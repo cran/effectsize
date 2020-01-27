@@ -12,8 +12,8 @@
 #'
 #' @examples
 #' cohens_d(iris$Sepal.Length, iris$Sepal.Width)
-#' hedges_g(iris$Sepal.Length, iris$Sepal.Width)
-#' glass_delta(iris$Sepal.Length, iris$Sepal.Width)
+#' hedges_g("Sepal.Length", "Sepal.Width", data = iris)
+#' glass_delta(Sepal.Length ~ Sepal.Width, data = iris)
 #'
 #' cohens_d(iris$Sepal.Length, iris$Sepal.Width, correct = TRUE, pooled_sd = FALSE)
 #' cohens_d(Sepal.Length ~ Species, data = iris[iris$Species %in% c("versicolor", "setosa"), ])
@@ -57,7 +57,7 @@ glass_delta <- function(x, y = NULL, data = NULL, correction = FALSE) {
   y <- out$y
 
   # Compute index
-  diff_of_means <- mean(y, na.rm = TRUE) - mean(x, na.rm = TRUE)
+  diff_of_means <- mean(x, na.rm = TRUE) - mean(y, na.rm = TRUE)
 
   if (type == "d" | type == "g") {
     if (paired) {

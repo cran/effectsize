@@ -639,7 +639,7 @@ body {
 </tr>
 </tbody>
 </table>
-<p>Standardizing the coefficient of this simple linear regression gives a value of <code>0.87</code>, but did you know that this is actually the <strong>same as a correlation</strong>? (Technically a <em>partial</em> correlation when multiple predictors are present). Thus, you can eventually apply some (<em>in</em>)famous interpretation guidelines (e.g., Cohen’s rules of thumb).</p>
+<p>Standardizing the coefficient of this simple linear regression gives a value of <code>0.87</code>, but did you know that for a simple regression this is actually the <strong>same as a correlation</strong>? Thus, you can eventually apply some (<em>in</em>)famous interpretation guidelines (e.g., Cohen’s rules of thumb).</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">library</span>(parameters)</a>
 <a class="sourceLine" id="cb2-2" title="2"></a>
 <a class="sourceLine" id="cb2-3" title="3"><span class="kw">cor.test</span>(iris<span class="op">$</span>Sepal.Length, iris<span class="op">$</span>Petal.Length) <span class="op">%&gt;%</span><span class="st"> </span></a>
@@ -649,22 +649,22 @@ body {
 &gt; iris$Sepal.Length | iris$Petal.Length | 0.87 | 21.65 | 148 | &lt; .001 | [0.83, 0.91] | Pearson
 </code></pre>
 <p>What happens in the case of <strong>multiple continuous variables</strong>? As in each effect in a regression model is “adjusted” for the other ones, we might expect coefficients to be somewhat alike to <strong>partial correlations</strong>. Let’s first start by computing the partial correlation between <strong>Sepal.Length</strong> and 3 other remaining variables.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1"><span class="kw">library</span>(ppcor)</a>
-<a class="sourceLine" id="cb4-2" title="2"></a>
-<a class="sourceLine" id="cb4-3" title="3">df &lt;-<span class="st"> </span>iris[, <span class="dv">1</span><span class="op">:</span><span class="dv">4</span>]  <span class="co"># Remove the Species factor</span></a>
-<a class="sourceLine" id="cb4-4" title="4"></a>
-<a class="sourceLine" id="cb4-5" title="5">ppcor<span class="op">::</span><span class="kw">pcor</span>(df)<span class="op">$</span>estimate[<span class="dv">2</span><span class="op">:</span><span class="dv">4</span>, <span class="dv">1</span>]  <span class="co"># Select the rows of interest</span></a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1"><span class="cf">if</span> (<span class="kw">require</span>(<span class="st">&quot;ppcor&quot;</span>)) {</a>
+<a class="sourceLine" id="cb4-2" title="2">  df &lt;-<span class="st"> </span>iris[, <span class="dv">1</span><span class="op">:</span><span class="dv">4</span>]  <span class="co"># Remove the Species factor</span></a>
+<a class="sourceLine" id="cb4-3" title="3">  ppcor<span class="op">::</span><span class="kw">pcor</span>(df)<span class="op">$</span>estimate[<span class="dv">2</span><span class="op">:</span><span class="dv">4</span>, <span class="dv">1</span>]  <span class="co"># Select the rows of interest</span></a>
+<a class="sourceLine" id="cb4-4" title="4">}</a></code></pre></div>
 <pre><code>&gt;  Sepal.Width Petal.Length  Petal.Width 
 &gt;         0.63         0.72        -0.34
 </code></pre>
-<p>Now, let’s apply another method to obtain effect sizes for frequentist regressions, based on the statistic values. We will convert the <em>t</em>-value (and its degrees of freedom, <em>df</em>) into a correlation coefficient <em>r</em>.</p>
+<p>Now, let’s apply another method to obtain effect sizes for frequentist regressions, based on the statistic values. We will convert the <em>t</em>-value (and its degrees of freedom, <em>df</em>) into a partial correlation coefficient <em>r</em>.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1">model &lt;-<span class="st"> </span><span class="kw">lm</span>(Sepal.Length <span class="op">~</span><span class="st"> </span>., <span class="dt">data =</span> df) </a>
 <a class="sourceLine" id="cb6-2" title="2"></a>
 <a class="sourceLine" id="cb6-3" title="3">parameters &lt;-<span class="st"> </span><span class="kw">model_parameters</span>(model)[<span class="dv">2</span><span class="op">:</span><span class="dv">4</span>,]</a>
 <a class="sourceLine" id="cb6-4" title="4"><span class="kw">convert_t_to_r</span>(parameters<span class="op">$</span>t, parameters<span class="op">$</span>df_residual)</a></code></pre></div>
-<pre><code>&gt; [1]  0.63  0.72 -0.34
+<pre><code>&gt; numeric(0)
 </code></pre>
-<p>Wow, the retrieved correlations coefficients from the regression model are <strong>exactly</strong> the same as the partial correlations. Can we arrive to the same conclusions by standardizing the parameters?</p>
+<p>Wow, the retrieved correlations coefficients from the regression model are <strong>exactly</strong> the same as the partial correlations!</p>
+<p>However, note that in multiple regression standardizing the parameters in not quite the same as computing the (partial) correlation, due to… math :(</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" title="1">model <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb8-2" title="2"><span class="st">  </span><span class="kw">standardize_parameters</span>() </a></code></pre></div>
 <table>
@@ -693,7 +693,6 @@ body {
 </tr>
 </tbody>
 </table>
-<p><strong>Unfortunately, not yet :(</strong></p>
 <h2 id="standardized-differences">Standardized differences</h2>
 <p>How does it work in the case of differences, when <strong>factors</strong> are entered and differences between a given level and a reference level (the intercept)? You might have heard that it is similar to a <strong>Cohen’s <em>d</em></strong>. Well, let’s see.</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" title="1"><span class="kw">lm</span>(Sepal.Length <span class="op">~</span><span class="st"> </span>Species, <span class="dt">data =</span> iris) <span class="op">%&gt;%</span><span class="st"> </span></a>
@@ -725,7 +724,7 @@ body {
 <a class="sourceLine" id="cb10-2" title="2">data &lt;-<span class="st"> </span>iris[iris<span class="op">$</span>Species <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;setosa&quot;</span>, <span class="st">&quot;versicolor&quot;</span>), ]</a>
 <a class="sourceLine" id="cb10-3" title="3"></a>
 <a class="sourceLine" id="cb10-4" title="4"><span class="kw">cohens_d</span>(Sepal.Length <span class="op">~</span><span class="st"> </span>Species, <span class="dt">data =</span> data) </a></code></pre></div>
-<pre><code>&gt; [1] 2.1
+<pre><code>&gt; [1] -2.1
 </code></pre>
 <p><em><strong>It is very different!</strong></em> Why? How? Both differences should be expressed in terms of SD of the response variable. <em>And there’s the trick</em>. First of all, in the linear model above, the SD by which the difference is scaled is the one of the whole response, which include <strong>all the three levels</strong>, whereas below, we filtered the data to only include the levels of interest. If we recompute the model on this filtered data, it should be better:</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" title="1"><span class="kw">lm</span>(Sepal.Length <span class="op">~</span><span class="st"> </span>Species, <span class="dt">data =</span> data) <span class="op">%&gt;%</span><span class="st"> </span></a>
@@ -750,7 +749,7 @@ body {
 </table>
 <p>Not really. Why? Because the actual formula to compute a <strong>Cohen’s <em>d</em></strong> doesn’t use the simple SD to scale the effect (as it is done when standardizing the parameters), but computes something called the <a href="https://easystats.github.io/effectsize/reference/sd_pooled.html"><strong>pooled SD</strong></a>. However, this can be turned off by setting <code>correct = &quot;raw&quot;</code>.</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1"><span class="kw">cohens_d</span>(Sepal.Length <span class="op">~</span><span class="st"> </span>Species, <span class="dt">data =</span> data, <span class="dt">pooled_sd =</span> <span class="ot">FALSE</span>) </a></code></pre></div>
-<pre><code>&gt; [1] 1.4
+<pre><code>&gt; [1] -1.4
 </code></pre>
 <p><em><strong>And here we are :)</strong></em></p>
 <!-- However, it is interesting to note that using the *smart* method when standardizing parameters will give you indices equivalent to **Glass' delta**, which difference is expressed in terms of SD of the intercept (the "reference" factor levels). -->

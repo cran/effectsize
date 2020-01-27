@@ -1,7 +1,7 @@
 Package: effectsize
 Type: Package
 Title: Indices of Effect Size and Standardized Parameters
-Version: 0.0.1
+Version: 0.1.1
 Authors@R: c(
     person("Dominique", 
 		"Makowski", 
@@ -23,7 +23,7 @@ Authors@R: c(
 		role = c("ctb")),
 	person("David", 
 		"Stanley", 
-		role = c("ctb"))		
+		role = c("ctb"))
 	)
 Maintainer: Dominique Makowski <dom.makowski@gmail.com>
 URL: https://github.com/easystats/effectsize
@@ -32,21 +32,21 @@ Description: Provide utilities to work with indices of effect size and standardi
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-Depends: R (>= 3.0)
-Imports: insight (>= 0.6.0), bayestestR (>= 0.4.0), parameters (>=
-        0.2.0), methods, stats, utils
+Depends: R (>= 3.2)
+Imports: insight (>= 0.7.0), bayestestR (>= 0.4.0), parameters (>=
+        0.3.0), stats, utils
 Suggests: afex, brms, boot, covr, dplyr, emmeans, gamm4, ggplot2,
         knitr, lmerTest, lm.beta, lme4, MuMIn, performance, ppcor,
         rmarkdown, rstan, rstanarm, see, testthat, tidyr
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.2
 Language: en-GB
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2019-11-11 23:45:12 UTC; Dom
+Packaged: 2020-01-26 07:07:41 UTC; domma
 Author: Dominique Makowski [aut, cre] (<https://orcid.org/0000-0001-5375-9967>),
   Daniel Lüdecke [aut] (<https://orcid.org/0000-0002-8895-3206>),
   Mattan S. Ben-Shachar [aut] (<https://orcid.org/0000-0002-4287-4801>),
   Ken Kelley [ctb],
   David Stanley [ctb]
 Repository: CRAN
-Date/Publication: 2019-11-15 13:00:02 UTC
+Date/Publication: 2020-01-27 06:30:03 UTC

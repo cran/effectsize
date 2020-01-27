@@ -9,7 +9,7 @@
 \alias{t_to_eta2_adj}
 \alias{F_to_omega2}
 \alias{t_to_omega2}
-\title{Convert test statistics (F, t) to indices of \strong{partial} variance explained (partial Eta / Omega / Epsilon squared)}
+\title{Convert test statistics (F, t) to indices of \strong{partial} variance explained (\strong{partial} Eta / Omega / Epsilon squared)}
 \usage{
 F_to_eta2(f, df, df_error, ...)
 
@@ -40,7 +40,7 @@ it is possible to compute a negative number; even though this doesn't make any p
 it is recommended to report the negative number and not a 0).
 }
 \description{
-These functions are convenience functions to convert F and t test statistics to partial Eta squared, (\eqn{\eta{_p}^2}), Omega squared (\eqn{\omega{_p}^2}) and Epsilon squared (\eqn{\epsilon{_p}^2}; an alias for the adjusted Eta squared). These are useful in cases where the various Sum of Squares and Mean Squares are not easily available or their computation is not straightforward (e.g., in liner mixed models, contrasts, etc.). For test statistics derived from \code{lm} and \code{aov} models, these functions give exact results. For all other cases, they return close approximations.
+These functions are convenience functions to convert F and t test statistics to \strong{partial} Eta squared, (\eqn{\eta{_p}^2}), Omega squared (\eqn{\omega{_p}^2}) and Epsilon squared (\eqn{\epsilon{_p}^2}; an alias for the adjusted Eta squared). These are useful in cases where the various Sum of Squares and Mean Squares are not easily available or their computation is not straightforward (e.g., in liner mixed models, contrasts, etc.). For test statistics derived from \code{lm} and \code{aov} models, these functions give exact results. For all other cases, they return close approximations.
 }
 \details{
 These functions use the following formulae:
@@ -58,31 +58,32 @@ For \eqn{t}, the conversion is based on the equality of \eqn{t^2 = F} when \eqn{
 }
 \examples{
 \donttest{
-library(afex)
-data(md_12.1)
-aov_ez("id", "rt", md_12.1,
-  within = c("angle", "noise"),
-  anova_table = list(correction = "none", es = "pes")
-)
+if (require("afex")) {
+  data(md_12.1)
+  aov_ez("id", "rt", md_12.1,
+    within = c("angle", "noise"),
+    anova_table = list(correction = "none", es = "pes")
+  )
+}
 # compare to:
 F_to_eta2(40.72, 2, 18)
 F_to_eta2(33.77, 1, 9)
 F_to_eta2(45.31, 2, 18)
 
 
-library(lmerTest) # for the df_error
-fit <- lmer(extra ~ group + (1 | ID), sleep)
-anova(fit)
-# Type III Analysis of Variance Table with Satterthwaite's method
-#       Sum Sq Mean Sq NumDF DenDF F value   Pr(>F)
-# group 12.482  12.482     1     9  16.501 0.002833 **
-# ---
-# Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-F_to_eta2(16.501, 1, 9)
-F_to_omega2(16.501, 1, 9)
-F_to_epsilon2(16.501, 1, 9)
+if (require("lmerTest")) { # for the df_error
+  fit <- lmer(extra ~ group + (1 | ID), sleep)
+  anova(fit)
+  # Type III Analysis of Variance Table with Satterthwaite's method
+  #       Sum Sq Mean Sq NumDF DenDF F value   Pr(>F)
+  # group 12.482  12.482     1     9  16.501 0.002833 **
+  # ---
+  # Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+  F_to_eta2(16.501, 1, 9)
+  F_to_omega2(16.501, 1, 9)
+  F_to_epsilon2(16.501, 1, 9)
 }
-
+}
 }
 \references{
 \itemize{

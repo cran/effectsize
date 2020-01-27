@@ -3,25 +3,31 @@
 %   R/standardize.models.R
 \name{standardize}
 \alias{standardize}
-\alias{standardize.numeric}
-\alias{standardize.factor}
 \alias{standardize.data.frame}
 \alias{standardize.lm}
 \title{Standardization (Z-scoring)}
 \usage{
 standardize(x, ...)
 
-\method{standardize}{numeric}(x, robust = FALSE, two_sd = FALSE,
-  verbose = TRUE, ...)
+\method{standardize}{data.frame}(
+  x,
+  robust = FALSE,
+  two_sd = FALSE,
+  select = NULL,
+  exclude = NULL,
+  verbose = TRUE,
+  force = FALSE,
+  ...
+)
 
-\method{standardize}{factor}(x, force = FALSE, ...)
-
-\method{standardize}{data.frame}(x, robust = FALSE, two_sd = FALSE,
-  select = NULL, exclude = NULL, verbose = TRUE, force = FALSE,
-  ...)
-
-\method{standardize}{lm}(x, robust = FALSE, two_sd = FALSE,
-  include_response = TRUE, verbose = TRUE, ...)
+\method{standardize}{lm}(
+  x,
+  robust = FALSE,
+  two_sd = FALSE,
+  include_response = TRUE,
+  verbose = TRUE,
+  ...
+)
 }
 \arguments{
 \item{x}{A dataframe, a vector or a statistical model.}
@@ -29,11 +35,15 @@ standardize(x, ...)
 \item{...}{Arguments passed to or from other methods.}
 
 \item{robust}{Logical, if \code{TRUE}, centering is done by substracting the
-median from the variables and divide it by the median absolute deviation
+median from the variables and dividing it by the median absolute deviation
 (MAD). If \code{FALSE}, variables are standardized by substracting the
-mean and divide it by the standard deviation (SD).}
+mean and dividing it by the standard deviation (SD).}
 
 \item{two_sd}{If \code{TRUE}, the variables are scaled by two times the deviation (SD or MAD depending on \code{robust}). This method can be useful to obtain model coefficients of continuous parameters comparable to coefficients related to binary predictors (Gelman, 2008).}
+
+\item{select}{Character vector of column names. If \code{NULL} (the default), all variables will be selected.}
+
+\item{exclude}{Character vector of column names to be excluded from selection.}
 
 \item{verbose}{Toggle warnings on or off.}
 
@@ -41,10 +51,6 @@ mean and divide it by the standard deviation (SD).}
 well. Factors are converted to numerical values, with the lowest level
 being the value \code{1} (unless the factor has numeric levels, which are
 converted to the corresponding numeric value).}
-
-\item{select}{Character vector of column names. If \code{NULL} (the default), all variables will be selected.}
-
-\item{exclude}{Character vector of column names to be excluded from selection.}
 
 \item{include_response}{For a model, if \code{TRUE} (default), the response value
 will also be standardized. If \code{FALSE}, only the predictors will be standardized.
@@ -55,7 +61,7 @@ response value will never be standardized, to make re-fitting the model work.}
 The standardized object (either a standardize dataframe or a statistical model fitted on standardized data).
 }
 \description{
-Performs a standardization of data (Z-scoring), i.e., centred and scaled, so that the data is expressed in terms of standard deviation (i.e., mean = 0, SD = 1) or Median Absolute Deviance (median = 0, MAD = 1). When applied to a statistical model, this function extracts the dataset, standardizes it, and refits the model with this standardized version of the dataset. The \code{\link{normalize}} function can also be used to scale all numeric variables within the 0 - 1 range.
+Performs a standardization of data (Z-scoring), i.e., centering and scaling, so that the data is expressed in terms of standard deviation (i.e., mean = 0, SD = 1) or Median Absolute Deviance (median = 0, MAD = 1). When applied to a statistical model, this function extracts the dataset, standardizes it, and refits the model with this standardized version of the dataset. The \code{\link{normalize}} function can also be used to scale all numeric variables within the 0 - 1 range.
 }
 \examples{
 # Dataframes

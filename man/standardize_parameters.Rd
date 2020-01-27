@@ -5,24 +5,37 @@
 \alias{standardize_posteriors}
 \title{Parameters standardization}
 \usage{
-standardize_parameters(model, parameters = NULL, method = "refit",
-  robust = FALSE, two_sd = FALSE, verbose = TRUE,
-  centrality = "median", ...)
+standardize_parameters(
+  model,
+  parameters = NULL,
+  method = "refit",
+  robust = FALSE,
+  two_sd = FALSE,
+  verbose = TRUE,
+  centrality = "median",
+  ...
+)
 
-standardize_posteriors(model, method = "refit", robust = FALSE,
-  two_sd = FALSE, verbose = TRUE, ...)
+standardize_posteriors(
+  model,
+  method = "refit",
+  robust = FALSE,
+  two_sd = FALSE,
+  verbose = TRUE,
+  ...
+)
 }
 \arguments{
 \item{model}{A statistical model.}
 
 \item{parameters}{An optional table containing the parameters to standardize. If \code{NULL}, will automatically retrieve it from the model.}
 
-\item{method}{The method used for standardizing the parameters. Can be \code{"refit"} (default)\code{"posthoc"}, \code{"smart"} or \code{"basic"}. See details.}
+\item{method}{The method used for standardizing the parameters. Can be \code{"refit"} (default), \code{"posthoc"}, \code{"smart"} or \code{"basic"}. See 'Details'.}
 
 \item{robust}{Logical, if \code{TRUE}, centering is done by substracting the
-median from the variables and divide it by the median absolute deviation
+median from the variables and dividing it by the median absolute deviation
 (MAD). If \code{FALSE}, variables are standardized by substracting the
-mean and divide it by the standard deviation (SD).}
+mean and dividing it by the standard deviation (SD).}
 
 \item{two_sd}{If \code{TRUE}, the variables are scaled by two times the deviation (SD or MAD depending on \code{robust}). This method can be useful to obtain model coefficients of continuous parameters comparable to coefficients related to binary predictors (Gelman, 2008).}
 
@@ -81,17 +94,18 @@ standardize_parameters(model, method = "basic")
 }
 
 \donttest{
-library(rstanarm)
-model <- stan_glm(Sepal.Length ~ Species * Petal.Width, data = iris, iter = 500, refresh = 0)
-standardize_posteriors(model, method = "refit")
-standardize_posteriors(model, method = "posthoc")
-standardize_posteriors(model, method = "smart")
-standardize_posteriors(model, method = "basic")
+if (require("rstanarm")) {
+  model <- stan_glm(Sepal.Length ~ Species * Petal.Width, data = iris, iter = 500, refresh = 0)
+  standardize_posteriors(model, method = "refit")
+  standardize_posteriors(model, method = "posthoc")
+  standardize_posteriors(model, method = "smart")
+  standardize_posteriors(model, method = "basic")
 
-standardize_parameters(model, method = "refit")
-standardize_parameters(model, method = "posthoc")
-standardize_parameters(model, method = "smart")
-standardize_parameters(model, method = "basic")
+  standardize_parameters(model, method = "refit")
+  standardize_parameters(model, method = "posthoc")
+  standardize_parameters(model, method = "smart")
+  standardize_parameters(model, method = "basic")
+}
 }
 }
 \references{

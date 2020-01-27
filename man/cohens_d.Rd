@@ -6,11 +6,23 @@
 \alias{glass_delta}
 \title{Effect size for differences}
 \usage{
-cohens_d(x, y = NULL, data = NULL, correction = FALSE,
-  pooled_sd = TRUE, paired = FALSE)
+cohens_d(
+  x,
+  y = NULL,
+  data = NULL,
+  correction = FALSE,
+  pooled_sd = TRUE,
+  paired = FALSE
+)
 
-hedges_g(x, y = NULL, data = NULL, correction = FALSE,
-  pooled_sd = TRUE, paired = FALSE)
+hedges_g(
+  x,
+  y = NULL,
+  data = NULL,
+  correction = FALSE,
+  pooled_sd = TRUE,
+  paired = FALSE
+)
 
 glass_delta(x, y = NULL, data = NULL, correction = FALSE)
 }
@@ -32,8 +44,8 @@ Compute different indices of effect size. For very small sample sizes (n < 20) H
 }
 \examples{
 cohens_d(iris$Sepal.Length, iris$Sepal.Width)
-hedges_g(iris$Sepal.Length, iris$Sepal.Width)
-glass_delta(iris$Sepal.Length, iris$Sepal.Width)
+hedges_g("Sepal.Length", "Sepal.Width", data = iris)
+glass_delta(Sepal.Length ~ Sepal.Width, data = iris)
 
 cohens_d(iris$Sepal.Length, iris$Sepal.Width, correct = TRUE, pooled_sd = FALSE)
 cohens_d(Sepal.Length ~ Species, data = iris[iris$Species \%in\% c("versicolor", "setosa"), ])

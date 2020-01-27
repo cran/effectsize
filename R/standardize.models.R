@@ -28,9 +28,13 @@ standardize.lm <- function(x, robust = FALSE, two_sd = FALSE, include_response =
 
   weight_variable <- insight::find_weights(x)
 
+  # don't standardize random effects
+
+  random_group_factor <- insight::find_random(x, flatten = TRUE, split_nested = TRUE)
+
   # standardize data
 
-  dont_standardize <- c(resp, log_terms, weight_variable)
+  dont_standardize <- c(resp, log_terms, weight_variable, random_group_factor)
   do_standardize <- setdiff(colnames(data), dont_standardize)
 
   if (length(do_standardize)) {
@@ -55,6 +59,9 @@ standardize.lm <- function(x, robust = FALSE, two_sd = FALSE, include_response =
     text <- utils::capture.output(model_std <- stats::update(x, newdata = data_std))
   } else if (inherits(x, "biglm")) {
     text <- utils::capture.output(model_std <- stats::update(x, moredata = data_std))
+  } else if (inherits(x, "mixor")) {
+    data_std <- data_std[order(data_std[, random_group_factor, drop = FALSE]), ]
+    text <- utils::capture.output(model_std <- stats::update(x, data = data_std))
   } else {
     text <- utils::capture.output(model_std <- stats::update(x, data = data_std))
   }
@@ -80,16 +87,40 @@ standardize.mlm <- function(x, robust = FALSE, two_sd = FALSE, verbose = TRUE, .
 }
 
 #' @export
+standardize.cglm <- standardize.lm
+
+#' @export
+standardize.cpglmm <- standardize.lm
+
+#' @export
+standardize.cpglm <- standardize.lm
+
+#' @export
 standardize.merMod <- standardize.lm
 
 #' @export
+standardize.mixor <- standardize.lm
+
+#' @export
+standardize.glmmadmb <- standardize.lm
+
+#' @export
 standardize.rq <- standardize.lm
+
+#' @export
+standardize.cgam <- standardize.lm
 
 #' @export
 standardize.crq <- standardize.lm
 
 #' @export
 standardize.nlrq <- standardize.lm
+
+#' @export
+standardize.bracl <- standardize.lm
+
+#' @export
+standardize.brmultinom <- standardize.lm
 
 #' @export
 standardize.speedglm <- standardize.lm
@@ -123,6 +154,12 @@ standardize.stanreg <- standardize.lm
 
 #' @export
 standardize.brmsfit <- standardize.lm
+
+#' @export
+standardize.fixest <- standardize.lm
+
+#' @export
+standardize.complmrob <- standardize.lm
 
 #' @export
 standardize.flexsurvreg <- standardize.lm
@@ -199,6 +236,12 @@ standardize.clm <- standardize.lm
 #' @export
 standardize.wbm <- function(x, ...) {
   warning("Standardization of parameters not possible for models from package 'panelr'.", call. = FALSE)
+  x
+}
+
+#' @export
+standardize.Surv <- function(x, ...) {
+  insight::print_color("'Surv' objects cannot be standardized.\n", "red")
   x
 }
 

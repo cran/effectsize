@@ -4,8 +4,7 @@
 \alias{format_standardize}
 \title{Transform a standardized vector into character}
 \usage{
-format_standardize(x, reference = x, robust = FALSE, digits = NULL,
-  ...)
+format_standardize(x, reference = x, robust = FALSE, digits = NULL, ...)
 }
 \arguments{
 \item{x}{A standardized numeric vector.}
@@ -13,9 +12,9 @@ format_standardize(x, reference = x, robust = FALSE, digits = NULL,
 \item{reference}{The reference vector from which to compute the mean and SD.}
 
 \item{robust}{Logical, if \code{TRUE}, centering is done by substracting the
-median from the variables and divide it by the median absolute deviation
+median from the variables and dividing it by the median absolute deviation
 (MAD). If \code{FALSE}, variables are standardized by substracting the
-mean and divide it by the standard deviation (SD).}
+mean and dividing it by the standard deviation (SD).}
 
 \item{digits}{Number of significant digits.}
 

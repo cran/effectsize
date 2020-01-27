@@ -4,7 +4,7 @@
 #'
 #' @param model A statistical model.
 #' @param parameters An optional table containing the parameters to standardize. If \code{NULL}, will automatically retrieve it from the model.
-#' @param method The method used for standardizing the parameters. Can be \code{"refit"} (default)\code{"posthoc"}, \code{"smart"} or \code{"basic"}. See details.
+#' @param method The method used for standardizing the parameters. Can be \code{"refit"} (default), \code{"posthoc"}, \code{"smart"} or \code{"basic"}. See 'Details'.
 #' @inheritParams standardize
 #' @param centrality For Bayesian models, which point-estimates (centrality indices) to compute. Character (vector) or list with one or more of these options: "median", "mean", "MAP" or "all".
 #'
@@ -50,17 +50,18 @@
 #' }
 #'
 #' \donttest{
-#' library(rstanarm)
-#' model <- stan_glm(Sepal.Length ~ Species * Petal.Width, data = iris, iter = 500, refresh = 0)
-#' standardize_posteriors(model, method = "refit")
-#' standardize_posteriors(model, method = "posthoc")
-#' standardize_posteriors(model, method = "smart")
-#' standardize_posteriors(model, method = "basic")
+#' if (require("rstanarm")) {
+#'   model <- stan_glm(Sepal.Length ~ Species * Petal.Width, data = iris, iter = 500, refresh = 0)
+#'   standardize_posteriors(model, method = "refit")
+#'   standardize_posteriors(model, method = "posthoc")
+#'   standardize_posteriors(model, method = "smart")
+#'   standardize_posteriors(model, method = "basic")
 #'
-#' standardize_parameters(model, method = "refit")
-#' standardize_parameters(model, method = "posthoc")
-#' standardize_parameters(model, method = "smart")
-#' standardize_parameters(model, method = "basic")
+#'   standardize_parameters(model, method = "refit")
+#'   standardize_parameters(model, method = "posthoc")
+#'   standardize_parameters(model, method = "smart")
+#'   standardize_parameters(model, method = "basic")
+#' }
 #' }
 #' @importFrom stats mad sd predict cor model.matrix
 #' @importFrom insight get_parameters model_info get_data get_response
