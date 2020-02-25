@@ -1,7 +1,7 @@
-73bd4caf2e0f6f0a4ad99816080f846b *DESCRIPTION
+173b19185b4476d58e1d00cdd569befe *DESCRIPTION
 f2f66d842fbf94c244bce6833641601e *NAMESPACE
 5ee713d16390e3f7cf15ebe9aa518b23 *NEWS.md
-d56477b7dba3f334683f984e388ca99c *R/adjust.R
+891c471b19cb4c3ad0ecde4477e10d89 *R/adjust.R
 6550e619982285b10a1a2bca5e57fc65 *R/change_scale.R
 b33cae2b2b3af534404120bc63b63304 *R/cohens_d.R
 ce279fc865f84183f9d10772d54ba4d8 *R/cohens_f.R
@@ -36,16 +36,16 @@ c7063ce95db8566d3bea41d0abacd3cb *R/ranktransform.R
 a2a96e55994c16d7db00989c7a5676ea *R/sd_pooled.R
 e545f02222f7d8a61e3f324f8c04b842 *R/standardize.R
 d6bca012af8ab84632ddf60389ab2e5b *R/standardize.data.frame.R
-6937a122293dbb26cfd5c973542d137a *R/standardize.models.R
+973d1399b5b30846733cc07c6bd8639e *R/standardize.models.R
 8fe0af52083d96bfcedc22248e547459 *R/standardize_info.R
 457f1e089fd0f27d440b62250f32cd97 *R/standardize_parameters.R
 94f77c387cdc42f882f773992bd70459 *R/utils_ci_eta_squared.R
 4fd5f6b524d0e0a59a8fa13948eebc6e *R/utils_confint_ncg.R
 c8f558bdf1beb9fe0384626cdbce47c0 *R/utils_factor_to_numeric.R
 77f0ff5fc8b81cbb7a54289bfb081efc *R/utils_values_aov.R
-b199366c4e87667f7deab8675373adb8 *README.md
-3ef19a7134a54aa8f8444f041ee13026 *build/partial.rdb
-0f842ae59b0d1d83bcf034c52488178e *build/vignette.rds
+c1ac1a304b9d3305e14fae2dd54a8721 *README.md
+2b1d8ee7fd7d71309f59cedd5916e191 *build/partial.rdb
+6db2db18a18be09bb3147a1152bae595 *build/vignette.rds
 f7ceafa44df0f0ef7223159bba23331b *inst/CITATION
 8a0bb7d4be10d9ed33a7da12d636da32 *inst/doc/bayesian_models.R
 192f20840982aa383fde1a1dc32862c0 *inst/doc/bayesian_models.Rmd
@@ -60,8 +60,8 @@ cb7cd207525e77ada9b446352f039277 *inst/doc/convert.Rmd
 2c003d454de938f4166ae01a6e51cbea *inst/doc/standardize_data.Rmd
 c6b95f0a767fdfa3bfb51063eb4deab9 *inst/doc/standardize_data.html
 2e3cca47be5b1ae00bef5c2ba79f3cfc *inst/doc/standardize_parameters.R
-4c3722fd3a0ca770a0616f40389fe21e *inst/doc/standardize_parameters.Rmd
-0f262328d745ea136c5dffdd331a0541 *inst/doc/standardize_parameters.html
+83bde26efd1d70a4dfeacfca9eb00c7b *inst/doc/standardize_parameters.Rmd
+520bc345726d20b1006815941c73d653 *inst/doc/standardize_parameters.html
 a03e2a0dd616e89086f8ebf3fc8244dd *man/F_to_eta2.Rd
 5cfda7c9a273c08d4123053cbed81286 *man/adjust.Rd
 ce470aba6e4397fe8eca32bc315f29d4 *man/change_scale.Rd
@@ -107,4 +107,4 @@ ed64274151d7d17c344fbfa4ef7d22a2 *vignettes/bibliography.bib
 cb7cd207525e77ada9b446352f039277 *vignettes/convert.Rmd
 98e121cc9e3ecb6819f3b91fa64d942c *vignettes/interpret.Rmd
 2c003d454de938f4166ae01a6e51cbea *vignettes/standardize_data.Rmd
-4c3722fd3a0ca770a0616f40389fe21e *vignettes/standardize_parameters.Rmd
+83bde26efd1d70a4dfeacfca9eb00c7b *vignettes/standardize_parameters.Rmd
