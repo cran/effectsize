@@ -12,7 +12,8 @@ cohens_d(
   data = NULL,
   correction = FALSE,
   pooled_sd = TRUE,
-  paired = FALSE
+  paired = FALSE,
+  ci = 0.95
 )
 
 hedges_g(
@@ -21,34 +22,54 @@ hedges_g(
   data = NULL,
   correction = FALSE,
   pooled_sd = TRUE,
-  paired = FALSE
+  paired = FALSE,
+  ci = 0.95
 )
 
-glass_delta(x, y = NULL, data = NULL, correction = FALSE)
+glass_delta(x, y = NULL, data = NULL, correction = FALSE, ci = 0.95)
 }
 \arguments{
-\item{x}{A continuous variable or a formula.}
+\item{x}{A formula, a numeric vector, or a name of one in \code{data}.}
 
-\item{y}{A continuous variable, a factor with two groups or a formula.}
+\item{y}{A numeric vector, a grouping (character / factor) vector, a or a name of one in \code{data}. Ignored if \code{x} is a formula.}
 
 \item{data}{An optional data frame containing the variables.}
 
-\item{correction}{If \code{TRUE}, applies a correction to the formula to make it less biased for small samples (McGrath & Meyer, 2006).}
+\item{correction}{If \code{TRUE}, applies a correction to make it less biased for small samples (McGrath & Meyer, 2006).}
 
-\item{pooled_sd}{If \code{FALSE}, the regular SD from both combined groups is used instead of the \code{\link{sd_pooled}}.}
+\item{pooled_sd}{If \code{TRUE} (default), a \code{\link{sd_pooled}} is used (assuming equal variance). Else the mean SD from both groups is used instead.}
 
 \item{paired}{If \code{TRUE}, the values of \code{x} and \code{y} are considered as paired.}
+
+\item{ci}{Confidence Interval (CI) level}
+}
+\value{
+A data frame with the effect size(s) and confidence interval(s).
+
+\subsection{Confidence Intervals}{
+Confidence intervals are estimated using the Noncentrality parameter method;
+These methods searches for a the best \code{ncp} (non-central parameters) for
+of the noncentral F distribution for the desired tail-probabilities,
+and then convert these \code{ncp}s to the corresponding effect sizes.
+}
 }
 \description{
-Compute different indices of effect size. For very small sample sizes (n < 20) Hedges' g is considered as less biased than Cohen's d. For sample sizes > 20, the results for both statistics are roughly equivalent. The Glass’s delta is appropriate if standard deviations are significantly different between groups, as it uses only the control group's (\code{x}) standard deviation.
+Compute different indices of effect size. For very small sample sizes (n < 20)
+Hedges' g is considered as less biased than Cohen's d.
+For sample sizes > 20, the results for both statistics are roughly equivalent.
+\cr\cr
+ The Glass’s delta is appropriate if standard deviations are significantly different
+ between groups, as it uses only the \emph{second} group's standard deviation.
 }
 \examples{
 cohens_d(iris$Sepal.Length, iris$Sepal.Width)
 hedges_g("Sepal.Length", "Sepal.Width", data = iris)
-glass_delta(Sepal.Length ~ Sepal.Width, data = iris)
 
-cohens_d(iris$Sepal.Length, iris$Sepal.Width, correct = TRUE, pooled_sd = FALSE)
-cohens_d(Sepal.Length ~ Species, data = iris[iris$Species \%in\% c("versicolor", "setosa"), ])
+cohens_d(mpg ~ am, data = mtcars)
+cohens_d(mpg ~ am, data = mtcars, pooled_sd = FALSE)
+hedges_g(mpg ~ am, data = mtcars)
+glass_delta(mpg ~ am, data = mtcars)
+
 }
 \references{
 \itemize{

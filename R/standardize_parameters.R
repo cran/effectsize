@@ -94,7 +94,9 @@ standardize_parameters <- function(model, parameters = NULL, method = "refit", r
 #' @rdname standardize_parameters
 #' @export
 standardize_posteriors <- function(model, method = "refit", robust = FALSE, two_sd = FALSE, verbose = TRUE, ...) {
-  .standardize_parameters(model = model, method = method, robust = robust, two_sd = two_sd, verbose = verbose, ...)
+  out <- .standardize_parameters(model = model, method = method, robust = robust, two_sd = two_sd, verbose = verbose, ...)
+  class(out) <- c("effectsize_std_params", "data.frame")
+  out
 }
 
 
@@ -245,7 +247,7 @@ standardize_posteriors <- function(model, method = "refit", robust = FALSE, two_
     params <- insight::get_parameters(model, ...)
   } else {
     params <- insight::get_parameters(model, ...)
-    names(params) <- c("Parameter", "Std_Coefficient")
+    names(params)[2] <- "Std_Coefficient"
   }
   params
 }
