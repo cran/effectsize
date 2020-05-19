@@ -1,3 +1,15 @@
+# effectsize 0.3.1
+
+## New features
+
+- `standardize_parameters()` now returns CIs ( #72 )
+- `eta_squared()`, `omega_squared()` and `epsilon_squared()` now works with
+  - `gam` models.
+  - `afex` models.
+  - `lme` and `anova.lme` objects.
+- New function `equivalence_test()` for effect sizes.
+- New plotting methods in the `see` package.
+
 # effectsize 0.3.0
 
 ## New features
@@ -24,7 +36,7 @@
 
 - In `t_to_d()`, argument `pooled` is now `paired`.
 
-# effectsize 0.1.0
+# effectsize 0.2.0
 
 ## Bug fixes
 
@@ -32,7 +44,7 @@
 - Fixed wrong computation in `standardize()` when `two_sd = TRUE`.
 - Fixed bug with missing column names in `standardize_parameters()` for models with different components (like count and zero-inflation).
 
-# effectsize 0.2.0
+# effectsize 0.1.1
 
 ## Changes
 

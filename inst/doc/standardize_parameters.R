@@ -12,20 +12,12 @@ if (!requireNamespace("dplyr", quietly = TRUE) ||
 
 set.seed(333)
 
-## ---- warning=FALSE, message=FALSE, eval=FALSE--------------------------------
-#  library(effectsize)
-#  library(dplyr)
-#  
-#  lm(Sepal.Length ~ Petal.Length, data = iris) %>%
-#    standardize_parameters()
-
-## ---- warning=FALSE, message=FALSE, echo = FALSE------------------------------
+## ---- warning=FALSE, message=FALSE--------------------------------------------
 library(effectsize)
 library(dplyr)
 
 lm(Sepal.Length ~ Petal.Length, data = iris) %>% 
-  standardize_parameters() %>% 
-  knitr::kable(digits = 2)
+  standardize_parameters()
 
 ## ---- warning=FALSE, message=FALSE--------------------------------------------
 library(parameters)
@@ -43,27 +35,16 @@ params <- model_parameters(model)
 
 t_to_r(params$t[2:4], params$df_error[2:4])
 
-## ---- warning=FALSE, message=FALSE, eval=FALSE--------------------------------
-#  model %>%
-#    standardize_parameters()
-
-## ---- warning=FALSE, message=FALSE, echo = FALSE------------------------------
+## ---- warning=FALSE, message=FALSE--------------------------------------------
 model %>% 
-  standardize_parameters()  %>% 
-  knitr::kable(digits = 2)
+  standardize_parameters() 
 
-## ---- warning=FALSE, message=FALSE, eval=FALSE--------------------------------
-#  # Select portion of data containing the two levels of interest
-#  data <- iris[iris$Species %in% c("setosa", "versicolor"), ]
-#  
-#  lm(Sepal.Length ~ Species, data = data) %>%
-#    standardize_parameters()
-
-## ---- warning=FALSE, message=FALSE, echo = FALSE------------------------------
+## ---- warning=FALSE, message=FALSE--------------------------------------------
+# Select portion of data containing the two levels of interest
 data <- iris[iris$Species %in% c("setosa", "versicolor"), ]
+
 lm(Sepal.Length ~ Species, data = data) %>% 
-  standardize_parameters() %>% 
-  knitr::kable(digits = 2)
+  standardize_parameters()
 
 ## ---- warning=FALSE, message=FALSE--------------------------------------------
 cohens_d(Sepal.Length ~ Species, data = data) 
@@ -73,14 +54,9 @@ cohens_d(Sepal.Length ~ Species, data = data)
   model_parameters())
 t_to_d(10.52, df_error = 98)
 
-## ---- warning=FALSE, message=FALSE, eval=FALSE--------------------------------
-#  lm(Sepal.Length ~ Species, data = data) %>%
-#    standardize_parameters(method = "smart")
-
-## ---- warning=FALSE, message=FALSE, echo = FALSE------------------------------
+## ---- warning=FALSE, message=FALSE--------------------------------------------
 lm(Sepal.Length ~ Species, data = data) %>%
-  standardize_parameters(method = "smart") %>%
-  knitr::kable(digits = 2)
+  standardize_parameters(method = "smart")
 
 ## ---- warning=FALSE, message=FALSE--------------------------------------------
 glass_delta(data$Sepal.Length[data$Species=="versicolor"],

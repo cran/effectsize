@@ -1,6 +1,6 @@
 #' Conversion between Effect sizes for Contingency Tables (Chi2, Phi, Cramer's V...)
 #'
-#' Convert between Chi square, (\eqn{chi^2}), phi (\eqn{\phi}) and Cramer's V.
+#' Convert between Chi square, (\eqn{\chi^2}), phi (\eqn{\phi}) and Cramer's V.
 #'
 #' @param chisq The Chi2 statistic.
 #' @param phi The Phi statistic.
@@ -80,13 +80,9 @@ chisq_to_phi <- function(chisq, n, nrow, ncol, ci = 0.95, adjust = FALSE, ...){
     res$CI_high <- .es(chisqs[,2])
   }
 
-  class(res) <- c("effectsize_table", class(res))
+  class(res) <- c("effectsize_table", "see_effectsize_table", class(res))
   return(res)
 }
-
-#' @rdname chisq_to_phi
-#' @export
-convert_chisq_to_phi <- chisq_to_phi
 
 
 #' @rdname chisq_to_phi
@@ -121,13 +117,9 @@ chisq_to_cramers_v <- function(chisq, n, nrow, ncol, ci = 0.95, adjust = FALSE, 
     res$CI_high <- .es(chisqs[,2])
   }
 
-  class(res) <- c("effectsize_table", class(res))
+  class(res) <- c("effectsize_table", "see_effectsize_table", class(res))
   return(res)
 }
-
-#' @rdname chisq_to_phi
-#' @export
-convert_chisq_to_cramers_v <- chisq_to_cramers_v
 
 
 # Reverse -----------------------------------------------------------------
@@ -138,6 +130,3 @@ phi_to_chisq <- function(phi, n, ...) {
   (phi * n)^2
 }
 
-#' @rdname chisq_to_phi
-#' @export
-convert_phi_to_chisq <- phi_to_chisq

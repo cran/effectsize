@@ -9,6 +9,7 @@ standardize_parameters(
   model,
   parameters = NULL,
   method = "refit",
+  ci = 0.95,
   robust = FALSE,
   two_sd = FALSE,
   verbose = TRUE,
@@ -31,6 +32,8 @@ standardize_posteriors(
 \item{parameters}{An optional table containing the parameters to standardize. If \code{NULL}, will automatically retrieve it from the model.}
 
 \item{method}{The method used for standardizing the parameters. Can be \code{"refit"} (default), \code{"posthoc"}, \code{"smart"} or \code{"basic"}. See 'Details'.}
+
+\item{ci}{Confidence Interval (CI) level}
 
 \item{robust}{Logical, if \code{TRUE}, centering is done by subtracting the
 median from the variables and dividing it by the median absolute deviation
@@ -80,10 +83,6 @@ standardize_parameters(model, method = "basic")
 standardize_parameters(model, robust = TRUE)
 standardize_parameters(model, two_sd = TRUE)
 
-# show CI
-library(parameters)
-params <- standardize_parameters(model, method = "smart", robust = TRUE)
-ci(params)
 
 iris$binary <- ifelse(iris$Sepal.Width > 3, 1, 0)
 model <- glm(binary ~ Species * Sepal.Length, data = iris, family = "binomial")
@@ -95,7 +94,7 @@ standardize_parameters(model, method = "basic")
 
 \donttest{
 if (require("rstanarm")) {
-  model <- stan_glm(Sepal.Length ~ Species * Petal.Width, data = iris, iter = 500, refresh = 0)
+  model <- stan_glm(Sepal.Length ~ Species + Petal.Width, data = iris, iter = 500, refresh = 0)
   standardize_posteriors(model, method = "refit")
   standardize_posteriors(model, method = "posthoc")
   standardize_posteriors(model, method = "smart")

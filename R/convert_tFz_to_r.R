@@ -55,7 +55,9 @@
 #' library(parameters)
 #' (param_tab <- parameters(model))
 #'
-#' t_to_r(param_tab$t[2:3], param_tab$df_error[2:3])
+#' (rs <- t_to_r(param_tab$t[2:3], param_tab$df_error[2:3]))
+#'
+#' if(require(see)) plot(rs)
 #'
 #' # How does this compare to actual partial correlations?
 #' if (require("correlation")) {
@@ -96,13 +98,9 @@ t_to_r <- function(t, df_error, ci = 0.95, ...) {
     res$CI_high <- ts[,2] / sqrt(ts[,2]^2 + df_error)
   }
 
-  class(res) <- c("effectsize_table", class(res))
+  class(res) <- c("effectsize_table", "see_effectsize_table", class(res))
   return(res)
 }
-
-#' @rdname t_to_r
-#' @export
-convert_t_to_r <- t_to_r
 
 # z -----------------------------------------------------------------------
 
@@ -128,13 +126,9 @@ z_to_r <- function(z, n, ci = 0.95, ...) {
     res$CI_high <- zs[,2] / sqrt(zs[,2]^2 + n)
   }
 
-  class(res) <- c("effectsize_table", class(res))
+  class(res) <- c("effectsize_table", "see_effectsize_table", class(res))
   return(res)
 }
-
-#' @rdname t_to_r
-#' @export
-convert_z_to_r <- z_to_r
 
 # F -----------------------------------------------------------------------
 
@@ -147,9 +141,6 @@ F_to_r <- function(f, df, df_error, ci = 0.95, ...) {
   t_to_r(sqrt(f), df_error = df_error, ci = ci)
 }
 
-#' @rdname t_to_r
-#' @export
-convert_F_to_r <- F_to_r
 
 
 

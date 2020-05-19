@@ -25,13 +25,9 @@ t_to_d <- function(t, df_error, paired = FALSE, ci = 0.95, pooled, ...) {
     res$CI_high <- paired * ts[,2] / sqrt(df_error)
   }
 
-  class(res) <- c("effectsize_table", class(res))
+  class(res) <- c("effectsize_table", "see_effectsize_table", class(res))
   return(res)
 }
-
-#' @rdname t_to_r
-#' @export
-convert_t_to_d <- t_to_d
 
 
 
@@ -70,14 +66,9 @@ z_to_d <- function(z, n, paired = FALSE, ci = 0.95, pooled, ...) {
     res$CI_high <- paired * zs[,2] / sqrt(n)
   }
 
-  class(res) <- c("effectsize_table", class(res))
+  class(res) <- c("effectsize_table", "see_effectsize_table", class(res))
   return(res)
 }
-
-#' @rdname t_to_r
-#' @export
-convert_z_to_d <- z_to_d
-
 
 
 # F -----------------------------------------------------------------------
@@ -102,6 +93,3 @@ F_to_d <- function(f, df, df_error, paired = FALSE, ci = 0.95, pooled, ...) {
   t_to_d(sqrt(f), df_error, paired, ci)
 }
 
-#' @rdname t_to_r
-#' @export
-convert_F_to_d <- F_to_d
