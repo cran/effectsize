@@ -5,12 +5,12 @@
 #' @param x a numeric vector or matrix. x and y can also both be factors.
 #' @param y a numeric vector; ignored if x is a matrix. If x is a factor, y should be a factor of the same length.
 #' @param CI Confidence Interval (CI) level
-#' @param adjust Should the effect size be bias-corrected? Defaults to \code{FALSE}.
-#' @param ... Passed to \code{chisq.test()}.
+#' @param adjust Should the effect size be bias-corrected? Defaults to `FALSE`.
+#' @param ... Ignored.
 #'
 #' @return A data frame with the effect size(s) between 0-1, and confidence interval(s).
 #'
-#' @seealso \code{\link{chisq_to_phi}} for details regarding estimation and CIs.
+#' @seealso [chisq_to_phi()] for details regarding estimation and CIs.
 #'
 #' @examples
 #' contingency_table <- as.table(rbind(c(762, 327, 468), c(484, 239, 477), c(484, 239, 477)))
@@ -22,25 +22,36 @@
 #' @importFrom stats chisq.test
 #' @export
 phi <- function(x, y = NULL, CI = 0.95, adjust = FALSE, ...){
-  res <- stats::chisq.test(x, y, ...)
+  res <- stats::chisq.test(x, y)
+  Obs <- res$observed
+  Exp <- res$expected
 
-  chisq_to_phi(unname(res$statistic),
-               n = sum(res$observed),
-               nrow = nrow(res$observed),
-               ncol = ncol(res$observed),
+  chisq_to_phi(chisq = .chisq(Obs, Exp),
+               n = sum(Obs),
+               nrow = nrow(Obs),
+               ncol = ncol(Obs),
                CI = CI,
                adjust = adjust)
 }
 
 #' @rdname phi
+#' @importFrom stats chisq.test
 #' @export
 cramers_v <- function(x, y = NULL, CI = 0.95, adjust = FALSE, ...){
-  res <- stats::chisq.test(x, y, ...)
+  res <- stats::chisq.test(x, y)
+  Obs <- res$observed
+  Exp <- res$expected
 
-  chisq_to_cramers_v(unname(res$statistic),
-                     n = sum(res$observed),
-                     nrow = nrow(res$observed),
-                     ncol = ncol(res$observed),
+  chisq_to_cramers_v(chisq = .chisq(Obs, Exp),
+                     n = sum(Obs),
+                     nrow = nrow(Obs),
+                     ncol = ncol(Obs),
                      CI = CI,
                      adjust = adjust)
+}
+
+
+#' @keywords internal
+.chisq <- function(Obs, Exp) {
+  sum(((Obs - Exp) ^ 2) / Exp)
 }

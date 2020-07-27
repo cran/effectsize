@@ -6,11 +6,8 @@ knitr::opts_chunk$set(comment = ">")
 options(digits = 2)
 options(knitr.kable.NA = '')
 
-if (!requireNamespace("afex", quietly = TRUE) ||
-    !requireNamespace("lmerTest", quietly = TRUE) ||
-    !requireNamespace("emmeans", quietly = TRUE) ||
-    !requireNamespace("parameters", quietly = TRUE)
-    ) {
+pkgs <- c("effectsize", "afex", "lmerTest", "emmeans", "parameters")
+if (!all(sapply(pkgs, requireNamespace))) {
   knitr::opts_chunk$set(eval = FALSE)
 } else {
   library(afex)
@@ -69,7 +66,7 @@ model_parameters(fit_lmm, df_method = "satterthwaite")
 
 t_to_eta2(6.77, df_error = 17)
 
-## ---- eval=TRUE---------------------------------------------------------------
+## -----------------------------------------------------------------------------
 F_to_eta2(45.8, 1, 17)
 F_to_epsilon2(45.8, 1, 17)
 F_to_omega2(45.8, 1, 17)
@@ -88,13 +85,8 @@ model_parameters(fit_lm)
 t_to_r(t = c(8.59, 27.57),
        df_error = 147)
 
-## ---- eval=FALSE--------------------------------------------------------------
-#  correlation::correlation(iris[,1:3], partial = TRUE)[1:2, c(1:3,7:8)]
-
-## ---- echo=FALSE--------------------------------------------------------------
-if (require(correlation, quietly = TRUE)) {
-  correlation::correlation(iris[,1:3], partial = TRUE)[1:2, c(1:3,7:8)]
-}
+## ---- eval=require(correlation, quietly = TRUE)-------------------------------
+correlation::correlation(iris[,1:3], partial = TRUE)[1:2, c(1:3,7:8)]
 
 ## -----------------------------------------------------------------------------
 pairs(emmeans(aov_fit, ~ angle))

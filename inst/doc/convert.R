@@ -4,6 +4,11 @@ options(knitr.kable.NA = '')
 knitr::opts_chunk$set(comment=">")
 options(digits=2)
 
+pkgs <- c("effectsize")
+if (!all(sapply(pkgs, requireNamespace))) {
+  knitr::opts_chunk$set(eval = FALSE)
+}
+
 ## ---- warning=FALSE, message=FALSE--------------------------------------------
 library(effectsize)
 

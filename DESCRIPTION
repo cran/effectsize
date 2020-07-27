@@ -1,7 +1,7 @@
 Package: effectsize
 Type: Package
 Title: Indices of Effect Size and Standardized Parameters
-Version: 0.3.1
+Version: 0.3.2
 Authors@R: c(
   person("Mattan S.", 
 		"Ben-Shachar", 
@@ -32,18 +32,18 @@ Description: Provide utilities to work with indices of effect size and standardi
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-Depends: R (>= 3.2)
-Imports: insight (>= 0.8.4), bayestestR (>= 0.6.0), parameters (>=
-        0.7.0), stats, utils
+Depends: R (>= 3.5)
+Imports: insight (>= 0.9.0), bayestestR (>= 0.7.2), parameters (>=
+        0.8.2), stats, utils
 Suggests: afex, brms, boot, car, correlation, covr, dplyr, emmeans,
         gamm4, ggplot2, knitr, lmerTest, lm.beta, lme4, MuMIn,
-        performance, rlang, rmarkdown, rstan, rstanarm, see, testthat,
-        tidyr
-RoxygenNote: 7.1.0
+        modelbased, performance, rlang, rmarkdown, rstan, rstanarm,
+        rstantools, see, testthat, tidyr
+RoxygenNote: 7.1.1
 Language: en-GB
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2020-05-19 05:53:00 UTC; USER
+Packaged: 2020-07-27 14:59:38 UTC; USER
 Author: Mattan S. Ben-Shachar [aut, cre]
     (<https://orcid.org/0000-0002-4287-4801>),
   Dominique Makowski [aut] (<https://orcid.org/0000-0001-5375-9967>),
@@ -51,4 +51,4 @@ Author: Mattan S. Ben-Shachar [aut, cre]
   Ken Kelley [ctb],
   David Stanley [ctb]
 Repository: CRAN
-Date/Publication: 2020-05-19 07:00:02 UTC
+Date/Publication: 2020-07-27 16:10:02 UTC

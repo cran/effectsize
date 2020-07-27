@@ -1,9 +1,20 @@
 #' Effect Size
 #'
-#' See the documentation for \code{\link{eta_squared}}, \code{\link{standardize_parameters}}, \code{\link{cramers_v}}.
+#' This function trys to return the best effect-size measure for the provided input model.
+#' See details below.
 #'
-#' @param model Statistical model or object of class \code{htest}.
-#' @param ... Arguments passed to or from other methods. See \code{eta_squared}, \code{standardize_parameters}, \code{cramers_v} or \code{t_to_d}.
+#' @param model Statistical model or object of class `htest`.
+#' @param ... Arguments passed to or from other methods.
+#'
+#' @details
+#'
+#' - For an object of class `htest`:
+#'   - A **t-test** returns *Cohen's d* via [t_to_d()].
+#'   - A **correlation test** returns *r*. See [t_to_r()].
+#'   - A **Chi-squared test** returns *Cramer's V* via [cramers_v()].
+#'   - A **One-way ANOVA test** returns *Eta squared* via [F_to_eta2()].
+#' - An object of class `anova` is passed to [eta_squared()].
+#' - Other objects are passed to [standardize_parameters()].
 #'
 #' @examples
 #' contingency_table <- as.table(rbind(c(762, 327, 468), c(484, 239, 477), c(484, 239, 477)))
@@ -12,6 +23,9 @@
 #'
 #' Ts <- t.test(1:10, y = c(7:20))
 #' effectsize(Ts)
+#'
+#' Aov <- oneway.test(extra ~ group, data = sleep)
+#' effectsize(Aov)
 #'
 #' fit <- lm(mpg ~ factor(cyl) * wt + hp, data = mtcars)
 #' effectsize(fit)
@@ -30,7 +44,7 @@ effectsize.htest <- function(model, ...) {
     out <- t_to_d(
       unname(model$statistic),
       unname(model$parameter),
-      paired = grepl("Paired", model$method),
+      paired = grepl("Paired", model$method) | grepl("One Sample", model$method),
       ...
     )
     return(out)
@@ -42,11 +56,15 @@ effectsize.htest <- function(model, ...) {
     out$CI_high <- model$conf.int[2]
     return(out)
   } else if (grepl("Chi-squared", model$method)) {
-    out <- chisq_to_cramers_v(
-      unname(model$statistic),
-      n = sum(model$observed),
-      nrow = nrow(model$observed),
-      ncol = ncol(model$observed),
+    Obs <- model$observed
+
+    out <- cramers_v(Obs, ...)
+    return(out)
+  } else if (grepl("One-way", model$method)) {
+    out <- F_to_eta2(
+      model$statistic,
+      model$parameter[1],
+      model$parameter[2],
       ...
     )
     return(out)

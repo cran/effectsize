@@ -4,15 +4,18 @@
 #'
 #' @inheritParams standardize_parameters
 #' @param interpretation Interpretation grid (i.e., the set of rules of thumb) used to interpret the effects.
-#' @param parameters A custom parameters table. If \code{NULL}, will use \code{\link{standardize_parameters}} to get it.
-#' @param standardize_method See \code{\link{standardize_parameters}}.
-#' @param standardize_robust See \code{\link{standardize_parameters}}.
+#' @param parameters A custom parameters table. If `NULL`, will use [standardize_parameters()] to get it.
+#' @param standardize_method See [standardize_parameters()].
+#' @param standardize_robust See [standardize_parameters()].
 #'
 #' @examples
 #' model <- lm(Sepal.Length ~ Species * Petal.Width, data = iris)
 #'
 #' @export
 interpret_parameters <- function(model, ...) {
+  warning("There is a known bug in 'interpret_parameters()' when interpreting parameters related to factors. \n",
+          "(See github.com/easystats/effectsize/issues/104)",
+          call. = FALSE)
   UseMethod("interpret_parameters")
 }
 

@@ -1,3 +1,21 @@
+# effectsize 0.3.2
+
+## New features
+
+- `eta_squared_posterior()` for estimating Eta Squared for Bayesian models.
+- `eta_squared()`, `omega_squared()` and `epsilon_squared()` now works with
+  - `ols` / `rms` models.
+- `effectsize()` for class `htest` supports `oneway.test(...)`.
+
+
+## Bug fixes
+
+- Fix minor miss-calculation of Chi-squared for 2*2 table with small samples ( #102 ).
+- Fixed miss-calculation of signed rank in `ranktransform()` ( #87 ).
+- Fixed bug in `standardize()` for standard objects with non-standard class-attributes (like vectors of class `haven_labelled` or `vctrs_vctr`).  
+- Fix `effectsize()` for one sample `t.test(...)` ( #95 ; thanks to pull request by @mutlusun )
+
+
 # effectsize 0.3.1
 
 ## New features

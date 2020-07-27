@@ -12,12 +12,14 @@
 \alias{convert_r_to_d}
 \alias{odds_to_d}
 \alias{convert_odds_to_d}
+\alias{logodds_to_d}
 \alias{d_to_odds}
 \alias{convert_d_to_odds}
-\alias{r_to_odds}
-\alias{convert_r_to_odds}
 \alias{odds_to_r}
 \alias{convert_odds_to_r}
+\alias{logodds_to_r}
+\alias{r_to_odds}
+\alias{convert_r_to_odds}
 \alias{odds_to_probs}
 \alias{odds_to_probs.data.frame}
 \alias{probs_to_odds}
@@ -45,17 +47,21 @@ odds_to_d(odds, log = FALSE, ...)
 
 convert_odds_to_d(odds, log = FALSE, ...)
 
+logodds_to_d(odds, log = TRUE, ...)
+
 d_to_odds(d, log = FALSE, ...)
 
 convert_d_to_odds(d, log = FALSE, ...)
 
-r_to_odds(r, log = FALSE, ...)
-
-convert_r_to_odds(r, log = FALSE, ...)
-
 odds_to_r(odds, log = FALSE, ...)
 
 convert_odds_to_r(odds, log = FALSE, ...)
+
+logodds_to_r(odds, log = TRUE, ...)
+
+r_to_odds(r, log = FALSE, ...)
+
+convert_r_to_odds(r, log = FALSE, ...)
 
 odds_to_probs(odds, log = FALSE, ...)
 
@@ -96,10 +102,10 @@ Enables a conversion between different indices of effect size, such as standardi
 }
 \details{
 \itemize{
-  \item \emph{d to r}: \code{d = 2 * r / sqrt(1 - r^2)}
-  \item \emph{r to d}: \code{r = d / (sqrt(d^2 + 4))}
-  \item \emph{odds to d}: \eqn{d = \frac{\log(odds)\times\sqrt{3}}{\pi}}
-  \item \emph{d to odds}: \eqn{log(odds) = d * \frac{\pi}{\sqrt(3)}}
+\item \emph{d to r}: \eqn{d = \frac{2 * r}{\sqrt{1 - r^2}}}
+\item \emph{r to d}: \eqn{r = \frac{d}{\sqrt{d^2 + 4}}}
+\item \emph{odds to d}: \eqn{d = \frac{\log(odds)\times\sqrt{3}}{\pi}}
+\item \emph{d to odds}: \eqn{log(odds) = d * \frac{\pi}{\sqrt(3)}}
 }
 }
 \examples{
@@ -113,7 +119,7 @@ odds_to_d(1.813799, log = TRUE)
 }
 \references{
 \itemize{
-  \item Sánchez-Meca, J., Marín-Martínez, F., & Chacón-Moscoso, S. (2003). Effect-size indices for dichotomized outcomes in meta-analysis. Psychological methods, 8(4), 448.
-  \item Borenstein, M., Hedges, L. V., Higgins, J. P. T., & Rothstein, H. R. (2009). Converting among effect sizes. Introduction to meta-analysis, 45-49.
+\item Sánchez-Meca, J., Marín-Martínez, F., & Chacón-Moscoso, S. (2003). Effect-size indices for dichotomized outcomes in meta-analysis. Psychological methods, 8(4), 448.
+\item Borenstein, M., Hedges, L. V., Higgins, J. P. T., & Rothstein, H. R. (2009). Converting among effect sizes. Introduction to meta-analysis, 45-49.
 }
 }

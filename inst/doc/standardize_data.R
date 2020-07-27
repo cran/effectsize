@@ -4,7 +4,13 @@ options(knitr.kable.NA = '')
 knitr::opts_chunk$set(comment=">")
 options(digits=2)
 
-## ---- fig.width=7, fig.height=4.5, eval = TRUE, results='hide', fig.align='center', comment=NA, message=FALSE, warning=FALSE----
+
+pkgs <- c("effectsize", "dplyr", "bayestestR", "see", "ggplot2", "parameters", "lme4", "KernSmooth")
+if (!all(sapply(pkgs, requireNamespace, quietly = TRUE))) {
+  knitr::opts_chunk$set(eval = FALSE)
+}
+
+## ---- fig.width=7, fig.height=4.5, results='hide', fig.align='center', comment=NA, message=FALSE, warning=FALSE----
 library(dplyr)
 
 # Download the 'emotion' dataset
@@ -23,7 +29,7 @@ df %>%
             Autobiographical_Link_Mean = mean(Autobiographical_Link, na.rm=TRUE),
             Autobiographical_Link_SD = sd(Autobiographical_Link, na.rm=TRUE))
 
-## ---- fig.width=7, fig.height=4.5, eval = TRUE, results='markup', fig.align='center', comment=NA, message=FALSE, warning=FALSE----
+## ---- fig.width=7, fig.height=4.5, results='markup', fig.align='center', comment=NA, message=FALSE, warning=FALSE----
 library(effectsize)
 
 Z_VariableWise <- df %>% 
@@ -39,7 +45,7 @@ Z_Full <- df %>%
   ungroup() %>% 
   standardize() 
 
-## ---- fig.width=7, fig.height=4.5, eval = TRUE, results='markup', fig.align='center', comment=NA, message=FALSE, warning=FALSE----
+## ---- fig.width=7, fig.height=4.5, results='markup', fig.align='center', comment=NA, message=FALSE, warning=FALSE----
 # Create a convenient function to print
 print_summary <- function(data){
   paste0(
@@ -60,7 +66,7 @@ print_summary(Z_VariableWise)
 print_summary(Z_ParticipantWise)
 print_summary(Z_Full)
 
-## ---- fig.width=7, fig.height=4.5, eval = requireNamespace("KernSmooth", quietly = TRUE), results='markup', fig.align='center', comment=NA, message=FALSE, warning=FALSE----
+## ---- fig.width=7, fig.height=4.5, results='markup', fig.align='center', comment=NA, message=FALSE, warning=FALSE----
 library(bayestestR)
 library(see)
 
@@ -71,7 +77,7 @@ data.frame(VarWise = Z_VariableWise$Subjective_Valence,
   plot() +
   see::theme_modern()
 
-## ---- fig.width=7, fig.height=4.5, eval = TRUE, results='markup', fig.align='center', comment=NA, message=FALSE, warning=FALSE----
+## ---- fig.width=7, fig.height=4.5, results='markup', fig.align='center', comment=NA, message=FALSE, warning=FALSE----
 # Create convenient function
 print_participants <- function(data){
   data %>% 
@@ -88,7 +94,7 @@ print_participants(Z_VariableWise)
 print_participants(Z_ParticipantWise)
 print_participants(Z_Full)
 
-## ---- fig.width=7, fig.height=4.5, eval = TRUE, results='markup', fig.align='center', comment=NA, message=FALSE, warning=FALSE----
+## ---- fig.width=7, fig.height=4.5, results='markup', fig.align='center', comment=NA, message=FALSE, warning=FALSE----
 library(ggplot2)
 
 cor.test(Z_VariableWise$Subjective_Valence, Z_ParticipantWise$Subjective_Valence)
@@ -102,7 +108,7 @@ data.frame(Original = df$Subjective_Valence,
   geom_smooth(method="lm") +
   see::theme_modern()
 
-## ---- fig.width=7, fig.height=4.5, eval = TRUE, results='markup', fig.align='center', comment=NA, message=FALSE, warning=FALSE----
+## ---- fig.width=7, fig.height=4.5, results='markup', fig.align='center', comment=NA, message=FALSE, warning=FALSE----
 library(lme4)
 library(parameters)
 

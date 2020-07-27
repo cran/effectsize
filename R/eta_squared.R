@@ -1,15 +1,15 @@
 #' Effect size for ANOVA
 #'
 #' Functions to compute effect size measures for ANOVAs, such as Eta, Omega and Epsilon squared,
-#' and Cohen's f (or their partialled versions) for \code{aov}, \code{aovlist} and \code{anova}
+#' and Cohen's f (or their partialled versions) for `aov`, `aovlist` and `anova`
 #' models. These indices represent an estimate of how much variance in the response variables
 #' is accounted for by the explanatory variable(s).
 #' \cr\cr
-#' Effect sizes are computed using the sums of squares obtained from \code{anova(model)} which
-#' might not always be appropriate (\strong{\emph{Yeah... ANOVAs are hard...}}). See details.
+#' Effect sizes are computed using the sums of squares obtained from `anova(model)` which
+#' might not always be appropriate (**_Yeah... ANOVAs are hard..._**). See details.
 #'
-#' @param model A model, ANOVA object, or the result of \code{parameters::model_parameters}.
-#' @param partial If \code{TRUE}, return partial indices.
+#' @param model A model, ANOVA object, or the result of `parameters::model_parameters`.
+#' @param partial If `TRUE`, return partial indices.
 #' @inheritParams chisq_to_phi
 #' @param ... Arguments passed to or from other methods (ignored).
 #'
@@ -17,54 +17,53 @@
 #'
 #' @details
 #'
-#' For \code{aov} and \code{aovlist} models, the effect sizes are computed directly with
-#' Sums-of-Squares. For all other model, the model is passed to \code{anova()}, and effect
-#' sizes are approximated via test statistic conversion (see \code{\link{F_to_eta2} for
-#' more details.})
+#' For `aov` and `aovlist` models, the effect sizes are computed directly with
+#' Sums-of-Squares. For all other model, the model is passed to `anova()`, and effect
+#' sizes are approximated via test statistic conversion (see `[F_to_eta2] for
+#' more details.`)
 #'
-#' \subsection{Type of Sums of Squares}{
+#' ## Type of Sums of Squares
 #' The sums of squares (or F statistics) used for the computation of the effect sizes is
-#' based on those returned by \code{anova(model)} (whatever those may be - for \code{aov}
-#' and \code{aovlist} these are \emph{type-1} sums of squares; for \code{merMod} these are
-#' \emph{type-3} sums of squares). Make sure these are the sums of squares you are intrested
-#' in (you might want to pass the result of \code{car::Anova(mode, type = 3)}).
+#' based on those returned by `anova(model)` (whatever those may be - for `aov`
+#' and `aovlist` these are *type-1* sums of squares; for `merMod` these are
+#' *type-3* sums of squares). Make sure these are the sums of squares you are intrested
+#' in (you might want to pass the result of `car::Anova(mode, type = 3)`).
 #' \cr\cr
-#' It is generally recommended to fit models with \emph{\code{contr.sum} factor weights} and
-#' \emph{centered covariates}, for sensible results. See examples.
-#' }
+#' It is generally recommended to fit models with *`contr.sum` factor weights* and
+#' *centered covariates*, for sensible results. See examples.
 #'
-#' \subsection{Confidence Intervals}{
+#' ## Confidence Intervals
 #' Confidence intervals are estimated using the Noncentrality parameter method;
-#' These methods searches for a the best \code{ncp} (non-central parameters) for
+#' These methods searches for a the best `ncp` (non-central parameters) for
 #' of the noncentral F distribution for the desired tail-probabilities,
-#' and then convert these \code{ncp}s to the corresponding effect sizes.
-#' }
+#' and then convert these `ncp`s to the corresponding effect sizes.
+#' \cr\cr
+#' Special care should be taken when interpreting CIs with a lower bound equal
+#' to (or small then) 0, and even more care should be taken when the
+#' *upper* bound is equal to (or small then) 0 (Steiger, 2004; Morey et al., 2016).
 #'
-#' \subsection{Omega Squared}{
+#' ## Omega Squared
 #' Omega squared is considered as a lesser biased alternative to eta-squared, especially
 #' when sample sizes are small (Albers \& Lakens, 2018). Field (2013) suggests the following
 #' interpretation heuristics:
-#' \itemize{
-#'   \item Omega Squared = 0 - 0.01: Very small
-#'   \item Omega Squared = 0.01 - 0.06: Small
-#'   \item Omega Squared = 0.06 - 0.14: Medium
-#'   \item Omega Squared > 0.14: Large
-#' }
+#' - Omega Squared = 0 - 0.01: Very small
+#' - Omega Squared = 0.01 - 0.06: Small
+#' - Omega Squared = 0.06 - 0.14: Medium
+#' - Omega Squared > 0.14: Large
 #'
-#' } \subsection{Epsilon Squared}{
+#' ## Epsilon Squared
 #' It is one of the least common measures of effect sizes: omega squared and eta squared are
 #' used more frequently. Although having a different name and a formula in appearance
 #' different, this index is equivalent to the adjusted R2 (Allen, 2017, p. 382).
 #'
-#' } \subsection{Cohen's f}{
+#' ## Cohen's f
 #' Cohen's f can take on values between zero, when the population
 #'  means are all equal, and an indefinitely large number as standard deviation of means
 #'  increases relative to the average standard deviation within each group. Cohen has
 #'  suggested that the values of 0.10, 0.25, and 0.40 represent small, medium, and large
 #'  effect sizes, respectively.
-#' }
 #'
-#' @seealso \code{\link{F_to_eta2}}
+#' @seealso [F_to_eta2()]
 #'
 #' @examples
 #' \donttest{
@@ -99,7 +98,6 @@
 #' }
 #'
 #' if (require("parameters")) {
-#'   data(mtcars)
 #'   model <- lm(mpg ~ wt + cyl, data = mtcars)
 #'   mp <- model_parameters(model)
 #'   eta_squared(mp)
@@ -116,12 +114,10 @@
 #' @references \itemize{
 #'  \item Albers, C., \& Lakens, D. (2018). When power analyses based on pilot data are biased: Inaccurate effect size estimators and follow-up bias. Journal of experimental social psychology, 74, 187-195.
 #'  \item Allen, R. (2017). Statistics and Experimental Design for Psychologists: A Model Comparison Approach. World Scientific Publishing Company.
-#'  \item Field, A. (2013). Discovering statistics using IBM SPSS statistics. sage.
-#'  \item Kelley, K. (2007). Methods for the behavioral, educational, and social sciences: An R package. Behavior Research Methods, 39(4), 979-984.
 #'  \item Kelley, T. (1935) An unbiased correlation ratio measure. Proceedings of the National Academy of Sciences. 21(9). 554-559.
+#'  \item Morey, R. D., Hoekstra, R., Rouder, J. N., Lee, M. D., & Wagenmakers, E. J. (2016). The fallacy of placing confidence in confidence intervals. Psychonomic bulletin & review, 23(1), 103-123.
+#'  \item Steiger, J. H. (2004). Beyond the F test: Effect size confidence intervals and tests of close fit in the analysis of variance and contrast analysis. Psychological Methods, 9, 164-182.
 #' }
-#'
-#' The computation of CIs is based on the implementation done by Stanley (2018) in the \code{ApaTables} package and Kelley (2007) in the \code{MBESS} package. All credits go to them.
 #'
 #' @export
 eta_squared <- function(model,
@@ -214,7 +210,7 @@ cohens_f <- function(model, partial = TRUE, ci = 0.9, ...) {
                           partial = TRUE,
                           ci = 0.9,
                           ...) {
-  if (!inherits(model, c("Gam", "anova", "anova.rms"))) {
+  if (!inherits(model, c("Gam", "anova"))) {
     # Pass to ANOVA table method
     res <- .anova_es.anova(
       stats::anova(model),
@@ -232,6 +228,7 @@ cohens_f <- function(model, partial = TRUE, ci = 0.9, ...) {
                    epsilon = F_to_epsilon2)
 
   params <- as.data.frame(parameters::model_parameters(model))
+  params <- params[params$Parameter != "(Intercept)", ]
   if (!"Residuals" %in% params$Parameter) {
     stop("No residuals data found - ",
          type,
@@ -240,7 +237,7 @@ cohens_f <- function(model, partial = TRUE, ci = 0.9, ...) {
 
   values <- .values_aov(params)
   if (type == "eta") {
-    if (isFALSE(partial)) {
+    if (!isTRUE(partial)) {
       params$Eta_Sq <- params$Sum_Squares / values$Sum_Squares_total
       params[params$Parameter == "Residuals", "Eta_Sq"] <- NA
     } else {
@@ -250,7 +247,7 @@ cohens_f <- function(model, partial = TRUE, ci = 0.9, ...) {
         NA
     }
   } else if (type == "omega") {
-    if (isFALSE(partial)) {
+    if (!isTRUE(partial)) {
       params$Omega_Sq <-
         (params$Sum_Squares - params$df * values$Mean_Square_residuals) / (values$Sum_Squares_total + values$Mean_Square_residuals)
       params[params$Parameter == "Residuals", "Omega_Sq"] <- NA
@@ -263,7 +260,7 @@ cohens_f <- function(model, partial = TRUE, ci = 0.9, ...) {
         NA
     }
   } else if (type == "epsilon") {
-    if (isFALSE(partial)) {
+    if (!isTRUE(partial)) {
       params$Epsilon_Sq <-
         (params$Sum_Squares - params$df * values$Mean_Square_residuals) /
         values$Sum_Squares_total
@@ -335,7 +332,6 @@ cohens_f <- function(model, partial = TRUE, ci = 0.9, ...) {
                    eta = F_to_eta2,
                    omega = F_to_omega2,
                    epsilon = F_to_epsilon2)
-  model <- model[rownames(model) != "(Intercept)", ]
 
   F_val <- c("F value", "approx F", "F-value")
   numDF <- c("NumDF", "num Df", "numDF")
@@ -349,7 +345,7 @@ cohens_f <- function(model, partial = TRUE, ci = 0.9, ...) {
                          ci = ci)
     return(res)
   }
-
+  model <- model[rownames(model) != "(Intercept)", ]
   model <- model[rownames(model) != "Residuals", ]
 
   F_val <- F_val[F_val %in% colnames(model)]
@@ -357,7 +353,7 @@ cohens_f <- function(model, partial = TRUE, ci = 0.9, ...) {
   denDF <- denDF[denDF %in% colnames(model)]
 
 
-  if (isFALSE(partial)) {
+  if (!isTRUE(partial)) {
     warning(
       "Currently only supports partial ",
       type,
@@ -382,6 +378,60 @@ cohens_f <- function(model, partial = TRUE, ci = 0.9, ...) {
 #' @keywords internal
 .anova_es.anova.lme <- .anova_es.anova
 
+#' @importFrom stats na.omit
+#' @keywords internal
+.anova_es.parameters_model <- function(model,
+                                       type = c("eta", "omega", "epsilon"),
+                                       partial = TRUE,
+                                       ci = 0.9,
+                                       ...) {
+  type <- match.arg(type)
+
+  if ("Group" %in% colnames(model) && sum(model$Parameter == "Residuals") > 1) {
+    x <- split(model, model$Group)
+    out <- do.call(rbind, lapply(x, function(i) {
+      f <- i[["F"]]
+      df_num <- i[["df"]][!is.na(f)]
+      df_error <- i[i$Parameter == "Residuals", "df"]
+      cbind(
+        data.frame(Group = unique(i$Group), stringsAsFactors = FALSE),
+        .anova_es_model_params(i, f, df_num, df_error, type, ci)
+      )
+    }))
+  } else {
+    if ("t" %in% colnames(model)) {
+      f <- model[["t"]]^2
+    }
+    if ("F" %in% colnames(model)) {
+      f <- model[["F"]]
+    }
+    if ("z" %in% colnames(model)) {
+      stop("Cannot compute effect size from models with no proper residual variance. Consider the estimates themselves as indices of effect size.")
+    }
+
+    df_col <- colnames(model)[colnames(model) %in% c("df", "Df", "NumDF")]
+    if (length(df_col)) {
+      df_num <- model[[df_col]][!is.na(f)]
+    } else {
+      df_num <- 1
+    }
+
+    if ("df_error" %in% colnames(model)) {
+      df_error <- model$df_error
+    } else if ("Residuals" %in% model$Parameter) {
+      df_error <- model[model$Parameter == "Residuals", df_col]
+    } else {
+      stop("Cannot extract degrees of freedom for the error term. Try passing the model object directly to 'eta_squared()'.")
+    }
+    out <- .anova_es_model_params(model, f, df_num, df_error, type, ci)
+  }
+
+  out
+}
+
+
+# Specific models ---------------------------------------------------------
+
 #' @keywords internal
 #' @importFrom parameters model_parameters
 .anova_es.aovlist <- function(model,
@@ -396,7 +446,7 @@ cohens_f <- function(model, partial = TRUE, ci = 0.9, ...) {
                    epsilon = F_to_epsilon2)
 
 
-  if (isFALSE(partial)) {
+  if (!isTRUE(partial)) {
     warning(
       "Currently only supports partial ",
       type,
@@ -472,7 +522,7 @@ cohens_f <- function(model, partial = TRUE, ci = 0.9, ...) {
                    omega = F_to_omega2,
                    epsilon = F_to_epsilon2)
 
-  if (isFALSE(partial)) {
+  if (!isTRUE(partial)) {
     warning(
       "Currently only supports partial ",
       type,
@@ -516,7 +566,7 @@ cohens_f <- function(model, partial = TRUE, ci = 0.9, ...) {
   #   return(out)
   # }
 
-  if (isFALSE(partial)) {
+  if (!isTRUE(partial)) {
     warning("Currently only supports partial ",
             type,
             " squared for afex-models.",
@@ -553,56 +603,32 @@ cohens_f <- function(model, partial = TRUE, ci = 0.9, ...) {
 }
 
 
-#' @importFrom stats na.omit
+
 #' @keywords internal
-.anova_es.parameters_model <- function(model,
-                                       type = c("eta", "omega", "epsilon"),
-                                       partial = TRUE,
-                                       ci = 0.9,
-                                       ...) {
-  type <- match.arg(type)
+#' @importFrom stats anova
+.anova_es.rms <- function(model,
+                          type = c("eta", "omega", "epsilon"),
+                          partial = TRUE,
+                          ci = 0.9,
+                          ...) {
 
-  if ("Group" %in% colnames(model) && sum(model$Parameter == "Residuals") > 1) {
-    x <- split(model, model$Group)
-    out <- do.call(rbind, lapply(x, function(i) {
-      f <- i[["F"]]
-      df_num <- i[["df"]][!is.na(f)]
-      df_error <- i[i$Parameter == "Residuals", "df"]
-      cbind(
-        data.frame(Group = unique(i$Group), stringsAsFactors = FALSE),
-        .anova_es_model_params(i, f, df_num, df_error, type, ci)
-      )
-    }))
-  } else {
-    if ("t" %in% colnames(model)) {
-      f <- model[["t"]]^2
-    }
-    if ("F" %in% colnames(model)) {
-      f <- model[["F"]]
-    }
-    if ("z" %in% colnames(model)) {
-      stop("Cannot compute effect size from models with no proper residual variance. Consider the estimates themselves as indices of effect size.")
-    }
-
-    df_col <- colnames(model)[colnames(model) %in% c("df", "Df", "NumDF")]
-    if (length(df_col)) {
-      df_num <- model[[df_col]][!is.na(f)]
-    } else {
-      df_num <- 1
-    }
-
-    if ("df_error" %in% colnames(model)) {
-      df_error <- model$df_error
-    } else if ("Residuals" %in% model$Parameter) {
-      df_error <- model[model$Parameter == "Residuals", df_col]
-    } else {
-      stop("Cannot extract degrees of freedom for the error term. Try passing the model object directly to 'eta_squared()'.")
-    }
-    out <- .anova_es_model_params(model, f, df_num, df_error, type, ci)
+  if (!inherits(model, "anova.rms")) {
+    model <- stats::anova(model)
   }
 
-  out
+  model <- as.data.frame(model)
+
+  colnames(model) <- gsub("F", "F value", colnames(model), fixed = TRUE)
+  colnames(model) <- gsub("d.f.", "NumDF", colnames(model), fixed = TRUE)
+  model$DenDF <- model$NumDF[rownames(model) == "ERROR"]
+
+  model <- model[rownames(model) != "ERROR", ]
+
+  out <- .anova_es.anova(model, type = type, partial = partial, ci = ci)
+  return(out)
 }
+
+.anova_es.anova.rms <- .anova_es.rms
 
 # Utils -------------------------------------------------------------------
 
