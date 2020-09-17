@@ -3,22 +3,78 @@
 #' Compute standardized model parameters (coefficients).
 #'
 #' @param model A statistical model.
-#' @param parameters An optional table containing the parameters to standardize. If `NULL`, will automatically retrieve it from the model.
-#' @param method The method used for standardizing the parameters. Can be `"refit"` (default), `"posthoc"`, `"smart"` or `"basic"`. See 'Details'.
+#' @param parameters An optional table containing the parameters to standardize.
+#'   If `NULL`, will automatically retrieve it from the model.
+#' @param method The method used for standardizing the parameters. Can be
+#'   `"refit"` (default), `"posthoc"`, `"smart"`, `"basic"` or `"pseudo"`. See
+#'   'Details'.
 #' @inheritParams standardize
 #' @inheritParams chisq_to_phi
-#' @param centrality For Bayesian models, which point-estimates (centrality indices) to compute. Character (vector) or list with one or more of these options: "median", "mean", "MAP" or "all".
+#' @param centrality For Bayesian models, which point-estimates (centrality
+#'   indices) to compute. Character (vector) or list with one or more of these
+#'   options: "median", "mean", "MAP" or "all".
 #'
 #' @details
 #' ## Methods:
-#' - **refit**: This method is based on a complete model re-fit with a standardized version of data. Hence, this method is equal to standardizing the variables before fitting the model. It is the "purest" and the most accurate (Neter et al., 1989), but it is also the most computationally costly and long (especially for heavy models such as, for instance, for Bayesian models). This method is particularly recommended for complex models that include interactions or transformations (e.g., polynomial or spline terms). The `robust` (default to `FALSE`) argument enables a robust standardization of data, i.e., based on the `median` and `MAD` instead of the `mean` and `SD`.
-#' - **posthoc**: Post-hoc standardization of the parameters, aiming at emulating the results obtained by "refit" without refitting the model. The coefficients are divided by the standard deviation (or MAD if `robust`) of the outcome (which becomes their expression 'unit'). Then, the coefficients related to numeric variables are additionally multiplied by the standard deviation (or MAD if `robust`) of the related terms, so that they correspond to changes of 1 SD of the predictor (e.g., "A change in 1 SD of `x` is related to a change of 0.24 of the SD of `y`). This does not apply to binary variables or factors, so the coefficients are still related to changes in levels. This method is not accurate and tend to give aberrant results when interactions are specified.
-#' - **smart** (Standardization of Model's parameters with Adjustment, Reconnaissance and Transformation): Similar to `method = "posthoc"` in that it does not involve model refitting. The difference is that the SD of the response is computed on the relevant section of the data. For instance, if a factor with 3 levels A (the intercept), B and C is entered as a predictor, the effect corresponding to B vs. A will be scaled by the variance of the response at the intercept only. As a results, the coefficients for effects of factors are similar to a Glass' delta.
-#' - **basic**: This method is similar to `method = "posthoc"`, but treats all variables as continuous: it also scales the coefficient by the standard deviation of model's matrix' parameter of factors levels (transformed to integers) or binary predictors. Although being inappropriate for these cases, this method is the one implemented by default in other software packages, such as `lm.beta::lm.beta()`.
+#' - **refit**: This method is based on a complete model re-fit with a
+#' standardized version of the data. Hence, this method is equal to
+#' standardizing the variables before fitting the model. It is the "purest" and
+#' the most accurate (Neter et al., 1989), but it is also the most
+#' computationally costly and long (especially for heavy models such as Bayesian
+#' models). This method is particularly recommended for complex models that
+#' include interactions or transformations (e.g., polynomial or spline terms).
+#' The `robust` (default to `FALSE`) argument enables a robust standardization
+#' of data, i.e., based on the `median` and `MAD` instead of the `mean` and
+#' `SD`. **See [standardize()] for more details.**
+#' - **posthoc**: Post-hoc standardization of the parameters, aiming at
+#' emulating the results obtained by "refit" without refitting the model. The
+#' coefficients are divided by the standard deviation (or MAD if `robust`) of
+#' the outcome (which becomes their expression 'unit'). Then, the coefficients
+#' related to numeric variables are additionally multiplied by the standard
+#' deviation (or MAD if `robust`) of the related terms, so that they correspond
+#' to changes of 1 SD of the predictor (e.g., "A change in 1 SD of `x` is
+#' related to a change of 0.24 of the SD of `y`). This does not apply to binary
+#' variables or factors, so the coefficients are still related to changes in
+#' levels. This method is not accurate and tend to give aberrant results when
+#' interactions are specified.
+#' - **smart** (Standardization of Model's parameters with Adjustment,
+#' Reconnaissance and Transformation): Similar to `method = "posthoc"` in that
+#' it does not involve model refitting. The difference is that the SD (or MAD if
+#' `robust`) of the response is computed on the relevant section of the data.
+#' For instance, if a factor with 3 levels A (the intercept), B and C is entered
+#' as a predictor, the effect corresponding to B vs. A will be scaled by the
+#' variance of the response at the intercept only. As a results, the
+#' coefficients for effects of factors are similar to a Glass' delta.
+#' - **basic**: This method is similar to `method = "posthoc"`, but treats all
+#' variables as continuous: it also scales the coefficient by the standard
+#' deviation of model's matrix' parameter of factors levels (transformed to
+#' integers) or binary predictors. Although being inappropriate for these cases,
+#' this method is the one implemented by default in other software packages,
+#' such as [lm.beta::lm.beta()].
+#' - **pseudo** (*for 2-level (G)LMMs only*): In this (post-hoc) method, the
+#' response and the predictor are standardized based on the level of prediction
+#' (levels are detected with [parameters::check_heterogeneity()]): Predictors
+#' are standardized based on their SD at level of prediction (see also
+#' [parameters::demean()]); The outcome (in linear LMMs) is standardized based
+#' on a fitted random-intercept-model, where `sqrt(random-intercept-variance)`
+#' is used for level 2 predictors, and `sqrt(residual-variance)` is used for
+#' level 1 predictors (Hoffman 2015, page 342).
 #'
-#' When `method = "smart"` or `method = "classic"`, `standardize_parameters()`
-#' also returns the standard errors for the standardized coefficients. Then, `ci()` can be
-#' used to calculate confidence intervals for the standardized coefficients. See 'Examples'.
+#' ## Transformed Variables
+#' When the model's formula contains transformations (e.g. `y ~ exp(X)`) `method
+#' = "refit"` might give different results compared to the other (post-hoc)
+#' methods: where `"refit"` standardizes the data prior to the transformation
+#' (e.g. equivalent to `exp(scale(X))`), the post-hoc methods standardize the
+#' transformed data (e.g. equivalent to `scale(exp(X))`). See [standardize()]
+#' for more details on how different transformations are dealt with.
+#'
+#' ## Generalized Linear Models
+#' When standardizing coefficients of a generalized model (GLM, GLMM, etc), only
+#' the predictors are standardized, maintaining the interpretability of the
+#' coefficients (e.g., in a binomial model: the exponent of the standardized
+#' parameter is the OR of a change of 1 SD in the predictor, etc.)
+#'
+#' @return A data frame with the standardized parameters and their CIs.
 #'
 #' @examples
 #' library(effectsize)
@@ -37,8 +93,7 @@
 #' standardize_parameters(model, two_sd = TRUE)
 #'
 #'
-#' iris$binary <- ifelse(iris$Sepal.Width > 3, 1, 0)
-#' model <- glm(binary ~ Species * Sepal.Length, data = iris, family = "binomial")
+#' model <- glm(am ~ cyl * mpg, data = mtcars, family = "binomial")
 #' standardize_parameters(model, method = "refit")
 #' standardize_parameters(model, method = "posthoc")
 #' standardize_parameters(model, method = "smart")
@@ -46,32 +101,35 @@
 #' }
 #'
 #' \donttest{
+#' if (require("lme4")) {
+#'   m <- lmer(mpg ~ cyl + am + vs + (1|cyl), mtcars)
+#'   standardize_parameters(m, method = "pseudo")
+#' }
+#'
+#'
+#'
 #' if (require("rstanarm")) {
-#'   model <- stan_glm(Sepal.Length ~ Species + Petal.Width, data = iris, iter = 500, refresh = 0)
-#'   standardize_posteriors(model, method = "refit")
-#'   standardize_posteriors(model, method = "posthoc")
-#'   standardize_posteriors(model, method = "smart")
-#'   standardize_posteriors(model, method = "basic")
-#'
-#'   standardize_parameters(model, method = "refit")
-#'   standardize_parameters(model, method = "posthoc")
-#'   standardize_parameters(model, method = "smart")
-#'   standardize_parameters(model, method = "basic")
+#'   model <- stan_glm(Sepal.Length ~ Species + Petal.Width, data = iris, refresh = 0)
+#'   # standardize_posteriors(model, method = "refit")
+#'   # standardize_posteriors(model, method = "posthoc")
+#'   # standardize_posteriors(model, method = "smart")
+#'   head(standardize_posteriors(model, method = "basic"))
 #' }
-#' }
-#' @importFrom stats mad sd predict cor model.matrix
-#' @importFrom insight get_parameters model_info get_data get_response
-#' @importFrom utils tail
-#' @importFrom bayestestR describe_posterior
 #'
-#' @seealso standardize_info
+#' }
+#'
+#' @seealso [standardize_info()]
 #'
 #' @return Standardized parameters table.
 #'
 #' @references
+#' - Hoffman, L. (2015). Longitudinal analysis: Modeling within-person fluctuation and change. Routledge.
 #' - Neter, J., Wasserman, W., & Kutner, M. H. (1989). Applied linear regression models.
 #' - Gelman, A. (2008). Scaling regression inputs by dividing by two standard deviations. Statistics in medicine, 27(15), 2865-2873.
 #'
+#' @importFrom stats mad sd predict cor model.matrix
+#' @importFrom insight get_parameters model_info get_data get_response
+#' @importFrom utils tail
 #' @importFrom bayestestR describe_posterior
 #' @importFrom parameters ci
 #' @export
@@ -92,16 +150,26 @@ standardize_parameters <- function(model, parameters = NULL, method = "refit", c
 
   # Summarise for Bayesian models
   if (insight::model_info(model)$is_bayesian) {
+    method <- attr(std_params, "std_method")
+    robust <- attr(std_params, "robust")
+    two_sd <- attr(std_params, "two_sd")
+
     std_params <- bayestestR::describe_posterior(
       std_params, centrality = centrality, dispersion = FALSE,
       ci = ci, ci_method = "hdi",
       test = NULL, diagnostic = NULL, priors = FALSE
     )
+    std_params$CI <- ci
     std_params <- std_params[names(std_params) %in% c("Parameter", "Coefficient", "Median", "Mean", "MAP","CI", "CI_low", "CI_high")]
     i <- colnames(std_params) %in% c("Coefficient", "Median", "Mean", "MAP")
     colnames(std_params)[i] <- paste0("Std_", colnames(std_params)[i])
+
+    attr(std_params, "std_method") <- method
+    attr(std_params, "two_sd") <- two_sd
+    attr(std_params, "robust") <- robust
   }
 
+  class(std_params) <- c("effectsize_table", "see_effectsize_table","data.frame")
   attr(std_params, "object_name") <- deparse(substitute(model), width.cutoff = 500)
   std_params
 }
@@ -121,14 +189,34 @@ standardize_posteriors <- function(model, method = "refit", robust = FALSE, two_
 
 #' @keywords internal
 .standardize_parameters <- function(model, parameters = NULL, method = "refit", ci = 0.95, robust = FALSE, two_sd = FALSE, verbose = TRUE, object_name = NULL, ...) {
-  method <- match.arg(method, choices = c("default", "refit", "posthoc", "smart", "partial", "basic"))
+  method <- match.arg(method, choices = c("default", "refit", "posthoc", "smart", "partial", "basic", "pseudo"))
+
+  if (method == "pseudo") {
+    if (!(insight::model_info(model)$is_mixed &&
+         length(insight::find_random(model)$random) == 1)) {
+      warning(
+        "'pseudo' method only available for 2-level (G)LMMs.\n",
+        "Setting method to 'basic'.",
+        call. = FALSE
+      )
+      method <- "basic"
+    }
+
+    if (robust) {
+      warning("'robust' standardization not available for 'pseudo' method.",
+              call. = FALSE)
+    }
+  }
+
+  if (method == "default") method <- "refit"
+
 
   # Refit
   if (method %in% c("refit")) {
     std_params <- .standardize_parameters_refit(model, ci = ci, robust = robust, verbose = verbose, ...)
 
     # Posthoc
-  } else if (method %in% c("posthoc", "smart", "basic", "classic")) {
+  } else if (method %in% c("posthoc", "smart", "basic", "classic", "pseudo")) {
     std_params <- .standardize_parameters_posthoc(model, parameters = parameters, method = method, ci = ci, robust = robust, two_sd = two_sd, verbose = verbose, object_name = object_name, ...)
 
     # Partial
@@ -136,7 +224,9 @@ standardize_posteriors <- function(model, method = "refit", robust = FALSE, two_
     stop("`method = 'partial'` not implemented yet :(")
   }
 
-  class(std_params) <- c("effectsize_table", "see_effectsize_table",class(std_params))
+  attr(std_params, "std_method") <- method
+  attr(std_params, "robust") <- robust
+  attr(std_params, "two_sd") <- two_sd
   std_params
 }
 
@@ -205,7 +295,7 @@ standardize_posteriors <- function(model, method = "refit", robust = FALSE, two_
 
 
   # Get info
-  deviations <- standardize_info(model, robust = robust)
+  deviations <- standardize_info(model, robust = robust, include_pseudo = method == "pseudo")
   if (method == "basic") {
     col_dev_resp <- "Deviation_Response_Basic"
     col_dev_pred <- "Deviation_Basic"
@@ -215,8 +305,11 @@ standardize_posteriors <- function(model, method = "refit", robust = FALSE, two_
   } else if (method == "smart") {
     col_dev_resp <- "Deviation_Response_Smart"
     col_dev_pred <- "Deviation_Smart"
+  } else if (method == "pseudo") {
+    col_dev_resp <- "Deviation_Response_Pseudo"
+    col_dev_pred <- "Deviation_Pseudo"
   } else {
-    stop("'method' must be one of 'basic', 'posthoc' or 'smart'.")
+    stop("'method' must be one of 'basic', 'posthoc', 'smart' or 'pseudo'.")
   }
 
   # Sapply standardization
@@ -275,10 +368,8 @@ standardize_posteriors <- function(model, method = "refit", robust = FALSE, two_
 
 #' @keywords internal
 .extract_parameters <- function(model, ...) {
-  if (insight::model_info(model)$is_bayesian) {
-    params <- insight::get_parameters(model, ...)
-  } else {
-    params <- insight::get_parameters(model, ...)
+  params <- insight::get_parameters(model, ...)
+  if (!insight::model_info(model)$is_bayesian) {
     names(params)[2] <- "Std_Coefficient"
   }
   params

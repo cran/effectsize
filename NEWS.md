@@ -1,3 +1,20 @@
+# effectsize 0.3.3
+
+## New features
+
+- `standardize_parameters(method = "pseudo")` returns pseudo-standardized coefficients for (G)LMM models.
+- `d_to_common_language()` for common language measures of standardized differences (a-la Cohen's d).
+
+## Changes
+
+- `r_to_odds()` family is now deprecated in favor of `r_to_oddsratio()`.
+
+## Bug fixes
+
+- `phi()` and `cramers_v()` did not respect the CI argument ( #111 ).
+- `standardize()` / `standardize_parameters()` properly deal with transformed data in the model formula ( #113 ).
+- `odds_to_probs()` was mis-treating impossible odds (NEVER TELL ME THE ODDS! #123 )
+
 # effectsize 0.3.2
 
 ## New features

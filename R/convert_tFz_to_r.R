@@ -20,7 +20,7 @@
 #' @return A data frame with the effect size(s) between 0-1, and confidence interval(s)
 #'
 #'
-#' @details These functions use the following formulae:
+#' @details These functions use the following formulae to approximate *r* and *d*:
 #' \cr\cr
 #' \deqn{r_{partial} = t / \sqrt{t^2 + df_{error}}}
 #' \cr\cr
@@ -105,6 +105,7 @@ t_to_r <- function(t, df_error, ci = 0.95, ...) {
 
 
 #' @rdname t_to_r
+#' @importFrom stats qnorm
 #' @export
 z_to_r <- function(z, n, ci = 0.95, ...) {
 
@@ -117,7 +118,7 @@ z_to_r <- function(z, n, ci = 0.95, ...) {
     alpha <- 1 - ci
     probs <- c(alpha / 2, 1 - alpha / 2)
 
-    qs <- qnorm(probs)
+    qs <- stats::qnorm(probs)
     zs <- cbind(qs[1] + z, qs[2] + z)
 
     res$CI_low <- zs[,1] / sqrt(zs[,1]^2 + n)

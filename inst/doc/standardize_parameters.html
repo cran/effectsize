@@ -627,6 +627,8 @@ body {
 &gt; -------------------------------------------------
 &gt; (Intercept)  |          -5.03e-16 | [-0.08, 0.08]
 &gt; Petal.Length |               0.87 | [ 0.79, 0.95]
+&gt; 
+&gt; # Standardization method: Refit
 </code></pre>
 <p>Standardizing the coefficient of this simple linear regression gives a value of <code>0.87</code>, but did you know that for a simple regression this is actually the <strong>same as a correlation</strong>? Thus, you can eventually apply some (<em>in</em>)famous interpretation guidelines (e.g., Cohen’s rules of thumb).</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">library</span>(parameters)</span>
@@ -667,6 +669,8 @@ body {
 &gt; Sepal.Width  |               0.34 | [ 0.27,  0.41]
 &gt; Petal.Length |               1.51 | [ 1.27,  1.75]
 &gt; Petal.Width  |              -0.51 | [-0.74, -0.28]
+&gt; 
+&gt; # Standardization method: Refit
 </code></pre>
 <h2 id="standardized-differences">Standardized differences</h2>
 <p>How does it work in the case of differences, when <strong>factors</strong> are entered and differences between a given level and a reference level (the intercept)? You might have heard that it is similar to a <strong>Cohen’s <em>d</em></strong>. Well, let’s see.</p>
@@ -679,6 +683,8 @@ body {
 &gt; -------------------------------------------------------
 &gt; (Intercept)       |              -0.72 | [-0.92, -0.53]
 &gt; Speciesversicolor |               1.45 | [ 1.18,  1.72]
+&gt; 
+&gt; # Standardization method: Refit
 </code></pre>
 <p>This linear model suggests that the <em>standardized</em> difference between the <em>versicolor</em> level of Species and the <em>setosa</em> level (the reference level - the intercept) is of 1.12 standard deviation of <code>Sepal.Length</code> (because the response variable was standardized, right?). Let’s compute the <strong>Cohen’s <em>d</em></strong> between these two levels:</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="kw">cohens_d</span>(Sepal.Length <span class="op">~</span><span class="st"> </span>Species, <span class="dt">data =</span> data) </span></code></pre></div>
@@ -709,6 +715,8 @@ body {
 &gt; -----------------------------------------------------
 &gt; (Intercept)       |               0.00 | [0.00, 0.00]
 &gt; Speciesversicolor |               2.64 | [2.15, 3.13]
+&gt; 
+&gt; # Standardization method: Smart
 </code></pre>
 <div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a><span class="kw">glass_delta</span>(data<span class="op">$</span>Sepal.Length[data<span class="op">$</span>Species<span class="op">==</span><span class="st">&quot;versicolor&quot;</span>],</span>
 <span id="cb21-2"><a href="#cb21-2"></a>            data<span class="op">$</span>Sepal.Length[data<span class="op">$</span>Species<span class="op">==</span><span class="st">&quot;setosa&quot;</span>])</span></code></pre></div>

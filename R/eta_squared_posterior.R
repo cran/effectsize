@@ -2,7 +2,9 @@
 #'
 #' This function simulates data from the posterior predictive distribution (ppd)
 #' and for each simulation the Eta Squared is computed for the model's fixed
-#' effects.
+#' effects. This means that the returned values are the population level effect
+#' size as implied by the posterior model (and not the effect size in the sample
+#' data). See [rstantools::posterior_predict()] for more info.
 #' \cr\cr
 #' Effect sizes are computed using the sums of squares obtained from
 #' `car::Anova(model, ...)` which might not always be appropriate (**_Yeah...
@@ -25,25 +27,23 @@
 #'
 #' @examples
 #' \donttest{
-#' if (require(rstanarm)) {
+#' if (require(rstanarm) && require(bayestestR)) {
 #'   fit_bayes <- stan_glm(mpg ~ factor(cyl) * wt + qsec,
 #'                         data = mtcars,
 #'                         family = gaussian(),
 #'                         refresh = 0)
 #'
-#'   es <- eta_squared_posterior(fit_bayes, partial = FALSE, type = 3)
+#'   es <- eta_squared_posterior(fit_bayes)
 #'
-#'   print(bayestestR::describe_posterior(es))
+#'   bayestestR::describe_posterior(es)
+#' }
 #'
-#'
-#'
-#'   # compare to:
-#'   if (require(car)) {
-#'     fit_freq <- lm(mpg ~ factor(cyl) * wt + qsec,
-#'                    data = mtcars)
-#'     aov_table <- car::Anova(fit_freq, type = 3)
-#'     print(eta_squared(aov_table, partial = FALSE))
-#'   }
+#' # compare to:
+#' if (require(car)) {
+#'   fit_freq <- lm(mpg ~ factor(cyl) * wt + qsec,
+#'                  data = mtcars)
+#'   aov_table <- car::Anova(fit_freq, type = 3)
+#'   eta_squared(aov_table)
 #' }
 #' }
 #'
