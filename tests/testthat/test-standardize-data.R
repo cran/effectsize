@@ -1,15 +1,24 @@
 if (require("testthat") && require("effectsize") && require("dplyr") && require("rlang")) {
+
+  # standardize.numeric -----------------------------------------------------
   test_that("standardize.numeric", {
     x <- standardize(seq(0, 1, length.out = 100))
-    testthat::expect_equal(mean(0), 0, tol = 0.01)
+    testthat::expect_equal(mean(x), 0, tol = 0.01)
+
+    x <- standardize(seq(0, 1, length.out = 100), two_sd = TRUE)
+    testthat::expect_equal(sd(x), 0.5, tol = 0.01)
 
     x <- standardize(seq(0, 1, length.out = 100), robust = TRUE)
-    testthat::expect_equal(median(0), 0, tol = 0.01)
+    testthat::expect_equal(median(x), 0, tol = 0.01)
+
+    x <- standardize(seq(0, 1, length.out = 100), robust = TRUE, two_sd = TRUE)
+    testthat::expect_equal(mad(x), 0.5, tol = 0.01)
 
     testthat::expect_message(standardize(c(0, 0, 0, 1, 1)))
   })
 
 
+  # standardize.data.frame --------------------------------------------------
   test_that("standardize.data.frame", {
     data(iris)
     x <- standardize(iris)
@@ -72,27 +81,25 @@ if (require("testthat") && require("effectsize") && require("dplyr") && require(
     testthat::expect_equal(mean(x$Sepal.Length_z), as.numeric(NA))
   })
 
-  test_that("standardize.lm", {
-    model <- standardize(lm(Sepal.Length ~ Species * Petal.Width, data = iris))
-    testthat::expect_equal(unname(coef(model)),
-                           c(0.06, -0.166, 0.19, 0.856, 0.457, -0.257),
-                           tol = 0.01)
 
-    # deal with log / sqrt terms
-    testthat::expect_message(standardize(lm(mpg ~ sqrt(cyl) + log(hp), mtcars)))
-    testthat::expect_message(standardize(lm(mpg ~ sqrt(cyl), mtcars)))
-    testthat::expect_message(standardize(lm(mpg ~ log(hp), mtcars)))
 
-    # difference between stand-methods:
-    mt <- mtcars
-    mt$hp_100 <- mt$hp/100
-    fit_exp <- lm(mpg ~ exp(hp_100), mt)
-    fit_scale1 <- lm(scale(mpg) ~ exp(scale(hp_100)), mt)
-    fit_scale2 <- lm(scale(mpg) ~ scale(exp(hp_100)), mt)
-    testthat::expect_equal(standardize_parameters(fit_exp, method = "refit")[2,2],
-                           unname(coef(fit_scale1)[2]))
+  test_that("standardize.data.frame, weights", {
+    x <- rexp(30)
+    w <- rpois(30, 20) + 1
 
-    testthat::expect_equal(standardize_parameters(fit_exp, method = "basic")[2,2],
-                           unname(coef(fit_scale2)[2]))
+    expect_equal(sqrt(cov.wt(cbind(x,x), w)$cov[1,1]),
+                 attr(standardize(x, weights = w),"scale"))
+    expect_equal(standardize(x, weights = w),
+                 standardize(data.frame(x), weights = w)$x)
+
+    # name and vector give same results
+    expect_equal(standardize(mtcars, exclude = "cyl", weights = mtcars$cyl),
+                 standardize(mtcars, weights = "cyl"))
+
+    if (require(dplyr)) {
+      d <- dplyr::group_by(mtcars, am)
+      expect_warning(standardize(d, weights = d$cyl))
+    }
+
   })
 }

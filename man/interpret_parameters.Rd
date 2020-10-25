@@ -19,7 +19,14 @@ interpret_parameters(model, ...)
 \arguments{
 \item{model}{A statistical model.}
 
-\item{...}{Arguments passed to or from other methods.}
+\item{...}{For \code{standardize_parameters()}, arguments passed to
+\link[parameters:model_parameters]{parameters::model_parameters}, such as:
+\itemize{
+\item \code{ci_method}, \code{centrality} for Bayesian models...
+\item \code{df_method} for Mixed models ...
+\item \code{exponentiate}, ...
+\item etc.
+}}
 
 \item{parameters}{A custom parameters table. If \code{NULL}, will use \code{\link[=standardize_parameters]{standardize_parameters()}} to get it.}
 

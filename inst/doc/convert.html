@@ -600,17 +600,155 @@ body {
 
 <body>
 
-<h1 id="converting-between-indices-of-effect-size">Converting between Indices of Effect Size</h1>
+<h1 id="converting-between-indices-of-effect-size">Converting Between Indices of Effect Size</h1>
 <ul>
+<li><a href="#converting-between-r-and-d">Converting Between <em>r</em> and <em>d</em></a>
+<ul>
+<li><a href="#in-multiple-regression">In multiple regression</a></li>
+</ul></li>
+<li><a href="#from-odds-ratios">From Odds ratios</a>
+<ul>
+<li><a href="#odds-ratios-to-risk-ratios">Odds ratios to Risk Ratios</a></li>
+</ul></li>
 <li><a href="#references">References</a></li>
 </ul>
-<p>The <code>effectsize</code> package contains function to convert among indices of effect size. <strong>This vignette needs to be improved! Please contribute by editing the text</strong> <a href="https://github.com/easystats/effectsize/blob/master/vignettes/convert.Rmd"><strong>here</strong></a> <strong>to make it better :)</strong></p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">library</span>(effectsize)</span>
-<span id="cb1-2"><a href="#cb1-2"></a></span>
-<span id="cb1-3"><a href="#cb1-3"></a><span class="kw">convert_d_to_r</span>(<span class="dt">d =</span> <span class="dv">1</span>)</span></code></pre></div>
-<pre><code>&gt; [1] 0.45
+<p>The <code>effectsize</code> package contains function to convert among indices of effect size. This can be useful for meta-analyses, or any comparison between different types of statistical analyses.</p>
+<h2 id="converting-between-r-and-d">Converting Between <em>r</em> and <em>d</em></h2>
+<p>The most basic conversion is between <em>r</em> values, a measure of standardized association between two continuous measures, and <em>d</em> values (such as Cohen’s <em>d</em>), a measure of standardized differences between two groups / conditions.</p>
+<p>Let’s look at the following data:</p>
+<pre><code>&gt;    Group Outcome
+&gt; 1      1  -0.942
+&gt; 2      1  -0.485
+&gt; 3      1  -0.100
+&gt; 4      1   0.285
+&gt; 5      1   0.742
+&gt; 6      2  -0.742
+&gt; 7      2  -0.285
+&gt; 8      2   0.100
+&gt; 9      2   0.485
+&gt; 10     2   0.942
 </code></pre>
-<h2 id="references">References</h2>
+<p>We can compute Cohen’s <em>d</em> between the two groups:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">cohens_d</span>(Outcome <span class="op">~</span><span class="st"> </span>Group, <span class="dt">data =</span> data)</span></code></pre></div>
+<pre><code>&gt; Cohen&#39;s d |        95% CI
+&gt; -------------------------
+&gt;     -0.31 | [-1.54, 0.95]
+</code></pre>
+<p>But we can also treat the 2-level <code>group</code> variable as a numeric variable, and compute Pearon’s <em>r</em>:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>correlation<span class="op">::</span><span class="kw">correlation</span>(data)</span></code></pre></div>
+<pre><code>&gt; Parameter1 | Parameter2 |    r |        95% CI | t(8) |     p |  Method | n_Obs
+&gt; -------------------------------------------------------------------------------
+&gt; Group      |    Outcome | 0.17 | [-0.52, 0.72] | 0.48 | 0.642 | Pearson |    10
+</code></pre>
+<p>But what if we only have summary statistics? Say, we only have (d=-0.37) and we want to know what the <em>r</em> would have been? We can approximate <em>r</em> using the following formula (Borenstein et al. 2009):</p>
+<p>[ r \approx \frac{d}{\sqrt{d^2 + 4}} ] And indeed, if we use <code>d_to_r()</code>, we get a pretty decent approximation:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="kw">d_to_r</span>(<span class="op">-</span><span class="fl">0.31</span>)</span></code></pre></div>
+<pre><code>&gt; [1] -0.153
+</code></pre>
+<p>(Which also works in the other way, with <code>r_to_d(0.17) = 0.345</code>)</p>
+<p>As we can see, these are rough approximations, but they can be useful when we don’t have the raw data on hand.</p>
+<h3 id="in-multiple-regression">In multiple regression</h3>
+<p>Although not exactly a classic Cohen’s d, we can also approximate a partial-<em>d</em> value (that is, the standardized difference between two groups / conditions, with variance from other predictors partilled out). For example:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>fit &lt;-<span class="st"> </span><span class="kw">lm</span>(mpg <span class="op">~</span><span class="st"> </span>am <span class="op">+</span><span class="st"> </span>hp, <span class="dt">data =</span> mtcars)</span>
+<span id="cb8-2"><a href="#cb8-2"></a></span>
+<span id="cb8-3"><a href="#cb8-3"></a>parameters<span class="op">::</span><span class="kw">model_parameters</span>(fit)</span></code></pre></div>
+<pre><code>&gt; Parameter   | Coefficient |       SE |         95% CI | t(29) |      p
+&gt; ----------------------------------------------------------------------
+&gt; (Intercept) |       26.58 |     1.43 | [23.67, 29.50] | 18.65 | &lt; .001
+&gt; am          |        5.28 |     1.08 | [ 3.07,  7.48] |  4.89 | &lt; .001
+&gt; hp          |       -0.06 | 7.86e-03 | [-0.07, -0.04] | -7.50 | &lt; .001
+</code></pre>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="co"># A couple of ways to get partial-d:</span></span>
+<span id="cb10-2"><a href="#cb10-2"></a><span class="fl">5.28</span> <span class="op">/</span><span class="st"> </span><span class="kw">sigma</span>(fit)</span></code></pre></div>
+<pre><code>&gt; [1] 1.81
+</code></pre>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="kw">t_to_d</span>(<span class="fl">4.89</span>, <span class="dt">df_error =</span> <span class="dv">29</span>)[[<span class="dv">1</span>]]</span></code></pre></div>
+<pre><code>&gt; [1] 1.82
+</code></pre>
+<p>We can convert these semi-<em>d</em> values to <em>r</em> values, but in this case these represent the <em>partial</em> correlation:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a><span class="kw">t_to_r</span>(<span class="fl">4.89</span>, <span class="dt">df_error =</span> <span class="dv">29</span>)</span></code></pre></div>
+<pre><code>&gt;    r |       95% CI
+&gt; -------------------
+&gt; 0.67 | [0.43, 0.80]
+</code></pre>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a>correlation<span class="op">::</span><span class="kw">correlation</span>(mtcars[,<span class="kw">c</span>(<span class="st">&quot;mpg&quot;</span>,<span class="st">&quot;am&quot;</span>,<span class="st">&quot;hp&quot;</span>)], <span class="dt">partial =</span> <span class="ot">TRUE</span>)[<span class="dv">1</span>,]</span></code></pre></div>
+<pre><code>&gt; Parameter1 | Parameter2 |    r |       95% CI | t(30) |      p |  Method | n_Obs
+&gt; --------------------------------------------------------------------------------
+&gt; mpg        |         am | 0.67 | [0.42, 0.83] |  4.97 | &lt; .001 | Pearson |    32
+</code></pre>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a><span class="co"># all close to:</span></span>
+<span id="cb18-2"><a href="#cb18-2"></a><span class="kw">d_to_r</span>(<span class="fl">1.81</span>)</span></code></pre></div>
+<pre><code>&gt; [1] 0.671
+</code></pre>
+<h2 id="from-odds-ratios">From Odds ratios</h2>
+<p>In binomial regression (more specifically in logistic regression), Odds ratios (OR) are themselves measures of effect size; they indicate the expected change in the odds of a some event.</p>
+<p>In some fields, it is common to dichotomize outcomes in order to be able to analyze them with logistic models. For example, if the outcome is the count of white blood cells, it can be more useful (medically) to predict the crossing of the threshold rather than the raw count itself. And so, where some scientists would maybe analyze the above data with a <em>t</em>-test and present Cohen’s <em>d</em>, others might analyze it with a logistic regression model on the dichotomized outcome, and present OR. So the question can be asked: given such a OR, what would Cohen’s <em>d</em> have been?</p>
+<p>Fortunately, there is a formula to approximate this (Sánchez-Meca, Marı́n-Martı́nez, and Chacón-Moscoso 2003):</p>
+<p>[ d = log(OR) \times \frac{\sqrt{3}}{\pi} ]</p>
+<p>which is implemented in the <code>oddsratio_to_d()</code> function.</p>
+<p>Let’s give it a try:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a><span class="co"># 1. Set a threshold</span></span>
+<span id="cb20-2"><a href="#cb20-2"></a>thresh &lt;-<span class="st"> </span><span class="dv">0</span></span>
+<span id="cb20-3"><a href="#cb20-3"></a></span>
+<span id="cb20-4"><a href="#cb20-4"></a><span class="co"># 2. dichotomize the outcome</span></span>
+<span id="cb20-5"><a href="#cb20-5"></a>data<span class="op">$</span>Outcome_binom &lt;-<span class="st"> </span>data<span class="op">$</span>Outcome <span class="op">&lt;</span><span class="st"> </span>thresh</span>
+<span id="cb20-6"><a href="#cb20-6"></a></span>
+<span id="cb20-7"><a href="#cb20-7"></a><span class="co"># 3. Fit a logistic regression:</span></span>
+<span id="cb20-8"><a href="#cb20-8"></a>fit &lt;-<span class="st"> </span><span class="kw">glm</span>(Outcome_binom <span class="op">~</span><span class="st"> </span>Group, </span>
+<span id="cb20-9"><a href="#cb20-9"></a>           <span class="dt">data =</span> data,</span>
+<span id="cb20-10"><a href="#cb20-10"></a>           <span class="dt">family =</span> <span class="kw">binomial</span>())</span>
+<span id="cb20-11"><a href="#cb20-11"></a></span>
+<span id="cb20-12"><a href="#cb20-12"></a>parameters<span class="op">::</span><span class="kw">model_parameters</span>(fit)</span></code></pre></div>
+<pre><code>&gt; Parameter   | Log-Odds |   SE |        95% CI |     z |     p
+&gt; -------------------------------------------------------------
+&gt; (Intercept) |     1.22 | 2.04 | [-2.77, 5.62] |  0.60 | 0.551
+&gt; Group       |    -0.81 | 1.29 | [-3.54, 1.70] | -0.63 | 0.530
+</code></pre>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1"></a><span class="co"># Convert log(OR) (the coefficient) to d</span></span>
+<span id="cb22-2"><a href="#cb22-2"></a><span class="kw">oddsratio_to_d</span>(<span class="op">-</span><span class="fl">0.81</span>, <span class="dt">log =</span> <span class="ot">TRUE</span>)</span></code></pre></div>
+<pre><code>&gt; [1] -0.447
+</code></pre>
+<h3 id="odds-ratios-to-risk-ratios">Odds ratios to Risk Ratios</h3>
+<p>Odds ratio, although popular, are not very intuitive in their interpretations. We don’t often think about the chances of catching a disease in terms of <em>odds</em>, instead we instead tend to think in terms of <em>probability</em> or some event - or the <em>risk</em>. Talking about <em>risks</em> we can also talk about the <em>change in risk</em>, knows as the <em>risk ratio</em> (<em>RR</em>).</p>
+<p>For example, if we find that for indevidual suffering from a migraine, for every bowl of brussels sprouts they eat, they’re odds of reducing the migraine increase by an (OR = 3.5) over a period of an hour. So, should people eat brussels sprouts to effectively reduce pain? Well, hard to say… Maybe if we look at <em>RR</em> we’ll get a clue.</p>
+<p>We can convert between <em>OR</em> and <em>RR</em> for the following formula (Grant 2014):</p>
+<p>[ RR = \frac{OR}{(1 - p0 + (p0 \times OR))}<br />
+]</p>
+<p>Where (p0) is the base-rate risk - the probability of the event without the intervention (e.g., what is the probability of the migraine subsiding within an hour without eating any brussels sprouts). If it the base-rate risk is, say, 85%, we get a <em>RR</em> of:</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1"></a>OR &lt;-<span class="st"> </span><span class="fl">3.5</span></span>
+<span id="cb24-2"><a href="#cb24-2"></a>baserate &lt;-<span class="st"> </span><span class="fl">0.85</span></span>
+<span id="cb24-3"><a href="#cb24-3"></a></span>
+<span id="cb24-4"><a href="#cb24-4"></a><span class="kw">oddsratio_to_riskratio</span>(OR, baserate)</span></code></pre></div>
+<pre><code>&gt; [1] 1.12
+</code></pre>
+<p>That is - for every bowl of brussels sprouts, we increase the chances of reducing the migraine by a mear 12%! Is if worth it? Depends on you affinity to brussels sprouts…</p>
+<p>Note that the base-rate risk is crucial here. If instead of 85% it was only 4%, then the <em>RR</em> would be:</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1"></a>OR &lt;-<span class="st"> </span><span class="fl">3.5</span></span>
+<span id="cb26-2"><a href="#cb26-2"></a>baserate &lt;-<span class="st"> </span><span class="fl">0.04</span></span>
+<span id="cb26-3"><a href="#cb26-3"></a></span>
+<span id="cb26-4"><a href="#cb26-4"></a><span class="kw">oddsratio_to_riskratio</span>(OR, baserate)</span></code></pre></div>
+<pre><code>&gt; [1] 3.18
+</code></pre>
+<p>That is - for every bowl of brussels sprouts, we increase the chances of reducing the migraine by a whopping 318%! Is if worth it? I guess that still depends on you affinity to brussels sprouts…</p>
+<h1 id="references">References</h1>
+<div id="refs" class="references hanging-indent">
+
+<div id="ref-borenstein2009converting">
+
+<p>Borenstein, Michael, Larry V Hedges, JPT Higgins, and Hannah R Rothstein. 2009. “Converting Among Effect Sizes.” <em>Introduction to Meta-Analysis</em>, 45–49.</p>
+</div>
+
+<div id="ref-grant2014converting">
+
+<p>Grant, Robert L. 2014. “Converting an Odds Ratio to a Range of Plausible Relative Risks for Better Communication of Research Findings.” <em>Bmj</em> 348: f7450.</p>
+</div>
+
+<div id="ref-sanchez2003effect">
+
+<p>Sánchez-Meca, Julio, Fulgencio Marı́n-Martı́nez, and Salvador Chacón-Moscoso. 2003. “Effect-Size Indices for Dichotomized Outcomes in Meta-Analysis.” <em>Psychological Methods</em> 8 (4): 448.</p>
+</div>
+
+</div>
 
 </body>
 </html>
