@@ -644,7 +644,7 @@ body {
 &gt; (Intercept)  |          -5.03e-16 | [-0.08, 0.08]
 &gt; Petal.Length |               0.87 | [ 0.79, 0.95]
 &gt; 
-&gt; # Standardization method: Refit
+&gt; # Standardization method: refit
 </code></pre>
 <p>Standardizing the coefficient of this <em>simple</em> linear regression gives a value of <code>0.87</code>, but did you know that for a simple regression this is actually the <strong>same as a correlation</strong>? Thus, you can eventually apply some (<em>in</em>)famous interpretation guidelines (e.g., Cohen’s rules of thumb).</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">library</span>(parameters)</span>
@@ -668,13 +668,14 @@ body {
 &gt; (Intercept) |              -0.49 | [-0.87, -0.11]
 &gt; amAutomatic |               1.20 | [ 0.60,  1.80]
 &gt; 
-&gt; # Standardization method: Refit
+&gt; # Standardization method: refit
 </code></pre>
 <p>This linear model suggests that the <em>standardized</em> difference between <em>Manual</em> (the reference level - the model’s intercept) and <em>Automatic</em> is of 1.20 standard deviation of <code>mpg</code> (because the response variable was standardized, right?). Let’s compute the <strong>Cohen’s <em>d</em></strong> between these two levels:</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="kw">cohens_d</span>(mpg <span class="op">~</span><span class="st"> </span>am, <span class="dt">data =</span> mtcars) </span></code></pre></div>
 <pre><code>&gt; Cohen&#39;s d |         95% CI
 &gt; --------------------------
 &gt;     -1.48 | [-2.27, -0.67]
+&gt;  - Estimate using pooled SD
 </code></pre>
 <p><em><strong>It is larger!</strong></em> Why? How? Both differences should be expressed in units of SD! But which SDs? Different SDs!</p>
 <p>When looking at the difference between groups as a <strong>slope</strong>, the standardized parameter is the difference between the means in (SD_{mpg}). That is, the <em>slope</em> between <code>Manual</code> and <code>Automatic</code> is a change of 1.20 (SD_{mpg})s.</p>
@@ -705,7 +706,7 @@ body {
 &gt; (Intercept) |               0.00 | [0.00, 0.00]
 &gt; amAutomatic |               1.17 | [0.59, 1.76]
 &gt; 
-&gt; # Standardization method: Smart
+&gt; # Standardization method: smart
 </code></pre>
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a><span class="kw">glass_delta</span>(mpg <span class="op">~</span><span class="st"> </span>am, <span class="dt">data =</span> mtcars)</span></code></pre></div>
 <pre><code>&gt; Glass&#39; delta |         95% CI
@@ -739,6 +740,8 @@ body {
 &gt; data       |    n_comps | 0.71 | [0.66, 0.75] |  22.40 | &lt; .001 | Pearson |   500
 &gt; data       |        age | 0.09 | [0.01, 0.18] |   2.09 | 0.221  | Pearson |   500
 &gt; data       |  seniority | 0.19 | [0.10, 0.27] |   4.30 | &lt; .001 | Pearson |   500
+&gt; 
+&gt; p-value adjustment method: Holm (1979)
 </code></pre>
 <p>Let’s compare these to the standardized slopes:</p>
 <div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a>mod &lt;-<span class="st"> </span><span class="kw">lm</span>(salary <span class="op">~</span><span class="st"> </span>xtra_hours <span class="op">+</span><span class="st"> </span>n_comps <span class="op">+</span><span class="st"> </span>age <span class="op">+</span><span class="st"> </span>seniority,</span>
@@ -753,7 +756,7 @@ body {
 &gt; age         |               0.04 | [ 0.00, 0.07]
 &gt; seniority   |               0.08 | [ 0.04, 0.12]
 &gt; 
-&gt; # Standardization method: Refit
+&gt; # Standardization method: refit
 </code></pre>
 <p>They are quite different! It seems then that <em><strong>standardized slopes in multiple linear regressions are not the same a correlations or partial correlations</strong></em> :(</p>
 <p>However, not all hope is lost yet - we can still try and recover the partial correlations from our model, in another way: by converting the <em>t</em>-statistics (and their degrees of freedom, <em>df</em>) into a partial correlation coefficient <em>r</em>.</p>
@@ -777,14 +780,14 @@ body {
 <span id="cb27-5"><a href="#cb27-5"></a>          <span class="dt">data =</span> hardlyworking)</span>
 <span id="cb27-6"><a href="#cb27-6"></a></span>
 <span id="cb27-7"><a href="#cb27-7"></a><span class="kw">model_parameters</span>(mod)</span></code></pre></div>
-<pre><code>&gt; Parameter       | Coefficient |     SE |              95% CI | t(494) |      p
-&gt; ------------------------------------------------------------------------------
-&gt; (Intercept)     |     9805.17 | 446.73 | [8927.44, 10682.89] |  21.95 | &lt; .001
-&gt; xtra_hours      |     1221.39 |  30.72 | [1161.03,  1281.75] |  39.76 | &lt; .001
-&gt; n_comps         |     2944.95 | 131.12 | [2687.32,  3202.57] |  22.46 | &lt; .001
-&gt; age_g [(30,35]] |      393.40 | 241.02 | [ -80.16,   866.96] |   1.63 | 0.103 
-&gt; age_g [(35,45]] |      596.31 | 427.75 | [-244.12,  1436.75] |   1.39 | 0.164 
-&gt; seniority       |      443.92 | 102.38 | [ 242.77,   645.08] |   4.34 | &lt; .001
+<pre><code>&gt; Parameter     | Coefficient |     SE |              95% CI | t(494) |      p
+&gt; ----------------------------------------------------------------------------
+&gt; (Intercept)   |     9805.17 | 446.73 | [8927.44, 10682.89] |  21.95 | &lt; .001
+&gt; xtra_hours    |     1221.39 |  30.72 | [1161.03,  1281.75] |  39.76 | &lt; .001
+&gt; n_comps       |     2944.95 | 131.12 | [2687.32,  3202.57] |  22.46 | &lt; .001
+&gt; age_g [31-35] |      393.40 | 241.02 | [ -80.16,   866.96] |   1.63 | 0.103 
+&gt; age_g [36-45] |      596.31 | 427.75 | [-244.12,  1436.75] |   1.39 | 0.164 
+&gt; seniority     |      443.92 | 102.38 | [ 242.77,   645.08] |   4.34 | &lt; .001
 </code></pre>
 <p>It seems like the best or most important predictor is <code>n_comps</code> as it has the coefficient. However, it is hard to compare among predictors, as they are on different scales. To address this issue, we must have all the predictors on the same scale - usually in the arbitrary unit of <em>standard deviations</em>.</p>
 <h3 id="refit-re-fitting-the-model-with-standardized-data"><strong><code>&quot;refit&quot;</code></strong>: Re-fitting the model with standardized data</h3>
@@ -799,7 +802,7 @@ body {
 &gt; age_g(35,45] |               0.10 | [-0.04, 0.23]
 &gt; seniority    |               0.08 | [ 0.04, 0.12]
 &gt; 
-&gt; # Standardization method: Refit
+&gt; # Standardization method: refit
 </code></pre>
 <p><code>standardize_parameters</code> also has a <code>robust</code> argument (default to <code>FALSE</code>), which enables a <strong>robust standardization of the data</strong>, <em>i.e.</em>, based on the <strong>median</strong> and <strong>MAD</strong> instead of the <strong>mean</strong> and <strong>SD</strong>:</p>
 <div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1"></a><span class="kw">standardize_parameters</span>(mod, <span class="dt">method =</span> <span class="st">&quot;refit&quot;</span>, <span class="dt">robust =</span> <span class="ot">TRUE</span>)</span></code></pre></div>
@@ -812,7 +815,7 @@ body {
 &gt; age_g(35,45] |               0.11 | [-0.05,  0.27]
 &gt; seniority    |               0.12 | [ 0.07,  0.18]
 &gt; 
-&gt; # Standardization method: Refit
+&gt; # Standardization method: refit
 </code></pre>
 <p>Note that since <code>age_g</code> is a factor, it is not numerically standardized, and so it standardized parameter is still not directly comparable to those of numeric variables. To address this, we can set <code>two_sd = TRUE</code>, thereby scaling parameters on 2 SDs (or MADs) of the predictors (Gelman 2008).</p>
 <div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1"></a><span class="kw">standardize_parameters</span>(mod, <span class="dt">method =</span> <span class="st">&quot;refit&quot;</span>, <span class="dt">two_sd =</span> <span class="ot">TRUE</span>)</span></code></pre></div>
@@ -825,7 +828,7 @@ body {
 &gt; age_g(35,45] |               0.10 | [-0.04, 0.23]
 &gt; seniority    |               0.16 | [ 0.09, 0.24]
 &gt; 
-&gt; # Standardization method: Refit
+&gt; # Standardization method: refit
 </code></pre>
 <p><code>effectsize</code> also comes with a helper function that returns the re-fit model, without summarizing it, which can then be used as the original model would:</p>
 <div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1"></a>mod_z &lt;-<span class="st"> </span><span class="kw">standardize</span>(mod, <span class="dt">two_sd =</span> <span class="ot">FALSE</span>, <span class="dt">robust =</span> <span class="ot">FALSE</span>)</span>
@@ -842,14 +845,14 @@ body {
 &gt;       0.0821
 </code></pre>
 <div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1"></a><span class="kw">model_parameters</span>(mod_z)</span></code></pre></div>
-<pre><code>&gt; Parameter       | Coefficient |   SE |        95% CI | t(494) |      p
-&gt; ----------------------------------------------------------------------
-&gt; (Intercept)     |       -0.05 | 0.03 | [-0.11, 0.02] |  -1.47 | 0.142 
-&gt; xtra_hours      |        0.77 | 0.02 | [ 0.73, 0.81] |  39.76 | &lt; .001
-&gt; n_comps         |        0.39 | 0.02 | [ 0.36, 0.43] |  22.46 | &lt; .001
-&gt; age_g [(30,35]] |        0.06 | 0.04 | [-0.01, 0.14] |   1.63 | 0.103 
-&gt; age_g [(35,45]] |        0.10 | 0.07 | [-0.04, 0.23] |   1.39 | 0.164 
-&gt; seniority       |        0.08 | 0.02 | [ 0.04, 0.12] |   4.34 | &lt; .001
+<pre><code>&gt; Parameter     | Coefficient |   SE |        95% CI | t(494) |      p
+&gt; --------------------------------------------------------------------
+&gt; (Intercept)   |       -0.05 | 0.03 | [-0.11, 0.02] |  -1.47 | 0.142 
+&gt; xtra_hours    |        0.77 | 0.02 | [ 0.73, 0.81] |  39.76 | &lt; .001
+&gt; n_comps       |        0.39 | 0.02 | [ 0.36, 0.43] |  22.46 | &lt; .001
+&gt; age_g [31-35] |        0.06 | 0.04 | [-0.01, 0.14] |   1.63 | 0.103 
+&gt; age_g [36-45] |        0.10 | 0.07 | [-0.04, 0.23] |   1.39 | 0.164 
+&gt; seniority     |        0.08 | 0.02 | [ 0.04, 0.12] |   4.34 | &lt; .001
 </code></pre>
 <h3 id="posthoc-refit-without-refitting"><strong><code>&quot;posthoc&quot;</code></strong>: Refit without refitting</h3>
 <p>Post-hoc standardization of the parameters aims at emulating the results obtained by <code>&quot;refit&quot;</code> without refitting the model. The coefficients are divided by the standard deviation (or MAD if <code>robust</code>) of the outcome (which becomes their expression ‘unit’). Then, the coefficients related to numeric variables are additionally multiplied by the standard deviation (or MAD if <code>robust</code>) of the related terms, so that they correspond to changes of 1 SD of the predictor (e.g., &quot;A change in 1 SD of <em>x</em> is related to a change of 0.24 of the SD of <em>y</em>). This does not apply to binary variables or factors, so the coefficients are still related to changes in levels. This method is not accurate and tend to give aberrant results when interactions are specified.</p>
@@ -863,7 +866,7 @@ body {
 &gt; age_g(35,45] |               0.10 | [-0.04, 0.23]
 &gt; seniority    |               0.08 | [ 0.04, 0.12]
 &gt; 
-&gt; # Standardization method: Posthoc
+&gt; # Standardization method: posthoc
 </code></pre>
 <h3 id="smart-standardization-of-models-parameters-with-adjustment-reconnaissance-and-transformation"><strong><code>&quot;smart&quot;</code></strong>: Standardization of Model’s parameters with Adjustment, Reconnaissance and Transformation</h3>
 <blockquote>
@@ -880,7 +883,7 @@ body {
 &gt; age_g(35,45] |               0.10 | [-0.04, 0.23]
 &gt; seniority    |               0.08 | [ 0.04, 0.12]
 &gt; 
-&gt; # Standardization method: Smart
+&gt; # Standardization method: smart
 </code></pre>
 <h3 id="basic-raw-scaling-of-the-model-frame"><strong><code>&quot;basic&quot;</code></strong>: Raw scaling of the model frame</h3>
 <p>This method is similar to <code>method = &quot;posthoc&quot;</code>, but treats all variables as continuous: it scales the coefficient by the standard deviation of model’s matrix’ parameter of factors levels (transformed to integers) or binary predictors. Although it can be argued that this might be inappropriate for these cases, this method allows for easier importance judgment across all predictor type (numeric, factor, interactions…). It is also the type of standardization implemented by default in other software packages (also <code>lm.beta::lm.beta()</code>), and, such as can be used for reproducibility and replication purposes.</p>
@@ -894,14 +897,15 @@ body {
 &gt; age_g(35,45] |               0.03 | [-0.01, 0.06]
 &gt; seniority    |               0.08 | [ 0.04, 0.12]
 &gt; 
-&gt; # Standardization method: Basic
+&gt; # Standardization method: basic
 </code></pre>
 <h2 id="standardizing-parameters-in-mixed-models">Standardizing Parameters In Mixed Models</h2>
 <p>Linear mixed models (LMM/HLM/MLM) offer an additional conundrum to standardization - how does one even calculate the SDs of the various predictors? Of of the response - is it the deviations within each group? Or perhaps between them?</p>
 <p>The solution: standardize according to level of the predictor (Hoffman 2015, 342)! Level 1 parameters are standardized according to variance <em>withing</em> groups, while level 2 parameters are standardized according to variance <em>between</em> groups. The resulting standardized coefficient are also called <em>pseudo</em>-standardized coefficients.[^Note that like method <code>&quot;basic&quot;</code>, these are based on the model matrix.]</p>
 <div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1"></a><span class="kw">library</span>(lme4)</span>
 <span id="cb45-2"><a href="#cb45-2"></a>m &lt;-<span class="st"> </span><span class="kw">lmer</span>(mpg <span class="op">~</span><span class="st"> </span>cyl <span class="op">+</span><span class="st"> </span>am <span class="op">+</span><span class="st"> </span>vs <span class="op">+</span><span class="st"> </span>(<span class="dv">1</span><span class="op">|</span>cyl), mtcars)</span>
-<span id="cb45-3"><a href="#cb45-3"></a><span class="kw">standardize_parameters</span>(m, <span class="dt">method =</span> <span class="st">&quot;pseudo&quot;</span>, <span class="dt">df_method =</span> <span class="st">&quot;satterthwaite&quot;</span>)</span></code></pre></div>
+<span id="cb45-3"><a href="#cb45-3"></a></span>
+<span id="cb45-4"><a href="#cb45-4"></a><span class="kw">standardize_parameters</span>(m, <span class="dt">method =</span> <span class="st">&quot;pseudo&quot;</span>, <span class="dt">df_method =</span> <span class="st">&quot;satterthwaite&quot;</span>)</span></code></pre></div>
 <pre><code>&gt; Parameter   | Coefficient (std.) |         95% CI
 &gt; -------------------------------------------------
 &gt; (Intercept) |               0.00 | [ 0.00,  0.00]
@@ -909,7 +913,7 @@ body {
 &gt; amAutomatic |               0.47 | [ 0.01,  0.93]
 &gt; vs          |               0.20 | [-0.47,  0.87]
 &gt; 
-&gt; # Standardization method: Pseudo
+&gt; # Standardization method: pseudo
 </code></pre>
 <div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1"></a><span class="co"># compare to:</span></span>
 <span id="cb47-2"><a href="#cb47-2"></a><span class="kw">standardize_parameters</span>(m, <span class="dt">method =</span> <span class="st">&quot;basic&quot;</span>, <span class="dt">df_method =</span> <span class="st">&quot;satterthwaite&quot;</span>)</span></code></pre></div>
@@ -920,7 +924,7 @@ body {
 &gt; amAutomatic |               0.25 | [ 0.00,  0.50]
 &gt; vs          |               0.11 | [-0.25,  0.47]
 &gt; 
-&gt; # Standardization method: Basic
+&gt; # Standardization method: basic
 </code></pre>
 <h2 id="standardizing-parameters-in-generalized-linear-models">Standardizing Parameters In Generalized Linear Models</h2>
 <p>Unlike linear (/mixed) models, in generalized linear (/mixed) models (GLMs) there is <em>less</em> of a need for standardization. Why? Because in many GLMs the estimated coefficients are themselves measures of effect size, such as <em>odds-ratios</em> (OR) in logistic regression, or <em>incidence rate ratios</em> (IRR) in Poisson regressions. This is because in such model the outcome is <strong>not</strong> on an arbitrary scale - that is, the meaning of rates and probabilities are changed by arbitrary linear transformations.</p>
@@ -937,7 +941,7 @@ body {
 &gt; factor(cyl)6 |               0.73 | [-2.04,  3.66]
 &gt; factor(cyl)8 |               0.70 | [-3.13,  4.78]
 &gt; 
-&gt; # Standardization method: Refit
+&gt; # Standardization method: refit
 </code></pre>
 <div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1"></a><span class="co"># standardize_parameters(mod_b, method = &quot;posthoc&quot;, two_sd = TRUE)</span></span>
 <span id="cb51-2"><a href="#cb51-2"></a><span class="co"># standardize_parameters(mod_b, method = &quot;basic&quot;)</span></span></code></pre></div>
@@ -955,7 +959,7 @@ body {
 &gt; factor(cyl)6 |              2.08 | [0.13,    39.04]
 &gt; factor(cyl)8 |              2.02 | [0.04,   119.12]
 &gt; 
-&gt; # Standardization method: Refit
+&gt; # Standardization method: refit
 </code></pre>
 <h1 id="cohens-f">Cohen’s <em>f</em></h1>
 <p>Cohen’s (f) (of <a href="https://easystats.github.io/effectsize/articles/anovaES.html">ANOVA fame</a>) can be used as a measure of effect size in the context of sequential multiple regression. That is, when comparing two models, we can examine the ratio between the increase in (R^2) and the unexplained variance:</p>

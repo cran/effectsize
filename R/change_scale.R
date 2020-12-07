@@ -14,10 +14,12 @@
 #' change_scale(c(0, 1, 5, -5, -2), to = c(-5, 5))
 #'
 #' head(change_scale(iris))
-#'
 #' @seealso [normalize()] [standardize()] [ranktransform()]
 #'
 #' @return A rescaled object.
+#'
+#' @family transform utilities
+#'
 #' @export
 change_scale <- function(x, ...) {
   UseMethod("change_scale")

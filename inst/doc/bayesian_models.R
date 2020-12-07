@@ -58,9 +58,10 @@ modAOV <- stan_glm(salary ~ age_f * comps_f,
 
 ## -----------------------------------------------------------------------------
 pes_posterior <- eta_squared_posterior(modAOV, 
-                                       draws = 500, # how many times should the PPD be estimated
+                                       draws = 500, # how many samples from the PPD?
                                        partial = TRUE, # partial eta squared
-                                       type = 3) # type 3 SS
+                                       # type 3 SS
+                                       ss_function = car::Anova, type = 3) 
 
 head(pes_posterior)
 

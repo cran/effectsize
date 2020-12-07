@@ -1,6 +1,6 @@
 #' Interpret Bayesian diagnostic indices
 #'
-#' Interpretation of Bayesian indices, such as Effective Sample Size (ESS), Rhat, or percentage in ROPE.
+#' Interpretation of Bayesian diagnostic indices, such as Effective Sample Size (ESS) and Rhat.
 #'
 #' @param ess Value or vector of Effective Sample Size (ESS) values.
 #' @param rhat Value or vector of Rhat values.
@@ -39,7 +39,7 @@ interpret_ess <- function(ess, rules = "burkner2017") {
   rules <- .match.rules(
     rules,
     list(
-      burkner2017 = rules(c(1000), c("insufficient", "sufficient"), name = "burkner2017")
+      burkner2017 = rules(c(1000), c("insufficient", "sufficient"), name = "burkner2017", right = FALSE)
     )
   )
 

@@ -39,19 +39,13 @@
 #' designs.
 #' 2. Epsilon has been found to be less biased (Carroll & Nordholm, 1975).
 #'
-#' ## Confidence Intervals
-#' Confidence intervals are estimated using the Noncentrality parameter method;
-#' These methods searches for a the best `ncp` (non-central parameters) for
-#' of the noncentral F distribution for the desired tail-probabilities,
-#' and then convert these `ncp`s to the corresponding effect sizes.
-#' \cr\cr
-#' Special care should be taken when interpreting CIs with a lower bound equal
-#' to (or small then) 0, and even more care should be taken when the
-#' *upper* bound is equal to (or small then) 0 (Steiger, 2004; Morey et al., 2016).
+#' @inheritSection cohens_d Confidence Intervals
+#' @inheritSection chisq_to_phi CI Contains Zero
 #'
 #' @note \eqn{Adj. \eta_p^2} is an alias for \eqn{\epsilon_p^2}.
 #'
 #' @seealso [eta_squared()] for more details.
+#' @family effect size from test statistic
 #'
 #' @examples
 #' \donttest{
@@ -69,24 +63,27 @@
 #'   df_error = c(18, 9, 18)
 #' ))
 #'
-#' if(require(see)) plot(etas)
+#' if (require(see)) plot(etas)
 #'
 #'
 #' if (require("lmerTest")) { # for the df_error
 #'   fit <- lmer(extra ~ group + (1 | ID), sleep)
 #'   # anova(fit)
-#'   # Type III Analysis of Variance Table with Satterthwaite's method
-#'   #       Sum Sq Mean Sq NumDF DenDF F value   Pr(>F)
-#'   # group 12.482  12.482     1     9  16.501 0.002833 **
-#'   # ---
-#'   # Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+#'   # #> Type III Analysis of Variance Table with Satterthwaite's method
+#'   # #>       Sum Sq Mean Sq NumDF DenDF F value   Pr(>F)
+#'   # #> group 12.482  12.482     1     9  16.501 0.002833 **
+#'   # #> ---
+#'   # #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+#'
 #'   F_to_eta2(16.501, 1, 9)
 #'   F_to_omega2(16.501, 1, 9)
 #'   F_to_epsilon2(16.501, 1, 9)
 #'   F_to_f(16.501, 1, 9)
 #' }
 #'
+#'
 #' ## Use with emmeans based contrasts
+#' ## --------------------------------
 #' if (require(emmeans)) {
 #'   warp.lm <- lm(breaks ~ wool * tension, data = warpbreaks)
 #'
@@ -150,11 +147,13 @@ t_to_omega2 <- function(t, df_error, ci = 0.9, ...) {
 #' @rdname F_to_eta2
 #' @param squared Return Cohen's *f* or Cohen's *f*-squared?
 #' @export
-F_to_f <- function(f, df, df_error, ci = 0.9, squared = FALSE, ...){
+F_to_f <- function(f, df, df_error, ci = 0.9, squared = FALSE, ...) {
   res_eta <- F_to_eta2(f, df, df_error, ci = ci)
 
-  res <- data.frame(Cohens_f2_partial =
-                      res_eta$Eta2_partial / (1 - res_eta$Eta2_partial))
+  res <- data.frame(
+    Cohens_f2_partial =
+      res_eta$Eta2_partial / (1 - res_eta$Eta2_partial)
+  )
 
   if (is.numeric(ci)) {
     res$CI <- res_eta$CI
@@ -175,26 +174,25 @@ F_to_f <- function(f, df, df_error, ci = 0.9, squared = FALSE, ...){
 
 #' @rdname F_to_eta2
 #' @export
-t_to_f <- function(t, df_error, ci = 0.9, squared = FALSE, ...){
+t_to_f <- function(t, df_error, ci = 0.9, squared = FALSE, ...) {
   F_to_f(t^2, 1, df_error, ci = ci, squared = squared)
 }
 
 #' @rdname F_to_eta2
 #' @export
-F_to_f2 <- function(f, df, df_error, ci = 0.9, squared = TRUE, ...){
+F_to_f2 <- function(f, df, df_error, ci = 0.9, squared = TRUE, ...) {
   F_to_f(f, df = df, df_error = df_error, ci = ci, squared = squared)
 }
 
 #' @rdname F_to_eta2
 #' @export
-t_to_f2 <- function(t, df_error, ci = 0.9, squared = TRUE, ...){
+t_to_f2 <- function(t, df_error, ci = 0.9, squared = TRUE, ...) {
   F_to_f(t^2, 1, df_error, ci = ci, squared = squared)
 }
 
 
 #' @keywords internal
-.F_to_pve <- function(f, df, df_error, ci = 0.9, es = "eta2"){
-
+.F_to_pve <- function(f, df, df_error, ci = 0.9, es = "eta2") {
   res <- switch(
     tolower(es),
     eta2 = data.frame(Eta2_partial = (f * df) / (f * df + df_error)),
@@ -207,7 +205,7 @@ t_to_f2 <- function(t, df_error, ci = 0.9, squared = TRUE, ...){
     stopifnot(length(ci) == 1, ci < 1, ci > 0)
     res$CI <- ci
     # based on MBESS::ci.R2
-    f <- pmax(0,(res[[1]] / df) / ((1 - res[[1]]) / df_error))
+    f <- pmax(0, (res[[1]] / df) / ((1 - res[[1]]) / df_error))
     fs <- t(mapply(.get_ncp_F, f, df, df_error, ci))
 
     # This really is a generic F_to_R2

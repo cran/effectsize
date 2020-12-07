@@ -56,8 +56,11 @@ ranktransform(c(0, 1, 5, -5, -2))
 ranktransform(c(0, 1, 5, -5, -2), sign = TRUE)
 
 head(ranktransform(iris))
-
 }
 \seealso{
-\code{\link[=normalize]{normalize()}} \code{\link[=standardize]{standardize()}} \code{\link[=change_scale]{change_scale()}}
+Other transform utilities: 
+\code{\link{change_scale}()},
+\code{\link{normalize}()},
+\code{\link{standardize}()}
 }
+\concept{transform utilities}

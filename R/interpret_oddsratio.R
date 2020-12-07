@@ -10,19 +10,18 @@
 #'
 #' - Chen et al. (2010) (`"chen2010"`; default)
 #'   - **OR < 1.68** - Very small
-#'   - **1.68 < OR < 3.47** - Small
-#'   - **3.47 < OR < 6.71** - Medium
-#'   - **OR > 6.71 ** - Large
+#'   - **1.68 <= OR < 3.47** - Small
+#'   - **3.47 <= OR < 6.71** - Medium
+#'   - **OR >= 6.71 ** - Large
 #' - Cohen (1988) (`"cohen1988"`, based on the [oddsratio_to_d()] conversion, see [interpret_d()])
 #'   - **OR < 1.44** - Very small
-#'   - **1.44 < OR < 2.48** - Small
-#'   - **2.48 < OR < 4.27** - Medium
-#'   - **OR > 4.27 ** - Large
+#'   - **1.44 <= OR < 2.48** - Small
+#'   - **2.48 <= OR < 4.27** - Medium
+#'   - **OR >= 4.27 ** - Large
 #'
 #' @examples
 #' interpret_oddsratio(1)
 #' interpret_oddsratio(c(5, 2))
-#'
 #' @aliases interpret_odds
 #'
 #' @references
@@ -32,7 +31,6 @@
 #'
 #' @export
 interpret_oddsratio <- function(OR, rules = "chen2010", log = FALSE) {
-
   if (log) {
     OR <- exp(abs(OR))
   } else {
@@ -48,7 +46,9 @@ interpret_oddsratio <- function(OR, rules = "chen2010", log = FALSE) {
   rules <- .match.rules(
     rules,
     list(
-      chen2010 = rules(c(1.68, 3.47, 6.71), c("very small", "small", "medium", "large"), name = "chen2010"),
+      chen2010 = rules(c(1.68, 3.47, 6.71), c("very small", "small", "medium", "large"),
+        name = "chen2010", right = FALSE
+      ),
       cohen1988 = NA # for correct error msg
     )
   )

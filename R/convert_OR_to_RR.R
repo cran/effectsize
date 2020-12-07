@@ -4,6 +4,8 @@
 #' @param p0 Baseline risk
 #' @inheritParams oddsratio_to_d
 #'
+#' @family convert between effect sizes
+#'
 #' @examples
 #' p0 <- 0.4
 #' p1 <- 0.7
@@ -13,7 +15,6 @@
 #'
 #' riskratio_to_oddsratio(RR, p0 = p0)
 #' oddsratio_to_riskratio(OR, p0 = p0)
-#'
 #' @references Grant, R. L. (2014). Converting an odds ratio to a range of plausible relative risks for better communication of research findings. Bmj, 348, f7450.
 #' @export
 oddsratio_to_riskratio <- function(OR, p0, log = FALSE) {

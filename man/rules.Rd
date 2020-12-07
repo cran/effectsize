@@ -5,7 +5,7 @@
 \alias{is.rules}
 \title{Interpretation Grid}
 \usage{
-rules(values, labels = NULL, name = NULL)
+rules(values, labels = NULL, name = NULL, right = TRUE)
 
 is.rules(x)
 }
@@ -19,16 +19,19 @@ return the breakpoints.}
 
 \item{name}{Name of the set of rules (stored as a 'rule_name' attribute).}
 
+\item{right}{logical, for threshold-type rules, indicating if the thresholds
+themselves should be included in the interval to the right (lower values)
+or in the interval to the left (higher values).}
+
 \item{x}{An arbitrary R object.}
 }
 \description{
 Create a container for interpretation rules of thumb. Usually used in conjunction with \link{interpret}.
 }
 \examples{
-rules(c(0.05), c("significant", "not significant"))
+rules(c(0.05), c("significant", "not significant"), right = FALSE)
 rules(c(0.2, 0.5, 0.8), c("small", "medium", "large"))
 rules(c("small" = 0.2, "medium" = 0.5), name = "Cohen's Rules")
-
 }
 \seealso{
 interpret

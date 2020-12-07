@@ -21,11 +21,14 @@
 #' \cr
 #' For adjusted versions, see Bergsma, 2013.
 #'
-#' ## Confidence Intervals
-#' Confidence intervals are estimated using the Noncentrality parameter method;
-#' These methods searches for a the best `ncp` (non-central parameters) for of
-#' the noncentral Chi-squared distribution for the desired tail-probabilities,
-#' and then convert these `ncp`s to the corresponding effect sizes.
+#' @inheritSection cohens_d Confidence Intervals
+#'
+#' @section CI Contains Zero:
+#' Special care should be taken when interpreting CIs with a lower bound equal
+#' to (or small then) 0, and even more care should be taken when the *upper*
+#' bound is equal to (or small then) 0 (Steiger, 2004; Morey et al., 2016).
+#'
+#' @family effect size from test statistic
 #'
 #' @note Cohen's *w* is equivalent to *Phi*.
 #'
@@ -49,13 +52,12 @@
 #'   nrow = nrow(contingency_table),
 #'   ncol = ncol(contingency_table)
 #' )
-#'
 #' @references
 #' - Cumming, G., & Finch, S. (2001). A primer on the understanding, use, and calculation of confidence intervals that are based on central and noncentral distributions. Educational and Psychological Measurement, 61(4), 532-574.
 #' - Bergsma, W. (2013). A bias-correction for Cramer's V and Tschuprow's T. Journal of the Korean Statistical Society, 42(3), 323-328.
 #'
 #' @export
-chisq_to_phi <- function(chisq, n, nrow, ncol, ci = 0.95, adjust = FALSE, ...){
+chisq_to_phi <- function(chisq, n, nrow, ncol, ci = 0.95, adjust = FALSE, ...) {
   if (adjust || is.numeric(ci)) {
     is_goodness <- ncol == 1 || nrow == 1
 
@@ -69,7 +71,7 @@ chisq_to_phi <- function(chisq, n, nrow, ncol, ci = 0.95, adjust = FALSE, ...){
   if (adjust) {
     res <- data.frame(
       phi_adjusted = sqrt(pmax(0, (chisq / n) -
-                                 (df / (n - 1))))
+        (df / (n - 1))))
     )
   } else {
     res <- data.frame(phi = sqrt(chisq / n))
@@ -82,8 +84,10 @@ chisq_to_phi <- function(chisq, n, nrow, ncol, ci = 0.95, adjust = FALSE, ...){
 
     chisq_ <- phi_to_chisq(res[[1]], n)
 
-    chisqs <- t(mapply(.get_ncp_chi,
-                       chisq_, df, ci))
+    chisqs <- t(mapply(
+      .get_ncp_chi,
+      chisq_, df, ci
+    ))
 
     res$CI_low <-
       chisq_to_phi(chisqs[, 1], n, nrow, ncol, ci = NULL, adjust = FALSE)[[1]]
@@ -116,8 +120,8 @@ chisq_to_cramers_v <- function(chisq, n, nrow, ncol, ci = 0.95, adjust = FALSE, 
   phi <- chisq_to_phi(chisq, n, nrow, ncol, ci = NULL, adjust = adjust)[[1]]
 
   if (adjust) {
-    k <- nrow - ((nrow - 1) ^ 2) / (n - 1)
-    l <- ncol - ((ncol - 1) ^ 2) / (n - 1)
+    k <- nrow - ((nrow - 1)^2) / (n - 1)
+    l <- ncol - ((ncol - 1)^2) / (n - 1)
 
     if (is_goodness) {
       V <- phi / sqrt((pmax(k, l) - 1))
@@ -127,7 +131,6 @@ chisq_to_cramers_v <- function(chisq, n, nrow, ncol, ci = 0.95, adjust = FALSE, 
 
     res <- data.frame(Cramers_v_adjusted = V)
   } else {
-
     if (is_goodness) {
       V <- phi / sqrt((pmax(nrow, ncol) - 1))
     } else {
@@ -144,8 +147,10 @@ chisq_to_cramers_v <- function(chisq, n, nrow, ncol, ci = 0.95, adjust = FALSE, 
 
     chisq_ <- phi_to_chisq(phi, n)
 
-    chisqs <- t(mapply(.get_ncp_chi,
-                       chisq_, df, ci))
+    chisqs <- t(mapply(
+      .get_ncp_chi,
+      chisq_, df, ci
+    ))
 
     res$CI_low <-
       chisq_to_cramers_v(chisqs[, 1], n, nrow, ncol, ci = NULL, adjust = FALSE)[[1]]
@@ -163,6 +168,5 @@ chisq_to_cramers_v <- function(chisq, n, nrow, ncol, ci = 0.95, adjust = FALSE, 
 #' @rdname chisq_to_phi
 #' @export
 phi_to_chisq <- function(phi, n, ...) {
-  n * (phi ^ 2)
+  n * (phi^2)
 }
-

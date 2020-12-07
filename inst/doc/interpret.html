@@ -626,37 +626,37 @@ body {
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">interpret_r</span>(x, <span class="dt">rules =</span> <span class="st">&quot;funder2019&quot;</span>)</span></code></pre></div>
 <ul>
 <li><strong>r &lt; 0.05</strong> - Tiny</li>
-<li><strong>0.05 &lt; r &lt; 0.1</strong> - Very small</li>
-<li><strong>0.1 &lt; r &lt; 0.2</strong> - Small</li>
-<li><strong>0.2 &lt; r &lt; 0.3</strong> - Medium</li>
-<li><strong>0.3 &lt; r &lt; 0.4</strong> - Large</li>
-<li><strong>r &gt; 0.4</strong> - Very large</li>
+<li><strong>0.05 &lt;= r &lt; 0.1</strong> - Very small</li>
+<li><strong>0.1 &lt;= r &lt; 0.2</strong> - Small</li>
+<li><strong>0.2 &lt;= r &lt; 0.3</strong> - Medium</li>
+<li><strong>0.3 &lt;= r &lt; 0.4</strong> - Large</li>
+<li><strong>r &gt;= 0.4</strong> - Very large</li>
 </ul>
 <h4 id="gignac-and-szodorai-2016">Gignac and Szodorai (2016)</h4>
 <p>Gignac’s rules of thumb are actually one of few interpretation grid justified and based on actual data, in this case on the distribution of effect magnitudes in the litterature.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">interpret_r</span>(x, <span class="dt">rules =</span> <span class="st">&quot;gignac2016&quot;</span>)</span></code></pre></div>
 <ul>
 <li><strong>r &lt; 0.1</strong> - Very small</li>
-<li><strong>0.1 &lt; r &lt; 0.2</strong> - Small</li>
-<li><strong>0.2 &lt; r &lt; 0.3</strong> - Moderate</li>
-<li><strong>r &gt; 0.3</strong> - Large</li>
+<li><strong>0.1 &lt;= r &lt; 0.2</strong> - Small</li>
+<li><strong>0.2 &lt;= r &lt; 0.3</strong> - Moderate</li>
+<li><strong>r &gt;= 0.3</strong> - Large</li>
 </ul>
 <h4 id="cohen-1988">Cohen (1988)</h4>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">interpret_r</span>(x, <span class="dt">rules =</span> <span class="st">&quot;cohen1988&quot;</span>)</span></code></pre></div>
 <ul>
 <li><strong>r &lt; 0.1</strong> - Very small</li>
-<li><strong>0.1 &lt; r &lt; 0.3</strong> - Small</li>
-<li><strong>0.3 &lt; r &lt; 0.5</strong> - Moderate</li>
-<li><strong>r &gt; 0.5</strong> - Large</li>
+<li><strong>0.1 &lt;= r &lt; 0.3</strong> - Small</li>
+<li><strong>0.3 &lt;= r &lt; 0.5</strong> - Moderate</li>
+<li><strong>r &gt;= 0.5</strong> - Large</li>
 </ul>
 <h4 id="evans-1996">Evans (1996)</h4>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">interpret_r</span>(x, <span class="dt">rules =</span> <span class="st">&quot;evans1996&quot;</span>)</span></code></pre></div>
 <ul>
 <li><strong>r &lt; 0.2</strong> - Very weak</li>
-<li><strong>0.2 &lt; r &lt; 0.4</strong> - Weak</li>
-<li><strong>0.4 &lt; r &lt; 0.6</strong> - Moderate</li>
-<li><strong>0.6 &lt; r &lt; 0.8</strong> - Strong</li>
-<li><strong>r &gt; 0.8</strong> - Very strong</li>
+<li><strong>0.2 &lt;= r &lt; 0.4</strong> - Weak</li>
+<li><strong>0.4 &lt;= r &lt; 0.6</strong> - Moderate</li>
+<li><strong>0.6 &lt;= r &lt; 0.8</strong> - Strong</li>
+<li><strong>r &gt;= 0.8</strong> - Very strong</li>
 </ul>
 <h2 id="standardized-difference-d-cohens-d">Standardized Difference <em>d</em> (Cohen’s <em>d</em>)</h2>
 <p>The standardized difference can be obtained through the standardization of linear model’s parameters or data, in which they can be used as indices of effect size.</p>
@@ -664,29 +664,29 @@ body {
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw">interpret_d</span>(x, <span class="dt">rules =</span> <span class="st">&quot;cohen1988&quot;</span>)</span></code></pre></div>
 <ul>
 <li><strong>d &lt; 0.2</strong> - Very small</li>
-<li><strong>0.2 &lt; d &lt; 0.5</strong> - Small</li>
-<li><strong>0.5 &lt; d &lt; 0.8</strong> - Medium</li>
-<li><strong>d &gt; 0.8</strong> - Large</li>
+<li><strong>0.2 &lt;= d &lt; 0.5</strong> - Small</li>
+<li><strong>0.5 &lt;= d &lt; 0.8</strong> - Medium</li>
+<li><strong>d &gt;= 0.8</strong> - Large</li>
 </ul>
 <h4 id="sawilowsky-2009">Sawilowsky (2009)</h4>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="kw">interpret_d</span>(x, <span class="dt">rules =</span> <span class="st">&quot;sawilowsky2009&quot;</span>)</span></code></pre></div>
 <ul>
 <li><strong>d &lt; 0.1</strong> - Tiny</li>
-<li><strong>0.1 &lt; d &lt; 0.2</strong> - Very small</li>
-<li><strong>0.2 &lt; d &lt; 0.5</strong> - Small</li>
-<li><strong>0.5 &lt; d &lt; 0.8</strong> - Medium</li>
-<li><strong>0.8 &lt; d &lt; 1.2</strong> - Large</li>
-<li><strong>1.2 &lt; d &lt; 2</strong> - Very large</li>
-<li><strong>d &gt; 2</strong> - Huge</li>
+<li><strong>0.1 &lt;= d &lt; 0.2</strong> - Very small</li>
+<li><strong>0.2 &lt;= d &lt; 0.5</strong> - Small</li>
+<li><strong>0.5 &lt;= d &lt; 0.8</strong> - Medium</li>
+<li><strong>0.8 &lt;= d &lt; 1.2</strong> - Large</li>
+<li><strong>1.2 &lt;= d &lt; 2</strong> - Very large</li>
+<li><strong>d &gt;= 2</strong> - Huge</li>
 </ul>
 <h4 id="gignac-and-szodorai-2016-1">Gignac and Szodorai (2016)</h4>
 <p>Gignac’s rules of thumb are actually one of few interpretation grid justified and based on actual data, in this case on the distribution of effect magnitudes in the literature. These is in fact the same grid used for <em>r</em>, based on the conversion of <em>r</em> to <em>d</em>:</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="kw">interpret_d</span>(x, <span class="dt">rules =</span> <span class="st">&quot;gignac2016&quot;</span>)</span></code></pre></div>
 <ul>
 <li><strong>d &lt; 0.2</strong> - Very small</li>
-<li><strong>0.2 &lt; d &lt; 0.41</strong> - Small</li>
-<li><strong>0.41 &lt; d &lt; 0.63</strong> - Moderate</li>
-<li><strong>d &gt; 0.63</strong> - Large</li>
+<li><strong>0.2 &lt;= d &lt; 0.41</strong> - Small</li>
+<li><strong>0.41 &lt;= d &lt; 0.63</strong> - Moderate</li>
+<li><strong>d &gt;= 0.63</strong> - Large</li>
 </ul>
 <h2 id="odds-ratio">Odds Ratio</h2>
 <p>Odds ratio, and <em>log</em> odds ratio, are often found in epidemiological studies. However, they are also the parameters of <em><strong>logistic</strong></em> regressions, where they can be used as indices of effect size. Note that the (log) odds ratio from logistic regression coefficients are <em>unstandardized</em>, as they depend on the scale of the predictor. In order to apply the following guidelines, make sure you <a href="https://easystats.github.io/effectsize/articles/standardize_parameters.html"><em>standardize</em></a> your predictors!</p>
@@ -695,17 +695,17 @@ body {
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="kw">interpret_oddsratio</span>(x, <span class="dt">rules =</span> <span class="st">&quot;chen2010&quot;</span>)</span></code></pre></div>
 <ul>
 <li><strong>OR &lt; 1.68</strong> - Very small</li>
-<li><strong>1.68 &lt; OR &lt; 3.47</strong> - Small</li>
-<li><strong>3.47 &lt; OR &lt; 6.71</strong> - Medium</li>
-<li>**OR &gt; 6.71 ** - Large</li>
+<li><strong>1.68 &lt;= OR &lt; 3.47</strong> - Small</li>
+<li><strong>3.47 &lt;= OR &lt; 6.71</strong> - Medium</li>
+<li>**OR &gt;= 6.71 ** - Large</li>
 </ul>
 <h4 id="cohen-1988-2">Cohen (1988)</h4>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="kw">interpret_oddsratio</span>(x, <span class="dt">rules =</span> <span class="st">&quot;cohen1988&quot;</span>)</span></code></pre></div>
 <ul>
 <li><strong>OR &lt; 1.44</strong> - Very small</li>
-<li><strong>1.44 &lt; OR &lt; 2.48</strong> - Small</li>
-<li><strong>2.48 &lt; OR &lt; 4.27</strong> - Medium</li>
-<li>**OR &gt; 4.27 ** - Large</li>
+<li><strong>1.44 &lt;= OR &lt; 2.48</strong> - Small</li>
+<li><strong>2.48 &lt;= OR &lt; 4.27</strong> - Medium</li>
+<li>**OR &gt;= 4.27 ** - Large</li>
 </ul>
 <p>This converts (log) odds ratio to standardized difference <em>d</em> using the following formula (Cohen 1988; Sánchez-Meca, Marı́n-Martı́nez, and Chacón-Moscoso 2003):</p>
 <p>[ d = log(OR) \times \frac{\sqrt{3}}{\pi} ]</p>
@@ -715,32 +715,32 @@ body {
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="kw">interpret_r2</span>(x, <span class="dt">rules =</span> <span class="st">&quot;cohen1988&quot;</span>)</span></code></pre></div>
 <ul>
 <li><strong>R2 &lt; 0.02</strong> - Very weak</li>
-<li><strong>0.02 &lt; R2 &lt; 0.13</strong> - Weak</li>
-<li><strong>0.13 &lt; R2 &lt; 0.26</strong> - Moderate</li>
-<li><strong>R2 &gt; 0.26</strong> - Substantial</li>
+<li><strong>0.02 &lt;= R2 &lt; 0.13</strong> - Weak</li>
+<li><strong>0.13 &lt;= R2 &lt; 0.26</strong> - Moderate</li>
+<li><strong>R2 &gt;= 0.26</strong> - Substantial</li>
 </ul>
 <h4 id="falk-and-miller-1992">Falk and Miller (1992)</h4>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="kw">interpret_r2</span>(x, <span class="dt">rules =</span> <span class="st">&quot;falk1992&quot;</span>)</span></code></pre></div>
 <ul>
 <li><strong>R2 &lt; 0.1</strong> - Negligible</li>
-<li><strong>R2 &gt; 0.1</strong> - Adequate</li>
+<li><strong>R2 &gt;= 0.1</strong> - Adequate</li>
 </ul>
 <h3 id="for-pls--sem-r-squared-of-latent-variables">For PLS / SEM R-Squared of <em>latent</em> variables</h3>
 <h4 id="chin-and-others-1998">Chin and others (1998)</h4>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="kw">interpret_r2</span>(x, <span class="dt">rules =</span> <span class="st">&quot;chin1998&quot;</span>)</span></code></pre></div>
 <ul>
 <li><strong>R2 &lt; 0.19</strong> - Very weak</li>
-<li><strong>0.19 &lt; R2 &lt; 0.33</strong> - Weak</li>
-<li><strong>0.33 &lt; R2 &lt; 0.67</strong> - Moderate</li>
-<li><strong>R2 &gt; 0.67</strong> - Substantial</li>
+<li><strong>0.19 &lt;= R2 &lt; 0.33</strong> - Weak</li>
+<li><strong>0.33 &lt;= R2 &lt; 0.67</strong> - Moderate</li>
+<li><strong>R2 &gt;= 0.67</strong> - Substantial</li>
 </ul>
 <h4 id="hair-ringle-and-sarstedt-2011">Hair, Ringle, and Sarstedt (2011)</h4>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="kw">interpret_r2</span>(x, <span class="dt">rules =</span> <span class="st">&quot;hair2011&quot;</span>)</span></code></pre></div>
 <ul>
 <li><strong>R2 &lt; 0.25</strong> - Very weak</li>
-<li><strong>0.25 &lt; R2 &lt; 0.50</strong> - Weak</li>
-<li><strong>0.50 &lt; R2 &lt; 0.75</strong> - Moderate</li>
-<li><strong>R2 &gt; 0.75</strong> - Substantial</li>
+<li><strong>0.25 &lt;= R2 &lt; 0.50</strong> - Weak</li>
+<li><strong>0.50 &lt;= R2 &lt; 0.75</strong> - Moderate</li>
+<li><strong>R2 &gt;= 0.75</strong> - Substantial</li>
 </ul>
 <h2 id="omega--eta--epsilon-squared">Omega / Eta / Epsilon Squared</h2>
 <p>The Omega squared is a measure of effect size used in ANOVAs. It is an estimate of how much variance in the response variables are accounted for by the explanatory variables. Omega squared is widely viewed as a lesser biased alternative to eta-squared, especially when sample sizes are small.</p>
@@ -748,18 +748,18 @@ body {
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a><span class="kw">interpret_omega_squared</span>(x, <span class="dt">rules =</span> <span class="st">&quot;field2013&quot;</span>)</span></code></pre></div>
 <ul>
 <li><strong>ES &lt; 0.01</strong> - Very small</li>
-<li><strong>0.01 &lt; ES &lt; 0.06</strong> - Small</li>
-<li><strong>0.16 &lt; ES &lt; 0.14</strong> - Medium</li>
-<li>**ES &gt; 0.14 ** - Large</li>
+<li><strong>0.01 &lt;= ES &lt; 0.06</strong> - Small</li>
+<li><strong>0.16 &lt;= ES &lt; 0.14</strong> - Medium</li>
+<li>**ES &gt;= 0.14 ** - Large</li>
 </ul>
 <h4 id="cohen-1992">Cohen (1992)</h4>
 <p>These are applicable to one-way ANOVAs, or to <em>partial</em> Eta / Omega / Epsilon Squared in a multi-way ANOVA.</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a><span class="kw">interpret_omega_squared</span>(x, <span class="dt">rules =</span> <span class="st">&quot;cohen1992&quot;</span>)</span></code></pre></div>
 <ul>
 <li><strong>ES &lt; 0.02</strong> - Very small</li>
-<li><strong>0.02 &lt; ES &lt; 0.13</strong> - Small</li>
-<li><strong>0.13 &lt; ES &lt; 0.26</strong> - Medium</li>
-<li><strong>ES &gt; 0.26</strong> - Large</li>
+<li><strong>0.02 &lt;= ES &lt; 0.13</strong> - Small</li>
+<li><strong>0.13 &lt;= ES &lt; 0.26</strong> - Medium</li>
+<li><strong>ES &gt;= 0.26</strong> - Large</li>
 </ul>
 <h1 id="interpertation-of-other-indices">Interpertation of other Indices</h1>
 <p><code>effectsize</code> also offers functions for interpreting other statistical indices:</p>

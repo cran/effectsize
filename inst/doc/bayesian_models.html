@@ -639,14 +639,17 @@ body {
 <span id="cb3-4"><a href="#cb3-4"></a>                <span class="dt">refresh =</span> <span class="dv">0</span>) </span>
 <span id="cb3-5"><a href="#cb3-5"></a></span>
 <span id="cb3-6"><a href="#cb3-6"></a>parameters<span class="op">::</span><span class="kw">model_parameters</span>(mod, <span class="dt">test =</span> <span class="ot">NULL</span>)</span></code></pre></div>
-<pre><code>&gt; # Fixed effects 
+<pre><code>&gt; # Fixed effects
 &gt; 
-&gt; Parameter   |   Median |              89% CI |  Rhat |     ESS |                      Prior
-&gt; -------------------------------------------------------------------------------------------
-&gt; (Intercept) | 10023.20 | [9365.61, 10724.72] | 0.999 | 5404.55 | Normal (20000 +- 15495.02)
-&gt; xtra_hours  |  1236.25 | [1189.92,  1285.99] | 1.000 | 4755.57 |      Normal (0 +- 1587.80)
-&gt; n_comps     |  2964.35 | [2754.07,  3165.00] | 1.000 | 5032.44 |      Normal (0 +- 3755.71)
-&gt; seniority   |   439.46 | [ 286.51,   605.06] | 0.999 | 4283.39 |      Normal (0 +- 2702.93)
+&gt; Parameter   |   Median |                  CI |  Rhat |  ESS |                      Prior
+&gt; ----------------------------------------------------------------------------------------
+&gt; (Intercept) | 10023.20 | [9365.61, 10724.72] | 0.999 | 5405 | Normal (20000 +- 15495.02)
+&gt; xtra_hours  |  1236.25 | [1189.92,  1285.99] | 1.000 | 4756 |      Normal (0 +- 1587.80)
+&gt; n_comps     |  2964.35 | [2754.07,  3165.00] | 1.000 | 5032 |      Normal (0 +- 3755.71)
+&gt; seniority   |   439.46 | [ 286.51,   605.06] | 0.999 | 4283 |      Normal (0 +- 2702.93)
+
+&gt; 
+&gt; Using highest density intervals as credible intervals.
 </code></pre>
 <p>Looking at the un-standardized (“raw”) parameters, it looks like all predictors positively predict workers’ salaries, but which has the highest predictive power? Unfortunately, the predictors are not on the same scale (hours, compliments, years), so comparing them is hard when looking at the raw data. This is where standardization comes in.</p>
 <p>Like with <a href="https://easystats.github.io/effectsize/articles/standardize_parameters.html">frequentists models</a> we can choose from the same standardization methods. Let’s use the (slow) <code>&quot;refit&quot;</code> method.</p>
@@ -660,7 +663,7 @@ body {
 &gt; n_comps     |          0.39 | [ 0.37, 0.42]
 &gt; seniority   |          0.08 | [ 0.05, 0.11]
 &gt; 
-&gt; # Standardization method: Refit
+&gt; # Standardization method: refit
 </code></pre>
 <p>Note that the central tendency of the posterior distribution is still the <em>median</em> - the median of the standardized posterior distribution. We can easily change this, of the type of credible interval used:</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="kw">library</span>(effectsize)</span>
@@ -674,7 +677,7 @@ body {
 &gt; n_comps     |       0.39 | [0.37, 0.42]
 &gt; seniority   |       0.08 | [0.05, 0.11]
 &gt; 
-&gt; # Standardization method: Basic
+&gt; # Standardization method: basic
 </code></pre>
 <p>As we can see, working harder (or at least for longer hours) has stronger predictive power than complementing or seniority. (Do note, however, that this does not mean that if you wish to have a higher salary you should work overtime - the raw parameters seem to suggest that complementing your boss is the way to go, with one compliment worth almost 3.5 times <strong>more</strong> than a full hours’ work!)</p>
 <h1 id="eta2">Eta<sup>2</sup></h1>
@@ -708,9 +711,10 @@ body {
 <span id="cb11-7"><a href="#cb11-7"></a>                   <span class="dt">refresh =</span> <span class="dv">0</span>)</span></code></pre></div>
 <p>We can use <code>eta_squared_posterior()</code> to get the posterior distribution of (eta^2) or (eta^2_p) for each effect. Like an ANOVA table, we must make sure to use the right effects-coding and <em>SS</em>-type:</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a>pes_posterior &lt;-<span class="st"> </span><span class="kw">eta_squared_posterior</span>(modAOV, </span>
-<span id="cb12-2"><a href="#cb12-2"></a>                                       <span class="dt">draws =</span> <span class="dv">500</span>, <span class="co"># how many times should the PPD be estimated</span></span>
+<span id="cb12-2"><a href="#cb12-2"></a>                                       <span class="dt">draws =</span> <span class="dv">500</span>, <span class="co"># how many samples from the PPD?</span></span>
 <span id="cb12-3"><a href="#cb12-3"></a>                                       <span class="dt">partial =</span> <span class="ot">TRUE</span>, <span class="co"># partial eta squared</span></span>
-<span id="cb12-4"><a href="#cb12-4"></a>                                       <span class="dt">type =</span> <span class="dv">3</span>) <span class="co"># type 3 SS</span></span></code></pre></div>
+<span id="cb12-4"><a href="#cb12-4"></a>                                       <span class="co"># type 3 SS</span></span>
+<span id="cb12-5"><a href="#cb12-5"></a>                                       <span class="dt">ss_function =</span> car<span class="op">::</span>Anova, <span class="dt">type =</span> <span class="dv">3</span>) </span></code></pre></div>
 <pre><code>&gt; Simulating effect size... This can take a while...
 </code></pre>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a><span class="kw">head</span>(pes_posterior)</span></code></pre></div>

@@ -19,11 +19,10 @@
 #' normalize(c(0, 1, 5, -5, -2), include_bounds = FALSE)
 #'
 #' head(normalize(iris))
-#'
 #' @references
 #' - Smithson M, Verkuilen J (2006). A Better Lemon Squeezer? Maximum-Likelihood Regression with Beta-Distributed Dependent Variables. Psychological Methods, 11(1), 54–71.
 #'
-#' @seealso [ranktransform()] [standardize()] [change_scale()]
+#' @family transform utilities
 #'
 #' @return A normalized object.
 #' @export

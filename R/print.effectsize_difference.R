@@ -6,25 +6,34 @@
 #' @param ... Not used.
 print.effectsize_difference <- function(x, digits = 2, append_CL = FALSE, ...) {
   x_orig <- x
-  print.effectsize_table(x, digits = digits)
 
-  ## Add note
-  # note <- NULL
-  # if (any(colnames(x) %in% c("Cohens_d", "Hedges_g"))) {
-  #   note <- c(note, ifelse(attr(x, "pooled_sd"), "Pooled SD", "Unpooled SD"))
-  # }
-  # if (attr(x, "correction")) {
-  #   note <- c(note, "Bias-corrected")
-  # }
-  # if (!is.null(note)) cat(c("\n[",paste0(note, collapse = "; ")), "]\n")
+  footer <- caption <- NULL
 
-  ## Common lang
-  if (append_CL && any(colnames(x) %in% c("Cohens_d", "Hedges_g"))) {
-    cl <- d_to_common_language(x[[any(colnames(x) %in% c("Cohens_d", "Hedges_g"))]])
-    cl <- sapply(cl, function(ff) sprintf("%g%% CI", round(ff * 100, digits = digits)))
-    cl <- paste(paste0("* ", names(cl),": ",cl), collapse = "\n")
-    cat("\n")
-    insight::print_color(cl, "cyan")
+  ## Add footer
+  if (any(colnames(x) %in% c("Cohens_d", "Hedges_g"))) {
+    footer <- paste0(" - Estimate using ", ifelse(attr(x, "pooled_sd"), "pooled SD", "un-pooled SD"), "\n")
+  }
+
+  if (any(colnames(x) == "Hedges_g")) {
+    correction <- paste0(
+      " - Sample samle bias corrected using ",
+      ifelse(attr(x, "correction") == 1, "Hedges and Olkin's", "Hunter and Schmidt's"),
+      " correction.\n"
+    )
+    footer <- paste0(footer, correction)
+  }
+
+  if (!is.null(footer)) footer <- c(footer, "cyan")
+
+  x <- .print_effectsize_table(x, digits = digits)
+  cat(insight::export_table(x, digits = digits, caption = caption, footer = footer))
+
+  if (append_CL && any(colnames(x_orig) %in% c("Cohens_d", "Hedges_g")) && !attr(x_orig, "paired")) {
+    # Common lang
+    cl <- d_to_common_language(x_orig[[any(colnames(x_orig) %in% c("Cohens_d", "Hedges_g"))]])
+    cl <- lapply(cl, insight::format_value, as_percent = TRUE, digits = digits)
+    cl <- data.frame(cl, check.names = FALSE)
+    cat(insight::export_table(cl, digits = digits, caption = c("\n\n# Common Language Effect Sizes", "blue")))
   }
 
   invisible(x_orig)

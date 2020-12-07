@@ -108,9 +108,10 @@ standardize_parameters(mod, method = "smart")
 ## -----------------------------------------------------------------------------
 standardize_parameters(mod, method = "basic")
 
-## ---- eval=require(lme4)------------------------------------------------------
+## ---- eval=knitr::opts_chunk$get("eval") && require(lme4) && require(lmerTest)----
 library(lme4)
 m <- lmer(mpg ~ cyl + am + vs + (1|cyl), mtcars)
+
 standardize_parameters(m, method = "pseudo", df_method = "satterthwaite")
 
 # compare to:

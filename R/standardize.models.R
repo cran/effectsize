@@ -3,10 +3,13 @@
 #'   will also be standardized. If `FALSE`, only the predictors will be
 #'   standardized. Note that for certain models (logistic regression, count
 #'   models, ...), the response value will never be standardized, to make
-#'   re-fitting the model work.
+#'   re-fitting the model work. (For `mediate` models, only applies to the y
+#'   model; m model's response will always be standardized.)
 #' @importFrom stats update
 #' @importFrom insight get_data model_info find_response get_response find_weights get_weights
 #' @importFrom utils capture.output
+#'
+#' @inheritSection standardize_parameters Generalized Linear Models
 #' @export
 standardize.default <- function(x, robust = FALSE, two_sd = FALSE, weights = TRUE, verbose = TRUE,
                                 include_response = TRUE, ...) {
@@ -46,19 +49,21 @@ standardize.default <- function(x, robust = FALSE, two_sd = FALSE, weights = TRU
     w <- insight::get_weights(x, na_rm = TRUE)
 
     data_std <- standardize(data[do_standardize],
-                            robust = robust,
-                            two_sd = two_sd,
-                            weights = if (weights) w else NULL,
-                            verbose = verbose)
+      robust = robust,
+      two_sd = two_sd,
+      weights = if (weights) w else NULL,
+      verbose = verbose
+    )
 
     if (!.no_response_standardize(m_info) && include_response && two_sd) {
       # if two_sd, it must not affect the response!
       data_std[resp] <- standardize(data[resp],
-                                    robust = robust,
-                                    two_sd = FALSE,
-                                    weights = if (weights) w else NULL,
-                                    verbose = verbose)
-      dont_standardize <- setdiff(dont_standardize,resp)
+        robust = robust,
+        two_sd = FALSE,
+        weights = if (weights) w else NULL,
+        verbose = verbose
+      )
+      dont_standardize <- setdiff(dont_standardize, resp)
     }
   } else {
     if (verbose) {
@@ -122,8 +127,10 @@ standardize.default <- function(x, robust = FALSE, two_sd = FALSE, weights = TRU
 
 #' @export
 standardize.mlm <- function(x, robust = FALSE, two_sd = FALSE, weights = TRUE, verbose = TRUE, ...) {
-  standardize.default(x, robust = robust, two_sd = two_sd, weights = weights, verbose = verbose,
-                      include_response = FALSE, ...)
+  standardize.default(x,
+    robust = robust, two_sd = two_sd, weights = weights, verbose = verbose,
+    include_response = FALSE, ...
+  )
 }
 
 
@@ -156,10 +163,11 @@ standardize.coxph <- function(x, robust = FALSE, two_sd = FALSE, weights = TRUE,
     w <- insight::get_weights(x, na_rm = TRUE)
 
     data_std <- standardize(data[pred],
-                            robust = robust,
-                            two_sd = two_sd,
-                            weights = if (weights) w else NULL,
-                            verbose = verbose)
+      robust = robust,
+      two_sd = two_sd,
+      weights = if (weights) w else NULL,
+      verbose = verbose
+    )
     data[pred] <- data_std
   }
 
@@ -173,6 +181,100 @@ standardize.coxph <- function(x, robust = FALSE, two_sd = FALSE, weights = TRUE,
 standardize.coxme <- standardize.coxph
 
 
+#' @export
+#' @importFrom utils capture.output
+#' @importFrom insight get_data
+#' @importFrom stats update
+standardize.mediate <- function(x, robust = FALSE, two_sd = FALSE, weights = TRUE, verbose = TRUE,
+                                include_response = TRUE, ...) {
+
+  # models and data
+  y <- x$model.y
+  m <- x$model.m
+  y_data <- insight::get_data(y)
+  m_data <- insight::get_data(m)
+
+  # std models and data
+  y_std <- standardize(y,
+    robust = robust, two_sd = two_sd,
+    weights = weights, verbose = verbose,
+    include_response = include_response, ...
+  )
+  m_std <- standardize(m,
+    robust = robust, two_sd = two_sd,
+    weights = weights, verbose = verbose,
+    include_response = TRUE, ...
+  )
+  y_data_std <- insight::get_data(y_std)
+  m_data_std <- insight::get_data(m_std)
+
+  # fixed values
+  covs <- x$covariates
+  control.value <- x$control.value
+  treat.value <- x$treat.value
+
+
+  if (!is.null(covs)) {
+    covs <- mapply(.rescale_fixed_values, covs, names(covs),
+      SIMPLIFY = FALSE,
+      MoreArgs = list(
+        y_data = y_data, m_data = m_data,
+        y_data_std = y_data_std, m_data_std = m_data_std
+      )
+    )
+    if (verbose) message("covariates' values have been rescaled to their standardized scales.")
+  }
+
+  # if (is.numeric(y_data[[x$treat]]) || is.numeric(m_data[[x$treat]])) {
+  #   if (!(is.numeric(y_data[[x$treat]]) && is.numeric(m_data[[x$treat]]))) {
+  #     stop("'treat' variable is not of same type across both y and m models.",
+  #          "\nCannot consistently standardize.", call. = FALSE)
+  #   }
+  #
+  #   temp_vals <- .rescale_fixed_values(c(control.value, treat.value), x$treat,
+  #                                      y_data = y_data, m_data = m_data,
+  #                                      y_data_std = y_data_std, m_data_std = m_data_std)
+  #
+  #   control.value <- temp_vals[1]
+  #   treat.value <- temp_vals[2]
+  #   if (verbose) message("control and treatment values have been rescaled to their standardized scales.")
+  # }
+
+  if (!all(c(control.value, treat.value) %in% c(0, 1))) {
+    warning("control and treat values are not 0 and 1, and have not been re-scaled.",
+      "\nInterpret results with caution.",
+      call. = FALSE
+    )
+  }
+
+
+  text <- utils::capture.output(
+    model_std <- stats::update(x,
+      model.y = y_std, model.m = m_std,
+      # control.value = control.value, treat.value = treat.value
+      covariates = covs
+    )
+  )
+
+  model_std
+}
+
+#' @keywords internal
+.rescale_fixed_values <- function(val, cov_nm,
+                                  y_data, m_data, y_data_std, m_data_std) {
+  if (cov_nm %in% colnames(y_data)) {
+    temp_data <- y_data
+    temp_data_std <- y_data_std
+  } else {
+    temp_data <- m_data
+    temp_data_std <- m_data_std
+  }
+
+  change_scale(val,
+    to = range(temp_data_std[[cov_nm]]),
+    range = range(temp_data[[cov_nm]])
+  )
+}
 
 
 # Cannot ------------------------------------------------------------------
@@ -208,8 +310,8 @@ standardize.wbgee <- standardize.wbm
 .log_terms <- function(model, data) {
   x <- insight::find_terms(model, flatten = TRUE)
   # log_pattern <- "^log\\((.*)\\)"
-  log_pattern <- "(log\\(log|log|log1|log10|log1p|log2)\\(([^,)]*).*"
-  out <- gsub(log_pattern, "\\2", x[grepl(log_pattern, x)])
+  log_pattern <- "(log\\(log|log|log1|log10|log1p|log2)\\(([^,\\+)]*).*"
+  out <- trimws(gsub(log_pattern, "\\2", x[grepl(log_pattern, x)]))
   intersect(colnames(data), out)
 }
 
@@ -217,8 +319,8 @@ standardize.wbgee <- standardize.wbm
 #' @importFrom insight find_terms
 .sqrt_terms <- function(model, data) {
   x <- insight::find_terms(model, flatten = TRUE)
-  pattern <- "sqrt\\(([^,)]*).*"
-  out <- gsub(pattern, "\\1", x[grepl(pattern, x)])
+  pattern <- "sqrt\\(([^,\\+)]*).*"
+  out <- trimws(gsub(pattern, "\\1", x[grepl(pattern, x)]))
   intersect(colnames(data), out)
 }
 
@@ -226,5 +328,10 @@ standardize.wbgee <- standardize.wbm
 #' @keywords internal
 .no_response_standardize <- function(info) {
   # check if model has a response variable that should not be standardized.
-  info$is_count | info$is_ordinal | info$is_multinomial | info$is_beta | info$is_censored | info$is_binomial | info$is_survival
+  !info$is_linear | info$family == "inverse.gaussian"
+
+  ## TODO alternative would be to keep the below line for checking if no std possible
+  ##      and then treat response for "Gamma()" or "inverse.gaussian" similar to log-terms
+
+  # info$is_count | info$is_ordinal | info$is_multinomial | info$is_beta | info$is_censored | info$is_binomial | info$is_survival
 }

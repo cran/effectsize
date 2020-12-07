@@ -95,13 +95,16 @@ t_to_r(t = c(-5.7, -8.9, -3.2),
        df_error = 18)
 
 ## -----------------------------------------------------------------------------
-warp.lm <- lm(breaks ~ tension, data = warpbreaks)
+m <- lm(breaks ~ tension, data = warpbreaks)
 
-pairs(emmeans(warp.lm,  ~ tension))
+em_tension <- emmeans(m, ~ tension)
+pairs(em_tension)
 
-t_to_d(t = c(2.5, 3.7, 1.2),
+t_to_d(t = c(2.53, 3.72, 1.20),
        df_error = 51)
 
+## -----------------------------------------------------------------------------
+eff_size(em_tension, sigma = sigma(m), edf = df.residual(m))
 
 ## -----------------------------------------------------------------------------
 

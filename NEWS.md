@@ -1,3 +1,27 @@
+# effectsize 0.4.1
+
+## Breaking Changes
+
+- `cohens_d()` and `glass_delta()`: The `correction` argument has been deprecated, in favor of it being correctly implemented in `hedges_g()` ( #222 ).
+- `eta_squared_posterior()` no longer uses `car::Anova()` by default.
+
+## New features
+
+- `effectsize()` gains `type = ` argument for specifying which effect size to return.
+- `eta_squared_posterior()` can return a generalized Eta squared.
+- `oddsratio()` and `riskratio()` functions for 2-by-2 contingency tables.
+- `standardize()` gains support for `mediation::mediate()` models.
+- `eta_squared()` family available for `manova` objects.
+
+## Changes
+
+- `eta_squared()` family of functions returns non-partial effect size for one-way between subjects design (#180).
+
+## Bug fixes
+
+- `hedges_g()` correctly implements the available bias correction methods ( #222 ).
+- Fixed width of CI for Cohen's *d* and Hedges' *g* when using *non*-pooled SD.
+
 # effectsize 0.4.0
 
 ## Breaking Changes

@@ -9,6 +9,8 @@
 #' @param log Take in or output the log of the ratio (such as in logistic models).
 #' @param ... Arguments passed to or from other methods.
 #'
+#' @family convert between effect sizes
+#'
 #' @examples
 #' r_to_d(0.5)
 #' d_to_oddsratio(1.154701)
@@ -17,22 +19,21 @@
 #' d_to_r(1)
 #' r_to_oddsratio(0.4472136, log = TRUE)
 #' oddsratio_to_d(1.813799, log = TRUE)
-#'
 #' @aliases convert_r_to_odds r_to_odds logodds_to_r convert_odds_to_r odds_to_r
 #'   convert_d_to_odds d_to_odds logodds_to_d convert_odds_to_d odds_to_d
 #'
 #' @return Converted index.
 #'
 #' @details
+#' Conversions between *OR* and *r* is done through these formulae.
 #' - *d to r*: \eqn{d = \frac{2 * r}{\sqrt{1 - r^2}}}
 #' - *r to d*: \eqn{r = \frac{d}{\sqrt{d^2 + 4}}}
 #' - *OR to d*: \eqn{d = \frac{\log(OR)\times\sqrt{3}}{\pi}}
 #' - *d to OR*: \eqn{log(OR) = d * \frac{\pi}{\sqrt(3)}}
 #'
-#' Conversions between *OR* and *r* is done through these formulae.
-#' \cr\cr
-#' When converting *d* to *r*, the resulting *r* is also called the binomial
-#' effect size display (BESD; Rosenthal et al., 1982).
+#' The conversion from *d* to *r* assumes equally sized groups. The resulting
+#' *r* is also called the binomial effect size display (BESD; Rosenthal et al.,
+#' 1982).
 #'
 #' @references
 #' - Sánchez-Meca, J., Marín-Martínez, F., & Chacón-Moscoso, S. (2003). Effect-size indices for dichotomized outcomes in meta-analysis. Psychological methods, 8(4), 448.
@@ -139,7 +140,3 @@ r_to_oddsratio <- function(r, log = FALSE, ...) {
 #' @rdname d_to_r
 #' @export
 convert_r_to_oddsratio <- r_to_oddsratio
-
-
-
-

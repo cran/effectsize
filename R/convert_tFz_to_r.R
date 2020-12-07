@@ -26,17 +26,20 @@
 #' \cr\cr
 #' \deqn{r_{partial} = z / \sqrt{z^2 + N}}
 #' \cr\cr
-#' \deqn{Cohen's d = 2 * t / \sqrt{df_{error}}}
+#' \deqn{d = 2 * t / \sqrt{df_{error}}}
 #' \cr\cr
-#' \deqn{Cohen's d_z = t / \sqrt{df_{error}}}
+#' \deqn{d_z = t / \sqrt{df_{error}}}
 #' \cr\cr
-#' \deqn{Cohen's d = 2 * z / \sqrt{N}}
+#' \deqn{d = 2 * z / \sqrt{N}}
 #'
-#' ## Confidence Intervals
-#' Confidence intervals are estimated using the Noncentrality parameter method;
-#' These methods searches for a the best `ncp` (non-central parameters) for
-#' of the noncentral F distribution for the desired tail-probabilities,
-#' and then convert these `ncp`s to the corresponding effect sizes.
+#' The resulting `d` effect size is an *approximation* to Cohen's *d*, and
+#' assumes two equal group sizes. When possible, it is advised to directly
+#' estimate Cohen's *d*, with [cohens_d()], [emmeans::eff_size()], or similar
+#' functions.
+#'
+#' @inheritSection cohens_d Confidence Intervals
+#'
+#' @family effect size from test statistic
 #'
 #' @examples
 #' ## t Tests
@@ -47,7 +50,6 @@
 #' res <- with(sleep, t.test(extra[group == 1], extra[group == 2], paired = TRUE))
 #' t_to_d(t = res$statistic, res$parameter, paired = TRUE)
 #' t_to_r(t = res$statistic, res$parameter)
-#'
 #' \donttest{
 #' ## Linear Regression
 #' model <- lm(Sepal.Length ~ Sepal.Width + Petal.Length, data = iris)
@@ -56,44 +58,47 @@
 #'
 #' (rs <- t_to_r(param_tab$t[2:3], param_tab$df_error[2:3]))
 #'
-#' if(require(see)) plot(rs)
+#' if (require(see)) plot(rs)
 #'
 #' # How does this compare to actual partial correlations?
 #' if (require("correlation")) {
-#'   correlation::correlation(iris[,1:3], partial = TRUE)[1:2, c(2,3,7,8)]
+#'   correlation::correlation(iris[, 1:3], partial = TRUE)[1:2, c(2, 3, 7, 8)]
 #' }
 #'
 #' ## Use with emmeans based contrasts (see also t_to_eta2)
 #' if (require(emmeans)) {
 #'   warp.lm <- lm(breaks ~ wool * tension, data = warpbreaks)
 #'
-#'   conts <- summary(pairs(emmeans(warp.lm,  ~ tension | wool)))
-#'   t_to_d(conts$t.ratio, conts$df)
-#' }
 #'
+#'   # Also see emmeans::eff_size()
+#'   em_tension <- emmeans(warp.lm, ~tension) #'
+#'   diff_tension <- summary(pairs(em_tension))
+#'   t_to_d(diff_tension$t.ratio, diff_tension$df)
+#' }
 #' }
 #'
 #' @references
 #' - Friedman, H. (1982). Simplified determinations of statistical power, magnitude of effect and research sample sizes. Educational and Psychological Measurement, 42(2), 521-526. \doi{10.1177/001316448204200214}
 #' - Wolf, F. M. (1986). Meta-analysis: Quantitative methods for research synthesis (Vol. 59). Sage.
-#' - Rosenthal, R. (1991). Meta-analytic procedures for social research. Newbury Park, CA: SAGE Publications, Incorporated.
+#' - Rosenthal, R. (1994) Parametric measures of effect size. In H. Cooper and L.V. Hedges (Eds.). The handbook of research synthesis. New York: Russell Sage Foundation.
 #' - Steiger, J. H. (2004). Beyond the F test: Effect size confidence intervals and tests of close fit in the analysis of variance and contrast analysis. Psychological Methods, 9, 164-182.
 #' - Cumming, G., & Finch, S. (2001). A primer on the understanding, use, and calculation of confidence intervals that are based on central and noncentral distributions. Educational and Psychological Measurement, 61(4), 532-574.
 #'
 #' @export
 t_to_r <- function(t, df_error, ci = 0.95, ...) {
-
   res <- data.frame(r = t / sqrt(t^2 + df_error))
 
   if (is.numeric(ci)) {
     stopifnot(length(ci) == 1, ci < 1, ci > 0)
     res$CI <- ci
 
-    ts <- t(mapply(.get_ncp_t,
-                   t, df_error, ci))
+    ts <- t(mapply(
+      .get_ncp_t,
+      t, df_error, ci
+    ))
 
-    res$CI_low <- ts[,1] / sqrt(ts[,1]^2 + df_error)
-    res$CI_high <- ts[,2] / sqrt(ts[,2]^2 + df_error)
+    res$CI_low <- ts[, 1] / sqrt(ts[, 1]^2 + df_error)
+    res$CI_high <- ts[, 2] / sqrt(ts[, 2]^2 + df_error)
   }
 
   class(res) <- c("effectsize_table", "see_effectsize_table", class(res))
@@ -108,7 +113,6 @@ t_to_r <- function(t, df_error, ci = 0.95, ...) {
 #' @importFrom stats qnorm
 #' @export
 z_to_r <- function(z, n, ci = 0.95, ...) {
-
   res <- data.frame(r = z / sqrt(z^2 + n))
 
   if (is.numeric(ci)) {
@@ -121,8 +125,8 @@ z_to_r <- function(z, n, ci = 0.95, ...) {
     qs <- stats::qnorm(probs)
     zs <- cbind(qs[1] + z, qs[2] + z)
 
-    res$CI_low <- zs[,1] / sqrt(zs[,1]^2 + n)
-    res$CI_high <- zs[,2] / sqrt(zs[,2]^2 + n)
+    res$CI_low <- zs[, 1] / sqrt(zs[, 1]^2 + n)
+    res$CI_high <- zs[, 2] / sqrt(zs[, 2]^2 + n)
   }
 
   class(res) <- c("effectsize_table", "see_effectsize_table", class(res))
@@ -139,7 +143,3 @@ F_to_r <- function(f, df, df_error, ci = 0.95, ...) {
   }
   t_to_r(sqrt(f), df_error = df_error, ci = ci)
 }
-
-
-
-

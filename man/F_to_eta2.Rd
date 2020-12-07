@@ -89,22 +89,25 @@ designs.
 \item Epsilon has been found to be less biased (Carroll & Nordholm, 1975).
 }
 }
-
-\subsection{Confidence Intervals}{
-
-Confidence intervals are estimated using the Noncentrality parameter method;
-These methods searches for a the best \code{ncp} (non-central parameters) for
-of the noncentral F distribution for the desired tail-probabilities,
-and then convert these \code{ncp}s to the corresponding effect sizes.
-\cr\cr
-Special care should be taken when interpreting CIs with a lower bound equal
-to (or small then) 0, and even more care should be taken when the
-\emph{upper} bound is equal to (or small then) 0 (Steiger, 2004; Morey et al., 2016).
-}
 }
 \note{
 \eqn{Adj. \eta_p^2} is an alias for \eqn{\epsilon_p^2}.
 }
+\section{Confidence Intervals}{
+Confidence intervals are estimated using the Noncentrality parameter method;
+These methods searches for a the best non-central parameters (\code{ncp}s) of the
+noncentral t-, F- or Chi-squared distribution for the desired
+tail-probabilities, and then convert these \code{ncp}s to the corresponding effect
+sizes.
+}
+
+\section{CI Contains Zero}{
+
+Special care should be taken when interpreting CIs with a lower bound equal
+to (or small then) 0, and even more care should be taken when the \emph{upper}
+bound is equal to (or small then) 0 (Steiger, 2004; Morey et al., 2016).
+}
+
 \examples{
 \donttest{
 if (require("afex")) {
@@ -121,24 +124,27 @@ if (require("afex")) {
   df_error = c(18, 9, 18)
 ))
 
-if(require(see)) plot(etas)
+if (require(see)) plot(etas)
 
 
 if (require("lmerTest")) { # for the df_error
   fit <- lmer(extra ~ group + (1 | ID), sleep)
   # anova(fit)
-  # Type III Analysis of Variance Table with Satterthwaite's method
-  #       Sum Sq Mean Sq NumDF DenDF F value   Pr(>F)
-  # group 12.482  12.482     1     9  16.501 0.002833 **
-  # ---
-  # Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+  # #> Type III Analysis of Variance Table with Satterthwaite's method
+  # #>       Sum Sq Mean Sq NumDF DenDF F value   Pr(>F)
+  # #> group 12.482  12.482     1     9  16.501 0.002833 **
+  # #> ---
+  # #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
   F_to_eta2(16.501, 1, 9)
   F_to_omega2(16.501, 1, 9)
   F_to_epsilon2(16.501, 1, 9)
   F_to_f(16.501, 1, 9)
 }
 
+
 ## Use with emmeans based contrasts
+## --------------------------------
 if (require(emmeans)) {
   warp.lm <- lm(breaks ~ wool * tension, data = warpbreaks)
 
@@ -160,4 +166,9 @@ if (require(emmeans)) {
 }
 \seealso{
 \code{\link[=eta_squared]{eta_squared()}} for more details.
+
+Other effect size from test statistic: 
+\code{\link{chisq_to_phi}()},
+\code{\link{t_to_d}()}
 }
+\concept{effect size from test statistic}

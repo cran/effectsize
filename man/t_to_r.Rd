@@ -53,19 +53,25 @@ These functions use the following formulae to approximate \emph{r} and \emph{d}:
 \cr\cr
 \deqn{r_{partial} = z / \sqrt{z^2 + N}}
 \cr\cr
-\deqn{Cohen's d = 2 * t / \sqrt{df_{error}}}
+\deqn{d = 2 * t / \sqrt{df_{error}}}
 \cr\cr
-\deqn{Cohen's d_z = t / \sqrt{df_{error}}}
+\deqn{d_z = t / \sqrt{df_{error}}}
 \cr\cr
-\deqn{Cohen's d = 2 * z / \sqrt{N}}
-\subsection{Confidence Intervals}{
+\deqn{d = 2 * z / \sqrt{N}}
 
+The resulting \code{d} effect size is an \emph{approximation} to Cohen's \emph{d}, and
+assumes two equal group sizes. When possible, it is advised to directly
+estimate Cohen's \emph{d}, with \code{\link[=cohens_d]{cohens_d()}}, \code{\link[emmeans:eff_size]{emmeans::eff_size()}}, or similar
+functions.
+}
+\section{Confidence Intervals}{
 Confidence intervals are estimated using the Noncentrality parameter method;
-These methods searches for a the best \code{ncp} (non-central parameters) for
-of the noncentral F distribution for the desired tail-probabilities,
-and then convert these \code{ncp}s to the corresponding effect sizes.
+These methods searches for a the best non-central parameters (\code{ncp}s) of the
+noncentral t-, F- or Chi-squared distribution for the desired
+tail-probabilities, and then convert these \code{ncp}s to the corresponding effect
+sizes.
 }
-}
+
 \examples{
 ## t Tests
 res <- t.test(1:10, y = c(7:20), var.equal = TRUE)
@@ -75,7 +81,6 @@ t_to_r(t = res$statistic, res$parameter)
 res <- with(sleep, t.test(extra[group == 1], extra[group == 2], paired = TRUE))
 t_to_d(t = res$statistic, res$parameter, paired = TRUE)
 t_to_r(t = res$statistic, res$parameter)
-
 \donttest{
 ## Linear Regression
 model <- lm(Sepal.Length ~ Sepal.Width + Petal.Length, data = iris)
@@ -84,21 +89,23 @@ library(parameters)
 
 (rs <- t_to_r(param_tab$t[2:3], param_tab$df_error[2:3]))
 
-if(require(see)) plot(rs)
+if (require(see)) plot(rs)
 
 # How does this compare to actual partial correlations?
 if (require("correlation")) {
-  correlation::correlation(iris[,1:3], partial = TRUE)[1:2, c(2,3,7,8)]
+  correlation::correlation(iris[, 1:3], partial = TRUE)[1:2, c(2, 3, 7, 8)]
 }
 
 ## Use with emmeans based contrasts (see also t_to_eta2)
 if (require(emmeans)) {
   warp.lm <- lm(breaks ~ wool * tension, data = warpbreaks)
 
-  conts <- summary(pairs(emmeans(warp.lm,  ~ tension | wool)))
-  t_to_d(conts$t.ratio, conts$df)
-}
 
+  # Also see emmeans::eff_size()
+  em_tension <- emmeans(warp.lm, ~tension) #'
+  diff_tension <- summary(pairs(em_tension))
+  t_to_d(diff_tension$t.ratio, diff_tension$df)
+}
 }
 
 }
@@ -106,8 +113,14 @@ if (require(emmeans)) {
 \itemize{
 \item Friedman, H. (1982). Simplified determinations of statistical power, magnitude of effect and research sample sizes. Educational and Psychological Measurement, 42(2), 521-526. \doi{10.1177/001316448204200214}
 \item Wolf, F. M. (1986). Meta-analysis: Quantitative methods for research synthesis (Vol. 59). Sage.
-\item Rosenthal, R. (1991). Meta-analytic procedures for social research. Newbury Park, CA: SAGE Publications, Incorporated.
+\item Rosenthal, R. (1994) Parametric measures of effect size. In H. Cooper and L.V. Hedges (Eds.). The handbook of research synthesis. New York: Russell Sage Foundation.
 \item Steiger, J. H. (2004). Beyond the F test: Effect size confidence intervals and tests of close fit in the analysis of variance and contrast analysis. Psychological Methods, 9, 164-182.
 \item Cumming, G., & Finch, S. (2001). A primer on the understanding, use, and calculation of confidence intervals that are based on central and noncentral distributions. Educational and Psychological Measurement, 61(4), 532-574.
 }
 }
+\seealso{
+Other effect size from test statistic: 
+\code{\link{F_to_eta2}()},
+\code{\link{chisq_to_phi}()}
+}
+\concept{effect size from test statistic}

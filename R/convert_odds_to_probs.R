@@ -10,6 +10,7 @@
 #' @param ... Arguments passed to or from other methods.
 #'
 #' @seealso [stats::plogis()]
+#' @family convert between effect sizes
 #'
 #' @examples
 #' odds_to_probs(3)
@@ -17,7 +18,6 @@
 #'
 #' probs_to_odds(0.95)
 #' probs_to_odds(0.95, log = TRUE)
-#'
 #' @export
 odds_to_probs <- function(odds, log = FALSE, ...) {
   UseMethod("odds_to_probs")

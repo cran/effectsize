@@ -103,7 +103,8 @@ existing variables are overwritten.}
 will also be standardized. If \code{FALSE}, only the predictors will be
 standardized. Note that for certain models (logistic regression, count
 models, ...), the response value will never be standardized, to make
-re-fitting the model work.}
+re-fitting the model work. (For \code{mediate} models, only applies to the y
+model; m model's response will always be standardized.)}
 }
 \value{
 The standardized object (either a standardize data frame or a
@@ -145,6 +146,13 @@ standardized data is shifted by \code{Z - min(Z) + 1} or \code{Z - min(Z)}
 }
 }
 
+\section{Generalized Linear Models}{
+When standardizing coefficients of a generalized model (GLM, GLMM, etc), only
+the predictors are standardized, maintaining the interpretability of the
+coefficients (e.g., in a binomial model: the exponent of the standardized
+parameter is the OR of a change of 1 SD in the predictor, etc.)
+}
+
 \examples{
 # Data frames
 summary(standardize(iris))
@@ -154,5 +162,14 @@ model <- lm(Sepal.Length ~ Species * Petal.Width, data = iris)
 coef(standardize(model))
 }
 \seealso{
-\code{\link[=normalize]{normalize()}} \code{\link[=standardize_parameters]{standardize_parameters()}}
+Other transform utilities: 
+\code{\link{change_scale}()},
+\code{\link{normalize}()},
+\code{\link{ranktransform}()}
+
+Other standardize: 
+\code{\link{standardize_info}()},
+\code{\link{standardize_parameters}()}
 }
+\concept{standardize}
+\concept{transform utilities}

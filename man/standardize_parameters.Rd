@@ -127,22 +127,20 @@ standardizes the transformed data (e.g. equivalent to \code{scale(exp(X))}). See
 \code{\link[=standardize]{standardize()}} for more details on how different transformations are dealt
 with.
 }
-
-\subsection{Generalized Linear Models}{
-
+}
+\section{Generalized Linear Models}{
 When standardizing coefficients of a generalized model (GLM, GLMM, etc), only
 the predictors are standardized, maintaining the interpretability of the
 coefficients (e.g., in a binomial model: the exponent of the standardized
 parameter is the OR of a change of 1 SD in the predictor, etc.)
 }
-}
+
 \examples{
 library(effectsize)
 data(iris)
 
 model <- lm(Sepal.Length ~ Species * Petal.Width, data = iris)
 standardize_parameters(model, method = "refit")
-
 \donttest{
 standardize_parameters(model, method = "posthoc")
 standardize_parameters(model, method = "smart")
@@ -161,7 +159,7 @@ standardize_parameters(model, method = "basic", exponentiate = TRUE)
 
 \donttest{
 if (require("lme4")) {
-  m <- lmer(mpg ~ cyl + am + vs + (1|cyl), mtcars)
+  m <- lmer(mpg ~ cyl + am + vs + (1 | cyl), mtcars)
   standardize_parameters(m, method = "pseudo", df_method = "satterthwaite")
 }
 
@@ -174,7 +172,6 @@ if (require("rstanarm")) {
   # standardize_posteriors(model, method = "smart")
   head(standardize_posteriors(model, method = "basic"))
 }
-
 }
 
 }
@@ -187,4 +184,16 @@ if (require("rstanarm")) {
 }
 \seealso{
 \code{\link[=standardize_info]{standardize_info()}}
+
+Other standardize: 
+\code{\link{standardize_info}()},
+\code{\link{standardize}()}
+
+Other effect size indices: 
+\code{\link{cohens_d}()},
+\code{\link{effectsize}()},
+\code{\link{eta_squared}()},
+\code{\link{phi}()}
 }
+\concept{effect size indices}
+\concept{standardize}

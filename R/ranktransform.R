@@ -14,10 +14,10 @@
 #' ranktransform(c(0, 1, 5, -5, -2), sign = TRUE)
 #'
 #' head(ranktransform(iris))
-#'
-#' @seealso [normalize()] [standardize()] [change_scale()]
-#'
 #' @return A rank-transformed object.
+#'
+#' @family transform utilities
+#'
 #' @export
 ranktransform <- function(x, ...) {
   UseMethod("ranktransform")
