@@ -7,7 +7,7 @@ options(digits = 2)
 options(knitr.kable.NA = '')
 
 pkgs <- c("effectsize", "afex", "lmerTest", "emmeans", "parameters")
-if (!all(sapply(pkgs, requireNamespace))) {
+if (!all(sapply(pkgs, requireNamespace, quietly = TRUE))) {
   knitr::opts_chunk$set(eval = FALSE)
 } else {
   library(afex)
@@ -62,7 +62,7 @@ anova(fit_lmm)
 F_to_eta2(45.8, 1, 17)
 
 ## -----------------------------------------------------------------------------
-model_parameters(fit_lmm, df_method = "satterthwaite")
+parameters::model_parameters(fit_lmm, df_method = "satterthwaite")
 
 t_to_eta2(6.77, df_error = 17)
 
@@ -72,21 +72,21 @@ F_to_epsilon2(45.8, 1, 17)
 F_to_omega2(45.8, 1, 17)
 
 ## -----------------------------------------------------------------------------
-model_parameters(fit_lmm, df_method = "satterthwaite")
+parameters::model_parameters(fit_lmm, df_method = "satterthwaite")
 
 t_to_r(6.77, df_error = 17)
 
 ## -----------------------------------------------------------------------------
 
-fit_lm <- lm(Sepal.Length ~ Sepal.Width + Petal.Length, data = iris) 
+fit_lm <- lm(rating  ~ complaints + critical, data = attitude)
 
-model_parameters(fit_lm)
+parameters::model_parameters(fit_lm)
 
-t_to_r(t = c(8.59, 27.57),
-       df_error = 147)
+t_to_r(t = c(7.46, 0.01),
+       df_error = 27)
 
 ## ---- eval=require(correlation, quietly = TRUE)-------------------------------
-correlation::correlation(iris[,1:3], partial = TRUE)[1:2, c(1:3,7:8)]
+correlation::correlation(attitude[, c(1, 2, 6)], partial = TRUE)[1:2, c(2, 3,  7, 8)]
 
 ## -----------------------------------------------------------------------------
 pairs(emmeans(aov_fit, ~ angle))

@@ -80,16 +80,19 @@
 #' coefficients (e.g., in a binomial model: the exponent of the standardized
 #' parameter is the OR of a change of 1 SD in the predictor, etc.)
 #'
-#' @return A data frame with the standardized parameters and their CIs.
+#' @return A data frame with the standardized parameters (`Std_*`, depending on
+#'   the model type) and their CIs (`CI_low` and `CI_high`). Where applicable,
+#'   standard errors (SEs) are returned as an attribute (`attr(x,
+#'   "standard_error")`).
 #'
 #' @family standardize
 #' @family effect size indices
+#' @seealso [standardize_info()]
 #'
 #' @examples
 #' library(effectsize)
-#' data(iris)
 #'
-#' model <- lm(Sepal.Length ~ Species * Petal.Width, data = iris)
+#' model <- lm(len ~ supp * dose, data = ToothGrowth)
 #' standardize_parameters(model, method = "refit")
 #' \donttest{
 #' standardize_parameters(model, method = "posthoc")
@@ -114,19 +117,16 @@
 #' }
 #'
 #'
-#'
+#' \dontrun{
 #' if (require("rstanarm")) {
-#'   model <- stan_glm(Sepal.Length ~ Species + Petal.Width, data = iris, refresh = 0)
-#'   # standardize_posteriors(model, method = "refit")
-#'   # standardize_posteriors(model, method = "posthoc")
-#'   # standardize_posteriors(model, method = "smart")
+#'   model <- stan_glm(rating ~ critical + privileges, data = attitude, refresh = 0)
+#'   standardize_posteriors(model, method = "refit")
+#'   standardize_posteriors(model, method = "posthoc")
+#'   standardize_posteriors(model, method = "smart")
 #'   head(standardize_posteriors(model, method = "basic"))
 #' }
 #' }
-#'
-#' @seealso [standardize_info()]
-#'
-#' @return Standardized parameters table.
+#' }
 #'
 #' @references
 #' - Hoffman, L. (2015). Longitudinal analysis: Modeling within-person fluctuation and change. Routledge.
@@ -202,7 +202,7 @@ standardize_parameters.default <- function(model, method = "refit", ci = 0.95, r
   attr(pars, "two_sd") <- two_sd
   attr(pars, "robust") <- robust
   attr(pars, "object_name") <- object_name
-  class(pars) <- c("effectsize_table", "see_effectsize_table", "effectsize_std_params", "data.frame")
+  class(pars) <- c("effectsize_std_params", "effectsize_table", "see_effectsize_table", "data.frame")
   return(pars)
 }
 
@@ -240,11 +240,10 @@ standardize_parameters.parameters_model <- function(model, method = "refit", ci 
   }
 
   ## attributes
-  attr(pars, "two_sd") <- two_sd
   attr(pars, "std_method") <- method
   attr(pars, "two_sd") <- two_sd
   attr(pars, "robust") <- robust
-  class(pars) <- c("effectsize_table", "see_effectsize_table", "effectsize_std_params", "data.frame")
+  class(pars) <- c("effectsize_std_params", "effectsize_table", "see_effectsize_table", "data.frame")
   return(pars)
 }
 

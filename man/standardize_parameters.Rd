@@ -45,7 +45,7 @@ model coefficients of continuous parameters comparable to coefficients
 related to binary predictors, when applied to \strong{the predictors} (not the
 outcome) (Gelman, 2008).}
 
-\item{verbose}{Toggle warnings on or off.}
+\item{verbose}{Toggle warnings and messages on or off.}
 
 \item{parameters}{Deprecated.}
 
@@ -59,9 +59,9 @@ outcome) (Gelman, 2008).}
 }}
 }
 \value{
-A data frame with the standardized parameters and their CIs.
-
-Standardized parameters table.
+A data frame with the standardized parameters (\verb{Std_*}, depending on
+the model type) and their CIs (\code{CI_low} and \code{CI_high}). Where applicable,
+standard errors (SEs) are returned as an attribute (\code{attr(x, "standard_error")}).
 }
 \description{
 Compute standardized model parameters (coefficients).
@@ -137,9 +137,8 @@ parameter is the OR of a change of 1 SD in the predictor, etc.)
 
 \examples{
 library(effectsize)
-data(iris)
 
-model <- lm(Sepal.Length ~ Species * Petal.Width, data = iris)
+model <- lm(len ~ supp * dose, data = ToothGrowth)
 standardize_parameters(model, method = "refit")
 \donttest{
 standardize_parameters(model, method = "posthoc")
@@ -164,13 +163,14 @@ if (require("lme4")) {
 }
 
 
-
+\dontrun{
 if (require("rstanarm")) {
-  model <- stan_glm(Sepal.Length ~ Species + Petal.Width, data = iris, refresh = 0)
-  # standardize_posteriors(model, method = "refit")
-  # standardize_posteriors(model, method = "posthoc")
-  # standardize_posteriors(model, method = "smart")
+  model <- stan_glm(rating ~ critical + privileges, data = attitude, refresh = 0)
+  standardize_posteriors(model, method = "refit")
+  standardize_posteriors(model, method = "posthoc")
+  standardize_posteriors(model, method = "smart")
   head(standardize_posteriors(model, method = "basic"))
+}
 }
 }
 
@@ -193,7 +193,8 @@ Other effect size indices:
 \code{\link{cohens_d}()},
 \code{\link{effectsize}()},
 \code{\link{eta_squared}()},
-\code{\link{phi}()}
+\code{\link{phi}()},
+\code{\link{rank_biserial}()}
 }
 \concept{effect size indices}
 \concept{standardize}

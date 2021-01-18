@@ -36,6 +36,9 @@ from transformation.}
 
 \item{probs}{Probability values to convert.}
 }
+\value{
+Converted index.
+}
 \description{
 Convert between Odds and Probabilities
 }
@@ -52,6 +55,7 @@ probs_to_odds(0.95, log = TRUE)
 Other convert between effect sizes: 
 \code{\link{d_to_common_language}()},
 \code{\link{d_to_r}()},
+\code{\link{eta2_to_f2}()},
 \code{\link{oddsratio_to_riskratio}()}
 }
 \concept{convert between effect sizes}

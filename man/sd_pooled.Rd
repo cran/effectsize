@@ -5,18 +5,19 @@
 \alias{mad_pooled}
 \title{Pooled Standard Deviation}
 \usage{
-sd_pooled(x, y = NULL, data = NULL)
+sd_pooled(x, y = NULL, data = NULL, verbose = TRUE)
 
-mad_pooled(x, y = NULL, data = NULL)
+mad_pooled(x, y = NULL, data = NULL, verbose = TRUE)
 }
 \arguments{
-\item{x}{A formula, a numeric vector, or a character name of one in \code{data}.
-(For \code{print()} the result of one of the standardized difference functions.)}
+\item{x}{A formula, a numeric vector, or a character name of one in \code{data}.}
 
 \item{y}{A numeric vector, a grouping (character / factor) vector, a or a
 character  name of one in \code{data}. Ignored if \code{x} is a formula.}
 
 \item{data}{An optional data frame containing the variables.}
+
+\item{verbose}{Toggle warnings and messages on or off.}
 }
 \value{
 Numeric, the pooled standard deviation.

@@ -11,7 +11,8 @@
 #' @param adjust Should the effect size be bias-corrected? Defaults to `FALSE`.
 #' @param ... Arguments passed to or from other methods.
 #'
-#' @return A data frame with the effect size(s) between 0-1, and confidence interval(s).
+#' @return A data frame with the effect size(s) between 0-1, and confidence
+#'   interval(s). See [cramers_v()].
 #'
 #' @details These functions use the following formulae:
 #' \cr
@@ -22,11 +23,7 @@
 #' For adjusted versions, see Bergsma, 2013.
 #'
 #' @inheritSection cohens_d Confidence Intervals
-#'
-#' @section CI Contains Zero:
-#' Special care should be taken when interpreting CIs with a lower bound equal
-#' to (or small then) 0, and even more care should be taken when the *upper*
-#' bound is equal to (or small then) 0 (Steiger, 2004; Morey et al., 2016).
+#' @inheritSection effectsize-CIs CI Contains Zero
 #'
 #' @family effect size from test statistic
 #'

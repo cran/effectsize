@@ -4,7 +4,7 @@ if (require("testthat") && require("effectsize")) {
     # Direction ---------------------------------------------------------------
     rez_t <- t.test(iris$Sepal.Length, iris$Sepal.Width)
     rez_d <- cohens_d(iris$Sepal.Length, iris$Sepal.Width)
-    testthat::expect_true(sign(rez_t$statistic) == sign(rez_d$Cohens_d))
+    testthat::expect_equal(sign(rez_t$statistic), sign(rez_d$Cohens_d), ignore_attr = TRUE)
 
 
     # Errors and warnings -----------------------------------------------------
@@ -15,36 +15,43 @@ if (require("testthat") && require("effectsize")) {
       d = c("a", "b", "b", "c", "c", "b", "c", "a", "a", "b"),
       e = rep(0:1, each = 5)
     )
+    df$exp_a <- exp(df$a)
     a2 <- 1:11
 
-    testthat::expect_true({
-      cohens_d(a ~ c, data = df)
-      TRUE
-    })
-    testthat::expect_true({
-      cohens_d("a", "c", data = df)
-      TRUE
-    })
-    testthat::expect_true({
-      cohens_d("a", "b", data = df)
-      TRUE
-    })
-    testthat::expect_true({
-      cohens_d(a2, df$b)
-      TRUE
-    })
-    testthat::expect_true({
-      cohens_d(b ~ e, data = df)
-      TRUE
-    })
+    testthat::expect_error(cohens_d(a ~ c, data = df), regexp = NA)
+    testthat::expect_error(cohens_d("a", "c", data = df), regexp = NA)
+    testthat::expect_error(cohens_d("a", "b", data = df), regexp = NA)
+    testthat::expect_error(cohens_d(a2, df$b), regexp = NA)
+    testthat::expect_error(cohens_d(b ~ e, data = df), regexp = NA)
+
+    testthat::expect_equal(cohens_d("exp_a", "c", data = df), cohens_d(exp(a) ~ c, data = df))
 
     testthat::expect_error(cohens_d(a ~ b, data = df))
     testthat::expect_error(cohens_d(a ~ d, data = df))
     testthat::expect_error(cohens_d("a", "d", data = df))
     testthat::expect_error(cohens_d("c", "c", data = df))
     testthat::expect_error(cohens_d(a2, df$c))
+    testthat::expect_error(cohens_d("a", "aa", data = df))
 
     testthat::expect_warning(cohens_d("b", "e", data = df))
+  })
+
+  test_that("cohens_d - mu", {
+    testthat::expect_equal(cohens_d(mtcars$mpg - 5),
+                           cohens_d(mtcars$mpg, mu = 5),
+                           ignore_attr = TRUE)
+
+    x <- 1:9
+    y <- c(1,1:9)
+    testthat::expect_equal(cohens_d(x - 3, y),
+                           cohens_d(x, y, mu = 3),
+                           ignore_attr = TRUE)
+
+    # t.test(x, y, mu = 3.125, var.equal = TRUE)
+    d <- cohens_d(x, y, mu = 3.125)
+    testthat::expect_equal(d[[1]], -0.969, tolerance = 0.01)
+    testthat::expect_equal(d$CI_low, -1.913, tolerance = 0.01)
+    testthat::expect_equal(d$CI_high[[1]], 0, tolerance = 0.01)
   })
 
   test_that("cohens_d - pooled", {
@@ -78,18 +85,20 @@ if (require("testthat") && require("effectsize")) {
 
     testthat::expect_warning(hedges_g(wt ~ am, data = mtcars, correction = TRUE))
     testthat::expect_warning(cohens_d(wt ~ am, data = mtcars, correction = TRUE))
-    testthat::expect_warning(glass_delta(wt ~ am, data = mtcars, correction = TRUE))
+    testthat::expect_warning(glass_delta(wt ~ am, data = mtcars, correction = TRUE, ci = NULL))
   })
 
   test_that("glass_delta", {
+    # must be 2 samples
+    testthat::expect_error(glass_delta(1:10))
+
+    testthat::skip_if_not_installed("boot")
+    set.seed(8007)
     x <- glass_delta(wt ~ am, data = mtcars)
     testthat::expect_equal(colnames(x)[1], "Glass_delta")
     testthat::expect_equal(x[[1]], 2.200, tolerance = 0.001)
-    testthat::expect_equal(x$CI_low, 1.292, tolerance = 0.001)
-    testthat::expect_equal(x$CI_high, 3.086, tolerance = 0.001)
-
-    # must be 2 samples
-    testthat::expect_error(glass_delta(1:10))
+    testthat::expect_equal(x$CI_low, 1.490089, tolerance = 0.001)
+    testthat::expect_equal(x$CI_high, 3.858925, tolerance = 0.001)
   })
 
 
@@ -104,8 +113,8 @@ if (require("testthat") && require("effectsize")) {
     x1 <- bayestestR::distribution_normal(1e4, mean = 0, sd = 1)
     x2 <- bayestestR::distribution_normal(1e4, mean = 1.5, sd = 2)
 
-    testthat::expect_equal(cohens_d(x1, x2)$Cohens_d, -sqrt(0.9), tolerance = 1e-2)
-    testthat::expect_equal(glass_delta(x2, x1)$Glass_delta, 1.5, tolerance = 1e-2)
+    testthat::expect_equal(cohens_d(x1, x2)[[1]], -sqrt(0.9), tolerance = 1e-2)
+    testthat::expect_equal(glass_delta(x2, x1, ci = NULL)[[1]], 1.5, tolerance = 1e-2)
   })
 
   test_that("Missing values", {

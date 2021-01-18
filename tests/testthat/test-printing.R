@@ -10,14 +10,32 @@ if (require("testthat") && require("effectsize")) {
   })
 
 
+  test_that("std effectsize table", {
+    es <- standardize_parameters(lm(mpg ~ cyl + gear, mtcars))
+    testthat::expect_output(print(es), regexp = "refit")
+
+    es <- standardize_parameters(lm(mpg ~ cyl + gear, mtcars), method = "basic")
+    testthat::expect_output(print(es), regexp = "basic")
+
+    es <- standardize_parameters(lm(mpg ~ cyl + gear, mtcars), robust = TRUE)
+    testthat::expect_output(print(es), regexp = "median")
+
+    es <- standardize_parameters(lm(mpg ~ cyl + gear, mtcars), two_sd = TRUE)
+    testthat::expect_output(print(es), regexp = "two")
+  })
+
+
   test_that("effectsize difference", {
     d <- cohens_d(1:3, c(1, 1:3))
     testthat::expect_output(print(d), regexp = "Cohen")
-    testthat::expect_output(print(d), regexp = "pooled")
+    testthat::expect_output(print(d), regexp = " pooled", fixed = TRUE)
     testthat::expect_output(print(d, append_CL = TRUE), regexp = "U3")
 
     d <- cohens_d(1:3, c(1, 1:3), pooled_sd = FALSE)
     testthat::expect_output(print(d), regexp = "un-pooled")
+
+    d <- cohens_d(1:5, c(1,1:4), paired = TRUE)
+    testthat::expect_error(testthat::expect_output(print(d), regexp = "pooled"))
 
     d <- hedges_g(1:3, c(1, 1:3), correction = 1)
     testthat::expect_output(print(d), regexp = "Hedges and Olkin")

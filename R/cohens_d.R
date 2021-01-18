@@ -12,7 +12,6 @@
 #' the populations, as it uses only the *second* group's standard deviation.
 #'
 #' @param x A formula, a numeric vector, or a character name of one in `data`.
-#'   (For `print()` the result of one of the standardized difference functions.)
 #' @param y A numeric vector, a grouping (character / factor) vector, a or a
 #'   character  name of one in `data`. Ignored if `x` is a formula.
 #' @param data An optional data frame containing the variables.
@@ -26,6 +25,8 @@
 #'   This produces an effect size that is equivalent to the one-sample effect
 #'   size on `x - y`.
 #' @inheritParams chisq_to_phi
+#' @inheritParams eta_squared
+#' @inheritParams stats::t.test
 #'
 #' @note The indices here give the population estimated standardized difference.
 #'   Some statistical packages give the sample estimate instead (without
@@ -33,30 +34,33 @@
 #'
 #' @details
 #'
-#' # Confidence Intervals
-#' Confidence intervals are estimated using the Noncentrality parameter method;
-#' These methods searches for a the best non-central parameters (`ncp`s) of the
-#' noncentral t-, F- or Chi-squared distribution for the desired
-#' tail-probabilities, and then convert these `ncp`s to the corresponding effect
-#' sizes.
+#' ## Confidence Intervals for Glass' *delta*
+#' Confidence Intervals for Glass' *delta* are estimated using the bootstrap
+#' method.
 #'
-#' @return A data frame with the effect size(s) and confidence interval(s).
+#' @inheritSection effectsize-CIs Confidence Intervals
+#'
+#' @return A data frame with the effect size ( `Cohens_d`, `Hedges_g`,
+#'   `Glass_delta`) and their CIs (`CI_low` and `CI_high`).
 #'
 #' @seealso [d_to_common_language()] [sd_pooled()]
 #' @family effect size indices
 #'
 #' @examples
-#' cohens_d(iris$Sepal.Length, iris$Sepal.Width)
-#' hedges_g("Sepal.Length", "Sepal.Width", data = iris)
+#' cohens_d(sleep$extra, sleep$group)
+#' hedges_g("extra", "group", data = sleep)
+#'
+#' cohens_d(sleep$extra[sleep$group==1], sleep$extra[sleep$group==2], paired = TRUE)
 #'
 #' cohens_d(mpg ~ am, data = mtcars)
 #' cohens_d(mpg ~ am, data = mtcars, pooled_sd = FALSE)
+#' cohens_d(mpg ~ am, data = mtcars, mu = -5)
 #' hedges_g(mpg ~ am, data = mtcars)
-#' glass_delta(mpg ~ am, data = mtcars)
+#' if (require(boot)) glass_delta(mpg ~ am, data = mtcars)
 #'
 #' print(cohens_d(mpg ~ am, data = mtcars), append_CL = TRUE)
 #' @references
-#' - Cohen, J. (2013). Statistical power analysis for the behavioral sciences. Routledge.
+#' - Cohen, J. (1988). Statistical power analysis for the behavioral sciences (2nd Ed.). New York: Routledge.
 #' - Hedges, L. V. & Olkin, I. (1985). Statistical methods for meta-analysis. Orlando, FL: Academic Press.
 #' - Hunter, J. E., & Schmidt, F. L. (2004). Methods of meta-analysis: Correcting error and bias in research findings. Sage.
 #' - McGrath, R. E., & Meyer, G. J. (2006). When effect sizes disagree: the case of r and d. Psychological methods, 11(4), 386.
@@ -67,8 +71,11 @@ cohens_d <- function(x,
                      y = NULL,
                      data = NULL,
                      pooled_sd = TRUE,
+                     mu = 0,
                      paired = FALSE,
                      ci = 0.95,
+                     verbose = TRUE,
+                     ...,
                      correction) {
   if (!missing(correction)) {
     warning("`correction` argument is deprecated. To apply bias correction, use `hedges_g()`.",
@@ -76,31 +83,50 @@ cohens_d <- function(x,
     )
   }
 
+  if (inherits(x, "htest")) {
+    if (!grepl("t-test", x$method))
+      stop("'x' is not a t-test!", call. = FALSE)
+    return(effectsize(x, type = "d", correction = correction, ci = ci, verbose = verbose))
+  }
+
+
   .effect_size_difference(
     x,
     y = y,
     data = data,
     type = "d",
     pooled_sd = pooled_sd,
+    mu = mu,
     paired = paired,
-    ci = ci
+    ci = ci,
+    verbose = verbose
   )
 }
 
 #' @rdname cohens_d
+#' @param iterations The number of bootstrap replicates for computing confidence intervals. Only applies when \code{ci} is not \code{NULL}.
 #' @export
 hedges_g <- function(x,
                      y = NULL,
                      data = NULL,
                      correction = 1,
                      pooled_sd = TRUE,
+                     mu = 0,
                      paired = FALSE,
-                     ci = 0.95) {
+                     ci = 0.95,
+                     verbose = TRUE,
+                     ...) {
   if (isTRUE(correction) || !correction %in% c(1, 2)) {
     warning("`correction` must be 1 or 2. See ?hedges_g. Setting to 1 for Hedges & Olkin's correction.",
       call. = FALSE, immediate. = TRUE
     )
     correction <- 1
+  }
+
+  if (inherits(x, "htest")) {
+    if (!grepl("t-test", x$method))
+      stop("'x' is not a t-test!", call. = FALSE)
+    return(effectsize(x, type = "g", correction = correction, ci = ci, verbose = verbose))
   }
 
   .effect_size_difference(
@@ -110,14 +136,16 @@ hedges_g <- function(x,
     type = "g",
     correction = correction,
     pooled_sd = pooled_sd,
+    mu = mu,
     paired = paired,
-    ci = ci
+    ci = ci,
+    verbose = verbose
   )
 }
 
 #' @rdname cohens_d
 #' @export
-glass_delta <- function(x, y = NULL, data = NULL, ci = 0.95, correction) {
+glass_delta <- function(x, y = NULL, data = NULL, mu = 0, ci = 0.95, iterations = 200, verbose = TRUE, ..., correction) {
   if (!missing(correction)) {
     warning("`correction` argument is deprecated. To apply bias correction, use `hedges_g()`.",
       call. = FALSE, immediate. = TRUE
@@ -128,8 +156,11 @@ glass_delta <- function(x, y = NULL, data = NULL, ci = 0.95, correction) {
     x,
     y = y,
     data = data,
+    mu = mu,
     type = "delta",
-    ci = ci
+    ci = ci,
+    verbose = verbose,
+    iterations = iterations
   )
 }
 
@@ -141,11 +172,14 @@ glass_delta <- function(x, y = NULL, data = NULL, ci = 0.95, correction) {
                                     y = NULL,
                                     data = NULL,
                                     type = "d",
+                                    mu = 0,
                                     correction = NULL,
                                     pooled_sd = TRUE,
                                     paired = FALSE,
-                                    ci = 0.95) {
-  out <- .deal_with_cohens_d_arguments(x, y, data)
+                                    ci = 0.95,
+                                    verbose = TRUE,
+                                    ...) {
+  out <- .deal_with_cohens_d_arguments(x, y, data, verbose)
   x <- out$x
   y <- out$y
 
@@ -170,6 +204,8 @@ glass_delta <- function(x, y = NULL, data = NULL, ci = 0.95, correction) {
     hn <- 1 / (n - 1)
     se <- s / sqrt(n)
     df <- n - 1
+
+    pooled_sd <- NULL
   } else {
     x <- stats::na.omit(x)
     y <- stats::na.omit(y)
@@ -179,9 +215,8 @@ glass_delta <- function(x, y = NULL, data = NULL, ci = 0.95, correction) {
     n2 <- length(y)
     n <- n1 + n2
 
-    hn <- (1 / n1 + 1 / n2)
-    df <- n - 2
-    if (type == "d" | type == "g") {
+    if (type %in% c("d", "g")) {
+      hn <- (1 / n1 + 1 / n2)
       if (pooled_sd) {
         s <- suppressWarnings(sd_pooled(x, y))
 
@@ -198,25 +233,34 @@ glass_delta <- function(x, y = NULL, data = NULL, ci = 0.95, correction) {
         df <- se^4 / (se1^4 / (n1 - 1) + se2^4 / (n2 - 1))
       }
     } else if (type == "delta") {
+      pooled_sd <- NULL
       s <- stats::sd(y)
-
-      se <- s * sqrt(1 / n1 + 1 / n2)
     }
   }
 
-  out <- data.frame(d = d / s)
+  out <- data.frame(d = (d - mu) / s)
   types <- c("d" = "Cohens_d", "g" = "Hedges_g", "delta" = "Glass_delta")
   colnames(out) <- types[type]
 
   if (is.numeric(ci)) {
+    stopifnot(length(ci) == 1, ci < 1, ci > 0)
+
     # Add cis
-    out$CI <- ci
+    if (type %in% c("d", "g")) {
+      out$CI <- ci
 
-    t <- d / se
-    ts <- .get_ncp_t(t, df, ci)
+      t <- (d - mu) / se
+      ts <- .get_ncp_t(t, df, ci)
 
-    out$CI_low <- ts[1] * sqrt(hn)
-    out$CI_high <- ts[2] * sqrt(hn)
+      out$CI_low <- ts[1] * sqrt(hn)
+      out$CI_high <- ts[2] * sqrt(hn)
+    } else if (type == "delta") {
+      if (requireNamespace("boot", quietly = TRUE)) {
+        out <- cbind(out, .delta_ci(x, y, mu = mu, ci = ci, ...))
+      } else {
+        warning("'boot' package required for estimating CIs for Glass' delta. Please install the package and try again.", call. = FALSE)
+      }
+    }
   }
 
 
@@ -232,7 +276,6 @@ glass_delta <- function(x, y = NULL, data = NULL, ci = 0.95, correction) {
       J <- ((n - 3) / (n - 2.25)) * sqrt((n - 2) / n)
     }
 
-
     out[, colnames(out) %in% c("Hedges_g", "CI_low", "CI_high")] <-
       out[, colnames(out) %in% c("Hedges_g", "CI_low", "CI_high")] * J
   }
@@ -241,6 +284,7 @@ glass_delta <- function(x, y = NULL, data = NULL, ci = 0.95, correction) {
   attr(out, "paired") <- paired
   attr(out, "correction") <- correction
   attr(out, "pooled_sd") <- pooled_sd
+  attr(out, "mu") <- mu
   return(out)
 }
 
@@ -256,39 +300,47 @@ glass_delta <- function(x, y = NULL, data = NULL, ci = 0.95, correction) {
 #' @keywords internal
 #' @importFrom stats terms
 #' @importFrom stats delete.response
-.deal_with_cohens_d_arguments <- function(x, y = NULL, data = NULL) {
+.deal_with_cohens_d_arguments <- function(x, y = NULL, data = NULL, verbose = TRUE) {
 
   # Sanity checks
   if (inherits(x, "formula") | is.character(x) | is.character(y)) {
-    if (is.null(data)) {
+    if (is.null(data)) { # && !is.data.frame(data <- y) ?
       stop("Please provide data argument.")
     }
   }
+
 
   ## Preprocess data
 
   # Formula
   if (inherits(x, "formula")) {
-    trms <- stats::terms(x)
+    if (length(x) != 3)
+      stop("Formula must have the 'outcome ~ group'.", call. = FALSE)
 
-    group <- all.vars(stats::delete.response(trms))
-    outcome <- setdiff(all.vars(trms), group)
+    mf <- stats::model.frame(stats::lm(formula = x, data = data))
 
-    if (!(length(outcome) == 1 & length(group) == 1)) {
+    x <- mf[[1]]
+    if (ncol(mf) == 1) {
+      y <- NULL
+    } else if (ncol(mf) == 2) {
+      y <- mf[[2]]
+    } else {
       stop("Formula must have the 'outcome ~ group'.", call. = FALSE)
     }
 
-    x <- data[[outcome]]
-    y <- as.factor(data[[group]])
+    if (!is.null(y) && !is.factor(y)) y <- factor(y)
   }
 
-
   if (is.character(x)) {
-    x <- data[[x]]
+    if (is.null(x <- data[[xn <- x]])) {
+      stop("Column ", xn, " missing from data.", call. = FALSE)
+    }
   }
 
   if (is.character(y)) {
-    y <- data[[y]]
+    if (is.null(y <- data[[yn <- y]])) {
+      stop("Column ", yn, " missing from data.", call. = FALSE)
+    }
   }
 
   if (!is.numeric(x)) {
@@ -310,7 +362,7 @@ glass_delta <- function(x, y = NULL, data = NULL, ci = 0.95, correction) {
       data <- split(x, y)
       x <- data[[1]]
       y <- data[[2]]
-    } else if (length(unique(y)) == 2) {
+    } else if (verbose && length(unique(y)) == 2) {
       warning(
         "'y' is numeric but has only 2 unique values. If this is a grouping variable, convert it to a factor.",
         call. = FALSE
@@ -320,3 +372,31 @@ glass_delta <- function(x, y = NULL, data = NULL, ci = 0.95, correction) {
 
   list(x = x, y = y)
 }
+
+.delta_ci <- function(x, y, mu = 0, ci = 0.95, iterations = 200) {
+  boot_delta <- function(data, .i, mu = 0) {
+    .x <- sample(x, replace = TRUE)
+    .y <- sample(y, replace = TRUE)
+
+    d <- mean(.x) - mean(.y)
+    s <- stats::sd(.y)
+    (d - mu) / s
+  }
+
+  # dud, not actually used
+  data <- data.frame(
+    i = seq_along(c(x, y))
+  )
+
+  R <- boot::boot(data = data,
+                  statistic = boot_delta,
+                  R = iterations,
+                  mu = mu)
+
+  out <- as.data.frame(
+    bayestestR::ci(na.omit(R$t), ci = ci, verbose = FALSE)
+  )
+  out$CI <- ci
+  out
+}
+

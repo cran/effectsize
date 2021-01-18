@@ -1,30 +1,37 @@
 #' Normalize numeric variable to \[0-1\] range
 #'
-#' Performs a normalization of data, i.e., it scales all numeric variables in
-#' the range 0 - 1. This is a special case of [change_scale()].
+#' Performs a normalization of data, i.e., it scales variables in the range 0 -
+#' 1. This is a special case of [change_scale()].
 #'
 #' @inheritParams standardize.data.frame
 #'
-#' @param x Object.
-#' @param include_bounds Logical, if `TRUE`, return value may include 0
-#'   and 1. If `FALSE`, the return value is compressed, using the formula
-#'   `(x * (n - 1) + 0.5) / n` (\cite{Smithson and Verkuilen 2006}), to
-#'   avoid zeros and ones in the normalized variables. This can be useful in
-#'   case of beta-regression, where the response variable is not allowed to
-#'   include zeros and ones.
+#' @param x A numeric vector, data frame, or matrix. See details.
+#' @param include_bounds Logical, if `TRUE`, return value may include 0 and 1.
+#'   If `FALSE`, the return value is compressed, using Smithson and Verkuilen's
+#'   (2006) formula `(x * (n - 1) + 0.5) / n`, to avoid zeros and ones in the
+#'   normalized variables. This can be useful in case of beta-regression, where
+#'   the response variable is not allowed to include zeros and ones.
 #' @param ... Arguments passed to or from other methods.
+#'
+#' @details
+#' - If `x` is a matrix, normalization is performed across all values (not
+#'   column- or row-wise). For column-wise normalization, convert the matrix to a
+#'   data.frame.
+#' - If `x` is a grouped data frame (`grouped_df`), normalization is performed
+#'   separately for each group.
 #'
 #' @examples
 #' normalize(c(0, 1, 5, -5, -2))
 #' normalize(c(0, 1, 5, -5, -2), include_bounds = FALSE)
 #'
-#' head(normalize(iris))
+#' head(normalize(trees))
 #' @references
 #' - Smithson M, Verkuilen J (2006). A Better Lemon Squeezer? Maximum-Likelihood Regression with Beta-Distributed Dependent Variables. Psychological Methods, 11(1), 54–71.
 #'
 #' @family transform utilities
 #'
 #' @return A normalized object.
+#'
 #' @export
 normalize <- function(x, ...) {
   UseMethod("normalize")
@@ -157,4 +164,10 @@ normalize.data.frame <- function(x, select = NULL, exclude = NULL, include_bound
 
   x[select] <- lapply(x[select], normalize, include_bounds = include_bounds, verbose = verbose)
   x
+}
+
+
+#' @export
+normalize.matrix <- function(x, ...) {
+  matrix(normalize(as.numeric(x), ...), nrow = nrow(x))
 }

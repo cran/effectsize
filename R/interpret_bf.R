@@ -46,7 +46,7 @@ interpret_bf <- function(bf, rules = "jeffreys1961", include_value = FALSE, prot
 
   orig_bf <- bf
 
-  dir <- ifelse(bf < 1, "against", "in favour of")
+  dir <- ifelse(bf < 1, "against", ifelse(bf > 1, "in favour of", "against or in favour of"))
   bf <- exp(abs(log(bf)))
 
   rules <- .match.rules(
@@ -63,12 +63,17 @@ interpret_bf <- function(bf, rules = "jeffreys1961", include_value = FALSE, prot
 
   interpretation <- interpret(bf, rules)
 
-
-  interpretation[] <- paste0(interpretation, " evidence ", dir)
+  # Format text
+  interpretation[] <- paste0(interpretation, " evidence")
   interpretation[orig_bf == 1] <- "no evidence"
+
+  # Add value if asked for
   if (include_value) {
     interpretation[] <- paste0(interpretation, " (", insight::format_bf(orig_bf, protect_ratio = protect_ratio, exact = exact), ")")
   }
+
+  # Add direction
+  interpretation[] <- paste(interpretation[], dir)
 
   interpretation[is.na(orig_bf)] <- ""
 

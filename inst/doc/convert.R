@@ -9,19 +9,20 @@ if (!all(sapply(pkgs, require, quietly = TRUE, character.only = TRUE))) {
   knitr::opts_chunk$set(eval = FALSE)
 }
 
-## ---- echo=FALSE--------------------------------------------------------------
+## -----------------------------------------------------------------------------
 set.seed(1)
 data <- bayestestR::simulate_difference(n = 10,
                                         d = 0.2,
                                         names = c("Group", "Outcome"))
-data$Group <- as.numeric(data$Group)
+
+## ---- echo=FALSE--------------------------------------------------------------
 print(data, digits = 3)
 
 ## -----------------------------------------------------------------------------
 cohens_d(Outcome ~ Group, data = data)
 
-## -----------------------------------------------------------------------------
-correlation::correlation(data)
+## ---- warning=FALSE-----------------------------------------------------------
+correlation::correlation(data)[2,]
 
 ## -----------------------------------------------------------------------------
 d_to_r(-0.31)

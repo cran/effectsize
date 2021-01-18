@@ -11,13 +11,11 @@
 #' @seealso [cohens_d()]
 #'
 #' @export
-sd_pooled <- function(x, y = NULL, data = NULL) {
+sd_pooled <- function(x, y = NULL, data = NULL, verbose = TRUE) {
 
   # This actually works, you must see if you want to keep this code. If you do,
   # following will work:
-  # sd_pooled(Sepal.Length, Petal.Width, data = iris)
-  # sd_pooled("Sepal.Length", "Petal.Width", data = iris)
-  # sd_pooled(iris$Sepal.Length, iris$Petal.Width)
+  # sd_pooled(mpg, hp, data = mtcars)
   # sd_pooled(x, y) # called from a different function, like cohens_d()
 
   # needs modification in in ".sd_pooled()" as well...
@@ -35,15 +33,15 @@ sd_pooled <- function(x, y = NULL, data = NULL) {
   # else
   #   y <- y1
 
-  .sd_pooled(x, y, data, robust = FALSE)
+  .sd_pooled(x, y, data, robust = FALSE, verbose = verbose)
 }
 
 
 
 #' @rdname sd_pooled
 #' @export
-mad_pooled <- function(x, y = NULL, data = NULL) {
-  .sd_pooled(x, y, data, robust = TRUE)
+mad_pooled <- function(x, y = NULL, data = NULL, verbose = TRUE) {
+  .sd_pooled(x, y, data, robust = TRUE, verbose = verbose)
 }
 
 
@@ -54,14 +52,14 @@ mad_pooled <- function(x, y = NULL, data = NULL) {
 
 
 #' @importFrom stats mad sd as.formula
-.sd_pooled <- function(x, y = NULL, data = NULL, robust = FALSE) {
+.sd_pooled <- function(x, y = NULL, data = NULL, robust = FALSE, verbose = TRUE) {
 
   # Activate here for evaluation of arguments...
 
   # eval_args <- .evaluate_arguments(x, y, data)
   # out <- .deal_with_cohens_d_arguments(eval_args$x, eval_args$y, eval_args$data)
 
-  out <- .deal_with_cohens_d_arguments(x, y, data)
+  out <- .deal_with_cohens_d_arguments(x, y, data, verbose)
   x <- na.omit(out$x)
   y <- na.omit(out$y)
 

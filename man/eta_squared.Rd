@@ -9,19 +9,35 @@
 \alias{eta_squared_posterior}
 \title{Effect size for ANOVA}
 \usage{
-eta_squared(model, partial = TRUE, generalized = FALSE, ci = 0.9, ...)
+eta_squared(
+  model,
+  partial = TRUE,
+  generalized = FALSE,
+  ci = 0.9,
+  verbose = TRUE,
+  ...
+)
 
-omega_squared(model, partial = TRUE, ci = 0.9, ...)
+omega_squared(model, partial = TRUE, ci = 0.9, verbose = TRUE, ...)
 
-epsilon_squared(model, partial = TRUE, ci = 0.9, ...)
+epsilon_squared(model, partial = TRUE, ci = 0.9, verbose = TRUE, ...)
 
-cohens_f(model, partial = TRUE, ci = 0.9, squared = FALSE, model2 = NULL, ...)
+cohens_f(
+  model,
+  partial = TRUE,
+  ci = 0.9,
+  squared = FALSE,
+  verbose = TRUE,
+  model2 = NULL,
+  ...
+)
 
 cohens_f_squared(
   model,
   partial = TRUE,
   ci = 0.9,
   squared = TRUE,
+  verbose = TRUE,
   model2 = NULL,
   ...
 )
@@ -45,10 +61,12 @@ eta_squared_posterior(
 variables are manipulated. Can also be a character vector of observed
 (non-manipulated) variables, in which case generalized Eta Squared is
 calculated taking these observed variables into account. For \code{afex_aov}
-model, \code{generalized = TRUE}, the observed variables are extracted
+model, when \code{generalized = TRUE}, the observed variables are extracted
 automatically from the fitted model, if they were provided then.}
 
 \item{ci}{Confidence Interval (CI) level}
+
+\item{verbose}{Toggle warnings and messages on or off.}
 
 \item{...}{For Bayesian models, passed to \code{ss_function}. Otherwise ignored.}
 
@@ -64,11 +82,11 @@ for simple linear models.}
 \item{draws}{For Bayesian models, an integer indicating the number of draws
 from the posterior predictive distribution to return. Larger numbers take
 longer to run, but provide estimates that are more stable.}
-
-\item{verbose}{Show messages / warning about centering.}
 }
 \value{
-A data frame with the effect size(s) and confidence interval(s).
+A data frame with the effect size(s) between 0-1 (\code{Eta2}, \code{Epsilon2},
+\code{Omega2}, \code{Cohens_f} or \code{Cohens_f2}, possibly with the \code{partial} or
+\code{generalized} suffix), and their CIs (\code{CI_low} and \code{CI_high}).
 \cr\cr
 For \code{eta_squared_posterior()}, a data frame containing the ppd of the Eta
 squared for each fixed effect, which can then be passed to
@@ -116,6 +134,10 @@ which to choose?
 Though Omega is the more popular choice (Albers \& Lakens, 2018), Epsilon is
 analogous to adjusted R2 (Allen, 2017, p. 382), and has been found to be less
 biased (Carroll & Nordholm, 1975).
+\cr\cr
+(Note that for \eqn{\omega_p^2} and \eqn{\epsilon_p^2} it is possible to
+compute a negative number; even though this doesn't make any practical sense,
+it is recommended to report the negative number and not a 0.)
 }
 
 \subsection{Cohen's f}{
@@ -125,8 +147,8 @@ equal, and an indefinitely large number as standard deviation of means
 increases relative to the average standard deviation within each group.
 \cr\cr
 When comparing two models in a sequential regression analysis, Cohen's f for
-R-square change is the ratio between ratio between the increase in R-square
-and the \\% unexplained variance.
+R-square change is the ratio between the increase in R-square
+and the percent of unexplained variance.
 \cr\cr
 Cohen has suggested that the values of 0.10, 0.25, and 0.40 represent small,
 medium, and large effect sizes, respectively.
@@ -144,18 +166,27 @@ more info.
 }
 }
 \section{Confidence Intervals}{
-Confidence intervals are estimated using the Noncentrality parameter method;
-These methods searches for a the best non-central parameters (\code{ncp}s) of the
-noncentral t-, F- or Chi-squared distribution for the desired
-tail-probabilities, and then convert these \code{ncp}s to the corresponding effect
-sizes.
+
+Unless stated otherwise, confidence intervals are estimated using the
+Noncentrality parameter method; These methods searches for a the best
+non-central parameters (\code{ncp}s) of the noncentral t-, F- or Chi-squared
+distribution for the desired tail-probabilities, and then convert these
+\code{ncp}s to the corresponding effect sizes. (See full \link{effectsize-CIs} for
+more.)
 }
 
 \section{CI Contains Zero}{
 
-Special care should be taken when interpreting CIs with a lower bound equal
-to (or small then) 0, and even more care should be taken when the \emph{upper}
-bound is equal to (or small then) 0 (Steiger, 2004; Morey et al., 2016).
+For positive only effect sizes (Eta squared, Cramer's V, etc.; Effect sizes
+associated with Chi-squared and F distributions), special care should be
+taken when interpreting CIs with a lower bound equal to 0, and even more care
+should be taken when the \emph{upper} bound is equal to 0 (Steiger, 2004; Morey et
+al., 2016). For example:\if{html}{\out{<div class="r">}}\preformatted{eta_squared(aov(mpg ~ factor(gear) + factor(cyl), mtcars[1:7, ]))
+}\if{html}{\out{</div>}}\preformatted{## Parameter    | Eta2 (partial) |       90\% CI
+## --------------------------------------------
+## factor(gear) |           0.58 | [0.00, 0.84]
+## factor(cyl)  |           0.46 | [0.00, 0.78]
+}
 }
 
 \examples{
@@ -222,6 +253,7 @@ if (require(lmerTest, quietly = TRUE)) {
 
 ## Bayesian Models (PPD)
 ## ---------------------
+\dontrun{
 if (require(rstanarm) && require(bayestestR) && require(car)) {
   fit_bayes <- stan_glm(mpg ~ factor(cyl) * wt + qsec,
     data = mtcars,
@@ -243,6 +275,7 @@ if (require(rstanarm) && require(bayestestR) && require(car)) {
   eta_squared(aov_table)
 }
 }
+}
 
 }
 \references{
@@ -251,7 +284,6 @@ if (require(rstanarm) && require(bayestestR) && require(car)) {
 \item Allen, R. (2017). Statistics and Experimental Design for Psychologists: A Model Comparison Approach. World Scientific Publishing Company.
 \item Carroll, R. M., & Nordholm, L. A. (1975). Sampling Characteristics of Kelley's epsilon and Hays' omega. Educational and Psychological Measurement, 35(3), 541-554.
 \item Kelley, T. (1935) An unbiased correlation ratio measure. Proceedings of the National Academy of Sciences. 21(9). 554-559.
-\item Morey, R. D., Hoekstra, R., Rouder, J. N., Lee, M. D., & Wagenmakers, E. J. (2016). The fallacy of placing confidence in confidence intervals. Psychonomic bulletin & review, 23(1), 103-123.
 \item Olejnik, S., & Algina, J. (2003). Generalized eta and omega squared statistics: measures of effect size for some common research designs. Psychological methods, 8(4), 434.
 \item Steiger, J. H. (2004). Beyond the F test: Effect size confidence intervals and tests of close fit in the analysis of variance and contrast analysis. Psychological Methods, 9, 164-182.
 }
@@ -263,6 +295,7 @@ Other effect size indices:
 \code{\link{cohens_d}()},
 \code{\link{effectsize}()},
 \code{\link{phi}()},
+\code{\link{rank_biserial}()},
 \code{\link{standardize_parameters}()}
 }
 \concept{effect size indices}

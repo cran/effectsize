@@ -7,7 +7,7 @@ options(digits = 2)
 options(knitr.kable.NA = '')
 
 pkgs <- c("effectsize", "parameters", "correlation")
-if (!all(sapply(pkgs, requireNamespace))) {
+if (!all(sapply(pkgs, requireNamespace, quietly = TRUE))) {
   knitr::opts_chunk$set(eval = FALSE)
 }
 
@@ -16,16 +16,14 @@ set.seed(333)
 ## -----------------------------------------------------------------------------
 library(effectsize)
 
-m <- lm(Sepal.Length ~ Petal.Length, data = iris)
+m <- lm(rating ~ complaints, data = attitude)
 
 standardize_parameters(m)
 
 ## -----------------------------------------------------------------------------
-library(parameters)
+r <- cor.test(attitude$rating, attitude$complaints)
 
-r <- cor.test(iris$Sepal.Length, iris$Petal.Length)
-
-model_parameters(r)
+effectsize(r)
 
 ## ----include=FALSE------------------------------------------------------------
 mtcars <- datasets::mtcars
@@ -71,7 +69,7 @@ mod <- lm(salary ~ xtra_hours + n_comps + age + seniority,
 standardize_parameters(mod)
 
 ## -----------------------------------------------------------------------------
-params <- model_parameters(mod)
+params <- parameters::model_parameters(mod)
 
 t_to_r(params$t[-1], df_error = params$df_error[-1])
 
@@ -82,7 +80,7 @@ hardlyworking$age_g <- cut(hardlyworking$age,
 mod <- lm(salary ~ xtra_hours + n_comps + age_g + seniority,
           data = hardlyworking)
 
-model_parameters(mod)
+parameters::model_parameters(mod)
 
 ## -----------------------------------------------------------------------------
 standardize_parameters(mod, method = "refit")
@@ -97,7 +95,7 @@ standardize_parameters(mod, method = "refit", two_sd = TRUE)
 mod_z <- standardize(mod, two_sd = FALSE, robust = FALSE)
 mod_z
 
-model_parameters(mod_z)
+parameters::model_parameters(mod_z)
 
 ## -----------------------------------------------------------------------------
 standardize_parameters(mod, method = "posthoc")
@@ -109,8 +107,7 @@ standardize_parameters(mod, method = "smart")
 standardize_parameters(mod, method = "basic")
 
 ## ---- eval=knitr::opts_chunk$get("eval") && require(lme4) && require(lmerTest)----
-library(lme4)
-m <- lmer(mpg ~ cyl + am + vs + (1|cyl), mtcars)
+m <- lme4::lmer(mpg ~ cyl + am + vs + (1|cyl), mtcars)
 
 standardize_parameters(m, method = "pseudo", df_method = "satterthwaite")
 

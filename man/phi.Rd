@@ -6,6 +6,7 @@
 \alias{cramers_v}
 \alias{oddsratio}
 \alias{riskratio}
+\alias{cohens_h}
 \alias{cohens_g}
 \title{Effect size for contingency tables}
 \usage{
@@ -18,6 +19,8 @@ cramers_v(x, y = NULL, ci = 0.95, adjust = FALSE, CI, ...)
 oddsratio(x, y = NULL, ci = 0.95, log = FALSE, ...)
 
 riskratio(x, y = NULL, ci = 0.95, log = FALSE, ...)
+
+cohens_h(x, y = NULL, ci = 0.95, ...)
 
 cohens_g(x, y = NULL, ci = 0.95, ...)
 }
@@ -40,11 +43,14 @@ for \code{cohens_g()}.}
 \item{log}{Take in or output the log of the ratio (such as in logistic models).}
 }
 \value{
-A data frame with the effect size(s), and confidence interval(s).
+A data frame with the effect size (\code{Cramers_v}, \code{phi} (possibly with
+the suffix \verb{_adjusted}), \code{Odds_ratio}, \code{Risk_ratio} (possibly with the
+prefix \code{log_}), \code{Cohens_h}, or \code{Cohens_g}) and its CIs (\code{CI_low} and
+\code{CI_high}).
 }
 \description{
 Compute Cramer's \emph{V}, phi (\eqn{\phi}), Cohen's \emph{w} (an alias of phi), Odds
-ratios, Risk ratios and Cohen's \emph{g} for contingency tables or
+ratios, Risk ratios, Cohen's \emph{h} and Cohen's \emph{g} for contingency tables or
 goodness-of-fit. See details.
 }
 \details{
@@ -55,41 +61,52 @@ two dichotomous variables, ranging between  0 (no dependence) and 1 (perfect
 dependence). For larger tables, Cramer's \emph{V} should be used, as it is bounded
 between 0-1, whereas phi can be larger than 1.
 \cr\cr
-For 2-by-2 contingency tables, Odds ratios and Risk ratios can also be
-estimated. Note that these are computed with each \strong{column} representing the
-different groups, and the first column representing the baseline (or
-control). If you wish you use rows as groups you must pass a transposed
-table, or switch the \code{x} and \code{y} arguments.
+For 2-by-2 contingency tables, Odds ratios, Risk ratios and Cohen's \emph{h} can
+also be estimated. Note that these are computed with each \strong{column}
+representing the different groups, and the first column representing the
+treatment group and the second column baseline (or control). Effects are
+given as \code{treatment / control}. If you wish you use rows as groups you must
+pass a transposed table, or switch the \code{x} and \code{y} arguments.
 \cr\cr
 Cohen's \emph{g} is an effect size for dependent (paired) contingency tables
 ranging between 0 (perfect symmetry) and 0.5 (perfect asymmetry) (see
 \code{\link[stats:mcnemar.test]{stats::mcnemar.test()}}).
 }
-\section{Confidence Intervals for g, OR and RR}{
+\section{Confidence Intervals for Cohen's g, OR, RR and Cohen's h}{
 For Cohen's \emph{g}, confidence intervals are based on the proportion (\eqn{P = g
 + 0.5}) confidence intervals returned by \code{\link[stats:prop.test]{stats::prop.test()}} (minus 0.5),
 which give a good close approximation.
 \cr\cr
-For Odds ratios and Risk ratios, confidence intervals are estimated using the
-standard parametric method (see Katz et al., 1978; Szumilas, 2010).
+For Odds ratios, Risk ratios and Cohen's \emph{h}, confidence intervals are
+estimated using the standard normal parametric method (see Katz et al., 1978;
+Szumilas, 2010).
 \cr\cr
 See \emph{Confidence Intervals} and \emph{CI Contains Zero} sections for \emph{phi}, Cohen's
 \emph{w} and Cramer's \emph{V}.
 }
 
 \section{Confidence Intervals}{
-Confidence intervals are estimated using the Noncentrality parameter method;
-These methods searches for a the best non-central parameters (\code{ncp}s) of the
-noncentral t-, F- or Chi-squared distribution for the desired
-tail-probabilities, and then convert these \code{ncp}s to the corresponding effect
-sizes.
+
+Unless stated otherwise, confidence intervals are estimated using the
+Noncentrality parameter method; These methods searches for a the best
+non-central parameters (\code{ncp}s) of the noncentral t-, F- or Chi-squared
+distribution for the desired tail-probabilities, and then convert these
+\code{ncp}s to the corresponding effect sizes. (See full \link{effectsize-CIs} for
+more.)
 }
 
 \section{CI Contains Zero}{
 
-Special care should be taken when interpreting CIs with a lower bound equal
-to (or small then) 0, and even more care should be taken when the \emph{upper}
-bound is equal to (or small then) 0 (Steiger, 2004; Morey et al., 2016).
+For positive only effect sizes (Eta squared, Cramer's V, etc.; Effect sizes
+associated with Chi-squared and F distributions), special care should be
+taken when interpreting CIs with a lower bound equal to 0, and even more care
+should be taken when the \emph{upper} bound is equal to 0 (Steiger, 2004; Morey et
+al., 2016). For example:\if{html}{\out{<div class="r">}}\preformatted{eta_squared(aov(mpg ~ factor(gear) + factor(cyl), mtcars[1:7, ]))
+}\if{html}{\out{</div>}}\preformatted{## Parameter    | Eta2 (partial) |       90\% CI
+## --------------------------------------------
+## factor(gear) |           0.58 | [0.00, 0.84]
+## factor(cyl)  |           0.46 | [0.00, 0.78]
+}
 }
 
 \examples{
@@ -112,19 +129,19 @@ cramers_v(M)
 
 ## 2-by-2 tables
 ## -------------
-RCT <- rbind(
-  c(30, 71),
-  c(100, 50)
-)
-dimnames(RCT) <- list(
-  Diagnosis = c("Sick", "Recovered"),
-  Group = c("Control", "Treatment")
-)
-RCT # note groups are COLUMNS
+(RCT <- matrix(
+  c(71,  30,
+    50, 100),
+  nrow = 2, byrow = TRUE,
+  dimnames = list(Diagnosis = c("Sick", "Recovered"),
+                  Group = c("Treatment", "Control"))
+)) # note groups are COLUMNS
 
 oddsratio(RCT)
 
 riskratio(RCT)
+
+cohens_h(RCT)
 
 
 
@@ -144,7 +161,7 @@ cohens_g(Performance)
 }
 \references{
 \itemize{
-\item Cohen, J. (1988). Statistical power analysis for the behavioural sciences.
+\item Cohen, J. (1988). Statistical power analysis for the behavioral sciences (2nd Ed.). New York: Routledge.
 \item Katz, D. J. S. M., Baptista, J., Azen, S. P., & Pike, M. C. (1978). Obtaining confidence intervals for the risk ratio in cohort studies. Biometrics, 469-474.
 \item Szumilas, M. (2010). Explaining odds ratios. Journal of the Canadian academy of child and adolescent psychiatry, 19(3), 227.
 }
@@ -156,6 +173,7 @@ Other effect size indices:
 \code{\link{cohens_d}()},
 \code{\link{effectsize}()},
 \code{\link{eta_squared}()},
+\code{\link{rank_biserial}()},
 \code{\link{standardize_parameters}()}
 }
 \concept{effect size indices}

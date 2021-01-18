@@ -16,6 +16,9 @@ riskratio_to_oddsratio(RR, p0, log = FALSE)
 
 \item{log}{Take in or output the log of the ratio (such as in logistic models).}
 }
+\value{
+Converted index.
+}
 \description{
 Convert between Odds ratios and Risk ratios
 }
@@ -36,6 +39,7 @@ Grant, R. L. (2014). Converting an odds ratio to a range of plausible relative r
 Other convert between effect sizes: 
 \code{\link{d_to_common_language}()},
 \code{\link{d_to_r}()},
+\code{\link{eta2_to_f2}()},
 \code{\link{odds_to_probs}()}
 }
 \concept{convert between effect sizes}
