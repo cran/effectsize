@@ -4,7 +4,7 @@ library(effectsize)
 
 knitr::opts_chunk$set(comment = ">")
 options(digits = 2)
-options(knitr.kable.NA = '')
+options(knitr.kable.NA = "")
 
 pkgs <- c("effectsize", "afex", "lmerTest", "emmeans", "parameters")
 if (!all(sapply(pkgs, requireNamespace, quietly = TRUE))) {
@@ -23,9 +23,10 @@ library(afex)
 
 data(md_12.1)
 
-aov_fit <- aov_car(rt ~ angle * noise + Error(id/(angle * noise)),
-                   data = md_12.1,
-                   anova_table=list(correction = "none", es = "pes"))
+aov_fit <- aov_car(rt ~ angle * noise + Error(id / (angle * noise)),
+  data = md_12.1,
+  anova_table = list(correction = "none", es = "pes")
+)
 aov_fit
 
 ## -----------------------------------------------------------------------------
@@ -42,15 +43,19 @@ library(emmeans)
 
 joint_tests(aov_fit, by = "noise")
 
-F_to_eta2(f = c(5, 79),
-          df = 2,
-          df_error = 29)
+F_to_eta2(
+  f = c(5, 79),
+  df = 2,
+  df_error = 29
+)
 
 ## -----------------------------------------------------------------------------
-pairs(emmeans(aov_fit, ~ angle))
+pairs(emmeans(aov_fit, ~angle))
 
-t_to_eta2(t = c(-5.7, -8.9, -3.2),
-          df_error = 18)
+t_to_eta2(
+  t = c(-5.7, -8.9, -3.2),
+  df_error = 18
+)
 
 ## -----------------------------------------------------------------------------
 library(lmerTest)
@@ -78,40 +83,47 @@ t_to_r(6.77, df_error = 17)
 
 ## -----------------------------------------------------------------------------
 
-fit_lm <- lm(rating  ~ complaints + critical, data = attitude)
+fit_lm <- lm(rating ~ complaints + critical, data = attitude)
 
 parameters::model_parameters(fit_lm)
 
-t_to_r(t = c(7.46, 0.01),
-       df_error = 27)
+t_to_r(
+  t = c(7.46, 0.01),
+  df_error = 27
+)
 
 ## ---- eval=require(correlation, quietly = TRUE)-------------------------------
-correlation::correlation(attitude[, c(1, 2, 6)], partial = TRUE)[1:2, c(2, 3,  7, 8)]
+correlation::correlation(attitude[, c(1, 2, 6)], partial = TRUE)[1:2, c(2, 3, 7, 8)]
 
 ## -----------------------------------------------------------------------------
-pairs(emmeans(aov_fit, ~ angle))
+pairs(emmeans(aov_fit, ~angle))
 
-t_to_r(t = c(-5.7, -8.9, -3.2),
-       df_error = 18)
+t_to_r(
+  t = c(-5.7, -8.9, -3.2),
+  df_error = 18
+)
 
 ## -----------------------------------------------------------------------------
 m <- lm(breaks ~ tension, data = warpbreaks)
 
-em_tension <- emmeans(m, ~ tension)
+em_tension <- emmeans(m, ~tension)
 pairs(em_tension)
 
-t_to_d(t = c(2.53, 3.72, 1.20),
-       df_error = 51)
+t_to_d(
+  t = c(2.53, 3.72, 1.20),
+  df_error = 51
+)
 
 ## -----------------------------------------------------------------------------
 eff_size(em_tension, sigma = sigma(m), edf = df.residual(m))
 
 ## -----------------------------------------------------------------------------
 
-pairs(emmeans(aov_fit, ~ angle))
+pairs(emmeans(aov_fit, ~angle))
 
-t_to_d(t = c(-5.7,-5.9,-3.2),
-       df_error = 18,
-       paired = TRUE)
-
+t_to_d(
+  t = c(-5.7, -5.9, -3.2),
+  df_error = 18,
+  paired = TRUE
+)
 

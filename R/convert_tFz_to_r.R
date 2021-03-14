@@ -1,6 +1,7 @@
 # t -----------------------------------------------------------------------
 
-#' Convert test statistics (t, z, F) to effect sizes of differences (Cohen's d) or association (**partial** r)
+#' Convert test statistics (t, z, F) to effect sizes of differences (Cohen's d)
+#' or association (**partial** r)
 #'
 #' These functions are convenience functions to convert t, z and F test
 #' statistics to Cohen's d and **partial** r. These are useful in cases where
@@ -14,8 +15,8 @@
 #' @param df,df_error Degrees of freedom of numerator or of the error estimate
 #'   (i.e., the residuals).
 #' @param n The number of observations (the sample size).
-#' @param paired Should the estimate accout for the t-value being testing the
-#'   difference between dependant means?
+#' @param paired Should the estimate account for the t-value being testing the
+#'   difference between dependent means?
 #' @param pooled Deprecated. Use `paired`.
 #' @inheritParams chisq_to_phi
 #' @param ... Arguments passed to or from other methods.
@@ -39,7 +40,7 @@
 #'
 #' The resulting `d` effect size is an *approximation* to Cohen's *d*, and
 #' assumes two equal group sizes. When possible, it is advised to directly
-#' estimate Cohen's *d*, with [cohens_d()], [emmeans::eff_size()], or similar
+#' estimate Cohen's *d*, with [cohens_d()], `emmeans::eff_size()`, or similar
 #' functions.
 #'
 #' @inheritSection cohens_d Confidence Intervals
@@ -57,7 +58,7 @@
 #' t_to_r(t = res$statistic, res$parameter)
 #' \donttest{
 #' ## Linear Regression
-#' model <- lm(rating  ~ complaints + critical, data = attitude)
+#' model <- lm(rating ~ complaints + critical, data = attitude)
 #' library(parameters)
 #' (param_tab <- parameters(model))
 #'
@@ -83,16 +84,30 @@
 #' }
 #'
 #' @references
-#' - Friedman, H. (1982). Simplified determinations of statistical power, magnitude of effect and research sample sizes. Educational and Psychological Measurement, 42(2), 521-526. \doi{10.1177/001316448204200214}
-#' - Wolf, F. M. (1986). Meta-analysis: Quantitative methods for research synthesis (Vol. 59). Sage.
-#' - Rosenthal, R. (1994) Parametric measures of effect size. In H. Cooper and L.V. Hedges (Eds.). The handbook of research synthesis. New York: Russell Sage Foundation.
-#' - Steiger, J. H. (2004). Beyond the F test: Effect size confidence intervals and tests of close fit in the analysis of variance and contrast analysis. Psychological Methods, 9, 164-182.
-#' - Cumming, G., & Finch, S. (2001). A primer on the understanding, use, and calculation of confidence intervals that are based on central and noncentral distributions. Educational and Psychological Measurement, 61(4), 532-574.
+#' - Friedman, H. (1982). Simplified determinations of statistical power,
+#' magnitude of effect and research sample sizes. Educational and Psychological
+#' Measurement, 42(2), 521-526. \doi{10.1177/001316448204200214}
+#'
+#' - Wolf, F. M. (1986). Meta-analysis: Quantitative methods for research
+#' synthesis (Vol. 59). Sage.
+#'
+#' - Rosenthal, R. (1994) Parametric measures of effect size. In H. Cooper and
+#' L.V. Hedges (Eds.). The handbook of research synthesis. New York: Russell
+#' Sage Foundation.
+#'
+#' - Steiger, J. H. (2004). Beyond the F test: Effect size confidence intervals
+#' and tests of close fit in the analysis of variance and contrast analysis.
+#' Psychological Methods, 9, 164-182.
+#'
+#' - Cumming, G., & Finch, S. (2001). A primer on the understanding, use, and
+#' calculation of confidence intervals that are based on central and noncentral
+#' distributions. Educational and Psychological Measurement, 61(4), 532-574.
 #'
 #' @export
 t_to_r <- function(t, df_error, ci = 0.95, ...) {
   res <- data.frame(r = t / sqrt(t^2 + df_error))
 
+  ci_method <- NULL
   if (is.numeric(ci)) {
     stopifnot(length(ci) == 1, ci < 1, ci > 0)
     res$CI <- ci
@@ -104,9 +119,13 @@ t_to_r <- function(t, df_error, ci = 0.95, ...) {
 
     res$CI_low <- ts[, 1] / sqrt(ts[, 1]^2 + df_error)
     res$CI_high <- ts[, 2] / sqrt(ts[, 2]^2 + df_error)
+
+    ci_method <- list(method = "ncp", distribution = "t")
   }
 
   class(res) <- c("effectsize_table", "see_effectsize_table", class(res))
+  attr(res, "ci") <- ci
+  attr(res, "ci_method") <- ci_method
   return(res)
 }
 
@@ -120,6 +139,7 @@ t_to_r <- function(t, df_error, ci = 0.95, ...) {
 z_to_r <- function(z, n, ci = 0.95, ...) {
   res <- data.frame(r = z / sqrt(z^2 + n))
 
+  ci_method <- NULL
   if (is.numeric(ci)) {
     stopifnot(length(ci) == 1, ci < 1, ci > 0)
     res$CI <- ci
@@ -132,9 +152,13 @@ z_to_r <- function(z, n, ci = 0.95, ...) {
 
     res$CI_low <- zs[, 1] / sqrt(zs[, 1]^2 + n)
     res$CI_high <- zs[, 2] / sqrt(zs[, 2]^2 + n)
+
+    ci_method <- list(method = "normal")
   }
 
   class(res) <- c("effectsize_table", "see_effectsize_table", class(res))
+  attr(res, "ci") <- ci
+  attr(res, "ci_method") <- ci_method
   return(res)
 }
 

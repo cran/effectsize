@@ -28,6 +28,11 @@
 #' The `robust` (default to `FALSE`) argument enables a robust standardization
 #' of data, i.e., based on the `median` and `MAD` instead of the `mean` and
 #' `SD`. **See [standardize()] for more details.**
+#'   - **Note** that `standardize_parameters(method = "refit")` may not return
+#'   the same results as fitting a model on data that has been standardized with
+#'   `standardize()`; `standardize_parameters()` used the data used by the model
+#'   fitting function, which might not be same data if there are missing values.
+#'   see the `remove_na` argument in `standardize()`.
 #' - **posthoc**: Post-hoc standardization of the parameters, aiming at
 #' emulating the results obtained by "refit" without refitting the model. The
 #' coefficients are divided by the standard deviation (or MAD if `robust`) of
@@ -73,6 +78,12 @@
 #' standardizes the transformed data (e.g. equivalent to `scale(exp(X))`). See
 #' [standardize()] for more details on how different transformations are dealt
 #' with.
+#'
+#' # Confidence Intervals
+#'
+#' The returned confidence intervals are re-scaled versions of the
+#' unstandardized confidence intervals, and not "true" confidence intervals of
+#' the standardized coefficients (cf. Jones & Waller, 2015).
 #'
 #' # Generalized Linear Models
 #' When standardizing coefficients of a generalized model (GLM, GLMM, etc), only
@@ -130,6 +141,7 @@
 #'
 #' @references
 #' - Hoffman, L. (2015). Longitudinal analysis: Modeling within-person fluctuation and change. Routledge.
+#' - Jones, J. A., & Waller, N. G. (2015). The normal-theory and asymptotic distribution-free (ADF) covariance matrix of standardized regression coefficients: theoretical extensions and finite sample behavior. Psychometrika, 80(2), 365-378.
 #' - Neter, J., Wasserman, W., & Kutner, M. H. (1989). Applied linear regression models.
 #' - Gelman, A. (2008). Scaling regression inputs by dividing by two standard deviations. Statistics in medicine, 27(15), 2865-2873.
 #'
@@ -148,7 +160,7 @@ standardize_parameters <- function(model, method = "refit", ci = 0.95, robust = 
 #' @importFrom parameters model_parameters
 #' @importFrom insight model_info
 #' @export
-standardize_parameters.default <- function(model, method = "refit", ci = 0.95, robust = FALSE, two_sd = FALSE, verbose = TRUE, parameters, ...) {
+standardize_parameters.default <- function(model, method = "refit", ci = 0.95, robust = FALSE, two_sd = FALSE, verbose = TRUE, ...) {
   object_name <- deparse(substitute(model), width.cutoff = 500)
   method <- match.arg(method, c("refit", "posthoc", "smart", "basic", "classic", "pseudo"))
 
@@ -202,12 +214,13 @@ standardize_parameters.default <- function(model, method = "refit", ci = 0.95, r
   attr(pars, "two_sd") <- two_sd
   attr(pars, "robust") <- robust
   attr(pars, "object_name") <- object_name
+  attr(pars, "ci") <- ci
   class(pars) <- c("effectsize_std_params", "effectsize_table", "see_effectsize_table", "data.frame")
   return(pars)
 }
 
 #' @export
-standardize_parameters.parameters_model <- function(model, method = "refit", ci = NULL, robust = FALSE, two_sd = FALSE, verbose = TRUE, parameters, ...) {
+standardize_parameters.parameters_model <- function(model, method = "refit", ci = NULL, robust = FALSE, two_sd = FALSE, verbose = TRUE, ...) {
   if (method == "refit") {
     stop("Method 'refit' not supported for 'model_parameters()", call. = TRUE)
   }
@@ -243,33 +256,89 @@ standardize_parameters.parameters_model <- function(model, method = "refit", ci 
   attr(pars, "std_method") <- method
   attr(pars, "two_sd") <- two_sd
   attr(pars, "robust") <- robust
+  attr(pars, "ci") <- ci
   class(pars) <- c("effectsize_std_params", "effectsize_table", "see_effectsize_table", "data.frame")
   return(pars)
 }
+
+#' @export
+standardize_parameters.bootstrap_model <-
+  function(model,
+           method = "refit",
+           ci = 0.95,
+           robust = FALSE,
+           two_sd = FALSE,
+           verbose = TRUE,
+           ...) {
+    object_name <- deparse(substitute(model), width.cutoff = 500)
+    method <- match.arg(method, c("refit", "posthoc", "smart", "basic", "classic", "pseudo"))
+
+    pars <- model
+    model <- attr(pars, "original_model")
+
+    if (method == "refit") {
+      stop("The 'refit' method is not supported for bootstrapped models.")
+      ## But it would look something like this:
+      # model <- standardize(model, robust = robust, two_sd = two_sd, verbose = verbose)
+      # model <- parameters::bootstrap_model(model, iterations = 1000, verbose = verbose)
+      # return(model)
+    }
+    mi <- insight::model_info(model)
+
+    # need model_parameters to return the parameters, not the terms
+    if (inherits(model, "aov")) class(model) <- class(model)[class(model) != "aov"]
+
+
+    if (method %in% c("posthoc", "smart", "basic", "classic", "pseudo")) {
+      pars <- .standardize_posteriors_posthoc(pars, method, model, robust, two_sd, verbose)
+
+      method <- attr(pars, "std_method")
+      robust <- attr(pars, "robust")
+    }
+
+    pars <- bayestestR::describe_posterior(pars, centrality = "median",
+                                           ci = ci, ci_method = "quantile",
+                                           test = NULL)
+    names(pars)[names(pars) == "Median"] <- "Std_Coefficient"
+
+
+    attr(pars, "std_method") <- method
+    attr(pars, "two_sd") <- two_sd
+    attr(pars, "robust") <- robust
+    attr(pars, "object_name") <- object_name
+    attr(pars, "ci") <- ci
+    class(pars) <- c("effectsize_std_params", "effectsize_table", "see_effectsize_table", "data.frame")
+    return(pars)
+  }
+
+#' @export
+standardize_parameters.bootstrap_parameters <-
+  function(model,
+           method = "refit",
+           ci = 0.95,
+           robust = FALSE,
+           two_sd = FALSE,
+           verbose = TRUE,
+           ...) {
+
+    standardize_parameters(attr(model, "boot_samples"),
+                           method = method,
+                           ci = ci,
+                           robust = robust,
+                           two_sd = two_sd,
+                           verbose = verbose,
+                           ...)
+  }
+
+
 
 #' @keywords internal
 #' @importFrom insight model_info find_random
 .standardize_parameters_posthoc <- function(pars, method, model, robust, two_sd, exponentiate, verbose) {
   # Sanity Check for "pseudo"
-  if (method == "pseudo" &&
-    !(insight::model_info(model)$is_mixed &&
-      length(insight::find_random(model)$random) == 1)) {
-    warning(
-      "'pseudo' method only available for 2-level (G)LMMs.\n",
-      "Setting method to 'basic'.",
-      call. = FALSE
-    )
-    method <- "basic"
-  }
+  method <- .should_pseudo(method, model)
 
-  if (method %in% c("smart", "posthoc") &&
-    .cant_smart_or_posthoc(model, pars$Parameter)) {
-    warning("Method '", method, "' does not currently support models with transformed parameters.",
-      "\nReverting to 'basic' method. Concider using the 'refit' method directly.",
-      call. = FALSE
-    )
-    method <- "basic"
-  }
+  method <- .cant_smart_or_posthoc(method, model, pars$Parameter)
 
   if (robust && method == "pseudo") {
     warning("'robust' standardization not available for 'pseudo' method.",
@@ -372,25 +441,9 @@ standardize_posteriors <- function(model, method = "refit", robust = FALSE, two_
 #' @importFrom insight model_info find_random
 .standardize_posteriors_posthoc <- function(pars, method, model, robust, two_sd, verbose) {
   # Sanity Check for "pseudo"
-  if (method == "pseudo" &&
-    !(insight::model_info(model)$is_mixed &&
-      length(insight::find_random(model)$random) == 1)) {
-    warning(
-      "'pseudo' method only available for 2-level (G)LMMs.\n",
-      "Setting method to 'basic'.",
-      call. = FALSE
-    )
-    method <- "basic"
-  }
+  method <- .should_pseudo(method, model)
 
-  if (method %in% c("smart", "posthoc") &&
-    .cant_smart_or_posthoc(model, colnames(pars))) {
-    warning("Method '", method, "' does not currently support models with transformed parameters.",
-      "\nReverting to 'basic' method. Concider using the 'refit' method directly.",
-      call. = FALSE
-    )
-    method <- "basic"
-  }
+  method <- .cant_smart_or_posthoc(method, model, pars$Parameter)
 
   if (robust && method == "pseudo") {
     warning("'robust' standardization not available for 'pseudo' method.",
@@ -432,23 +485,51 @@ standardize_posteriors <- function(model, method = "refit", robust = FALSE, two_
 }
 
 
+# util --------------------------------------------------------------------
+
+
 
 #' @keywords internal
-.cant_smart_or_posthoc <- function(model, params) {
-  cant_posthocsmart <- FALSE
+.cant_smart_or_posthoc <- function(method, model, params) {
+  if (method %in% c("smart", "posthoc")) {
+    cant_posthocsmart <- FALSE
 
-  if (insight::model_info(model)$is_linear) {
-    if (!colnames(model.frame(model))[1] == insight::find_response(model)) {
-      can_posthocsmart <- TRUE
+    if (insight::model_info(model)$is_linear) {
+      if (!colnames(model.frame(model))[1] == insight::find_response(model)) {
+        can_posthocsmart <- TRUE
+      }
+    }
+
+    # factors are allowed
+    if (!cant_posthocsmart &&
+        !all(params == insight::clean_names(params) |
+             grepl("(as.factor|factor)\\(", params))) {
+      cant_posthocsmart <- TRUE
+    }
+
+    if (cant_posthocsmart) {
+      warning("Method '", method, "' does not currently support models with transformed parameters.",
+              "\nReverting to 'basic' method. Concider using the 'refit' method directly.",
+              call. = FALSE
+      )
+      method <- "basic"
     }
   }
+  method
+}
 
-  # factors are allowed
-  if (!cant_posthocsmart &&
-    !all(params == insight::clean_names(params) |
-      grepl("(as.factor|factor)\\(", params))) {
-    cant_posthocsmart <- TRUE
+
+#' @keywords internal
+.should_pseudo <- function(method, model) {
+  if (method == "pseudo" &&
+      !(insight::model_info(model)$is_mixed &&
+        length(insight::find_random(model)$random) == 1)) {
+    warning(
+      "'pseudo' method only available for 2-level (G)LMMs.\n",
+      "Setting method to 'basic'.",
+      call. = FALSE
+    )
+    method <- "basic"
   }
-
-  return(cant_posthocsmart)
+  method
 }

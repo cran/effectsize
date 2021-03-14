@@ -1,5 +1,5 @@
 #' @param ss_function For Bayesian models, the function used to extract
-#'   sum-of-squares. Uses [`anova()`] by default, but can also be [car::Anova()]
+#'   sum-of-squares. Uses [`anova()`] by default, but can also be `car::Anova()`
 #'   for simple linear models.
 #' @param draws For Bayesian models, an integer indicating the number of draws
 #'   from the posterior predictive distribution to return. Larger numbers take
@@ -49,7 +49,7 @@ eta_squared_posterior.stanreg <- function(model,
     # Too hard right now.
   }
 
-  if (!isFALSE(generalized) && mo_inf$is_mixed) {
+  if ((isTRUE(generalized) || is.character(generalized)) && mo_inf$is_mixed) {
     if (verbose) {
       warning(
         "Bayesian Generalized Eta Squared not supported for mixed models.\n",
@@ -97,6 +97,8 @@ eta_squared_posterior.stanreg <- function(model,
   })
 
   res <- do.call("rbind", res)
+  attr(res, "partial") <- partial
+  attr(res, "generalized") <- generalized
   return(res)
 }
 

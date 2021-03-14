@@ -1,6 +1,6 @@
 ## ----message=FALSE, warning=FALSE, include=FALSE------------------------------
 library(knitr)
-options(knitr.kable.NA = '')
+options(knitr.kable.NA = "")
 knitr::opts_chunk$set(comment = ">")
 options(digits = 3)
 
@@ -11,9 +11,11 @@ if (!all(sapply(pkgs, require, quietly = TRUE, character.only = TRUE))) {
 
 ## -----------------------------------------------------------------------------
 set.seed(1)
-data <- bayestestR::simulate_difference(n = 10,
-                                        d = 0.2,
-                                        names = c("Group", "Outcome"))
+data <- bayestestR::simulate_difference(
+  n = 10,
+  d = 0.2,
+  names = c("Group", "Outcome")
+)
 
 ## ---- echo=FALSE--------------------------------------------------------------
 print(data, digits = 3)
@@ -22,11 +24,10 @@ print(data, digits = 3)
 cohens_d(Outcome ~ Group, data = data)
 
 ## ---- warning=FALSE-----------------------------------------------------------
-correlation::correlation(data)[2,]
+correlation::correlation(data)[2, ]
 
 ## -----------------------------------------------------------------------------
 d_to_r(-0.31)
-
 
 ## -----------------------------------------------------------------------------
 fit <- lm(mpg ~ am + hp, data = mtcars)
@@ -40,7 +41,7 @@ t_to_d(4.89, df_error = 29)[[1]]
 ## -----------------------------------------------------------------------------
 t_to_r(4.89, df_error = 29)
 
-correlation::correlation(mtcars[,c("mpg","am","hp")], partial = TRUE)[1,]
+correlation::correlation(mtcars[, c("mpg", "am", "hp")], partial = TRUE)[1, ]
 
 # all close to:
 d_to_r(1.81)
@@ -53,9 +54,10 @@ thresh <- 0
 data$Outcome_binom <- data$Outcome < thresh
 
 # 3. Fit a logistic regression:
-fit <- glm(Outcome_binom ~ Group, 
-           data = data,
-           family = binomial())
+fit <- glm(Outcome_binom ~ Group,
+  data = data,
+  family = binomial()
+)
 
 parameters::model_parameters(fit)
 

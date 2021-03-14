@@ -6,7 +6,8 @@
 #' @param chisq The Chi-squared statistic.
 #' @param phi The Phi statistic.
 #' @param n Sample size.
-#' @param nrow,ncol The number of rows/columns in the contingency table (ignored for Phi when `adjust=FALSE` and `CI=NULL`).
+#' @param nrow,ncol The number of rows/columns in the contingency table (ignored
+#'   for Phi when `adjust=FALSE` and `CI=NULL`).
 #' @param ci Confidence Interval (CI) level
 #' @param adjust Should the effect size be bias-corrected? Defaults to `FALSE`.
 #' @param ... Arguments passed to or from other methods.
@@ -50,8 +51,12 @@
 #'   ncol = ncol(contingency_table)
 #' )
 #' @references
-#' - Cumming, G., & Finch, S. (2001). A primer on the understanding, use, and calculation of confidence intervals that are based on central and noncentral distributions. Educational and Psychological Measurement, 61(4), 532-574.
-#' - Bergsma, W. (2013). A bias-correction for Cramer's V and Tschuprow's T. Journal of the Korean Statistical Society, 42(3), 323-328.
+#' - Cumming, G., & Finch, S. (2001). A primer on the understanding, use, and
+#' calculation of confidence intervals that are based on central and noncentral
+#' distributions. Educational and Psychological Measurement, 61(4), 532-574.
+#'
+#' - Bergsma, W. (2013). A bias-correction for Cramer's V and Tschuprow's T.
+#' Journal of the Korean Statistical Society, 42(3), 323-328.
 #'
 #' @export
 chisq_to_phi <- function(chisq, n, nrow, ncol, ci = 0.95, adjust = FALSE, ...) {
@@ -74,7 +79,7 @@ chisq_to_phi <- function(chisq, n, nrow, ncol, ci = 0.95, adjust = FALSE, ...) {
     res <- data.frame(phi = sqrt(chisq / n))
   }
 
-
+  ci_method <- NULL
   if (is.numeric(ci)) {
     stopifnot(length(ci) == 1, ci < 1, ci > 0)
     res$CI <- ci
@@ -90,9 +95,14 @@ chisq_to_phi <- function(chisq, n, nrow, ncol, ci = 0.95, adjust = FALSE, ...) {
       chisq_to_phi(chisqs[, 1], n, nrow, ncol, ci = NULL, adjust = FALSE)[[1]]
     res$CI_high <-
       chisq_to_phi(chisqs[, 2], n, nrow, ncol, ci = NULL, adjust = FALSE)[[1]]
+
+    ci_method <- list(method = "ncp", distribution = "chisq")
   }
 
   class(res) <- c("effectsize_table", "see_effectsize_table", class(res))
+  attr(res, "ci") <- ci
+  # attr(res, "ci_method") <- ci_method
+  attr(res, "adjust") <- adjust
   return(res)
 }
 
@@ -137,7 +147,7 @@ chisq_to_cramers_v <- function(chisq, n, nrow, ncol, ci = 0.95, adjust = FALSE, 
     res <- data.frame(Cramers_v = V)
   }
 
-
+  ci_method <- NULL
   if (is.numeric(ci)) {
     stopifnot(length(ci) == 1, ci < 1, ci > 0)
     res$CI <- ci
@@ -153,9 +163,14 @@ chisq_to_cramers_v <- function(chisq, n, nrow, ncol, ci = 0.95, adjust = FALSE, 
       chisq_to_cramers_v(chisqs[, 1], n, nrow, ncol, ci = NULL, adjust = FALSE)[[1]]
     res$CI_high <-
       chisq_to_cramers_v(chisqs[, 2], n, nrow, ncol, ci = NULL, adjust = FALSE)[[1]]
+
+    ci_method <- list(method = "ncp", distribution = "chisq")
   }
 
   class(res) <- c("effectsize_table", "see_effectsize_table", class(res))
+  attr(res, "ci") <- ci
+  # attr(res, "ci_method") <- ci_method
+  attr(res, "adjust") <- adjust
   return(res)
 }
 

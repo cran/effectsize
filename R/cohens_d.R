@@ -47,23 +47,45 @@
 #' @family effect size indices
 #'
 #' @examples
-#' cohens_d(sleep$extra, sleep$group)
-#' hedges_g("extra", "group", data = sleep)
 #'
-#' cohens_d(sleep$extra[sleep$group==1], sleep$extra[sleep$group==2], paired = TRUE)
+#' # two-sample tests -----------------------
 #'
+#' # using formula interface
 #' cohens_d(mpg ~ am, data = mtcars)
 #' cohens_d(mpg ~ am, data = mtcars, pooled_sd = FALSE)
 #' cohens_d(mpg ~ am, data = mtcars, mu = -5)
 #' hedges_g(mpg ~ am, data = mtcars)
 #' if (require(boot)) glass_delta(mpg ~ am, data = mtcars)
-#'
 #' print(cohens_d(mpg ~ am, data = mtcars), append_CL = TRUE)
+#'
+#' # other acceptable ways to specify arguments
+#' cohens_d(sleep$extra, sleep$group)
+#' hedges_g("extra", "group", data = sleep)
+#' cohens_d(sleep$extra[sleep$group == 1], sleep$extra[sleep$group == 2], paired = TRUE)
+#'
+#' # one-sample tests -----------------------
+#'
+#' cohens_d("wt", data = mtcars, mu = 3)
+#' hedges_g("wt", data = mtcars, mu = 3)
+#'
+#' # interpretation -----------------------
+#'
+#' interpret_d(0.4, rules = "cohen1988")
+#' d_to_common_language(0.4)
+#' interpret_g(0.4, rules = "sawilowsky2009")
+#' interpret_delta(0.4, rules = "gignac2016")
 #' @references
-#' - Cohen, J. (1988). Statistical power analysis for the behavioral sciences (2nd Ed.). New York: Routledge.
-#' - Hedges, L. V. & Olkin, I. (1985). Statistical methods for meta-analysis. Orlando, FL: Academic Press.
-#' - Hunter, J. E., & Schmidt, F. L. (2004). Methods of meta-analysis: Correcting error and bias in research findings. Sage.
-#' - McGrath, R. E., & Meyer, G. J. (2006). When effect sizes disagree: the case of r and d. Psychological methods, 11(4), 386.
+#' - Cohen, J. (1988). Statistical power analysis for the behavioral
+#' sciences (2nd Ed.). New York: Routledge.
+#'
+#' - Hedges, L. V. & Olkin, I. (1985). Statistical methods for
+#' meta-analysis. Orlando, FL: Academic Press.
+#'
+#' - Hunter, J. E., & Schmidt, F. L. (2004). Methods of meta-analysis:
+#' Correcting error and bias in research findings. Sage.
+#'
+#' - McGrath, R. E., & Meyer, G. J. (2006). When effect sizes disagree: the
+#' case of r and d. Psychological methods, 11(4), 386.
 #'
 #' @importFrom stats var model.frame
 #' @export
@@ -84,9 +106,15 @@ cohens_d <- function(x,
   }
 
   if (inherits(x, "htest")) {
-    if (!grepl("t-test", x$method))
+    if (!grepl("t-test", x$method)) {
       stop("'x' is not a t-test!", call. = FALSE)
+    }
     return(effectsize(x, type = "d", correction = correction, ci = ci, verbose = verbose))
+  } else if (inherits(x, "BFBayesFactor")) {
+    if (!inherits(x@numerator[[1]], c("BFoneSample", "BFindepSample"))) {
+      stop("'x' is not a t-test!", call. = FALSE)
+    }
+    return(effectsize(x, ci = ci, verbose = verbose))
   }
 
 
@@ -124,9 +152,15 @@ hedges_g <- function(x,
   }
 
   if (inherits(x, "htest")) {
-    if (!grepl("t-test", x$method))
+    if (!grepl("t-test", x$method)) {
       stop("'x' is not a t-test!", call. = FALSE)
+    }
     return(effectsize(x, type = "g", correction = correction, ci = ci, verbose = verbose))
+  } else if (inherits(x, "BFBayesFactor")) {
+    if (!inherits(x@numerator[[1]], c("BFoneSample", "BFindepSample"))) {
+      stop("'x' is not a t-test!", call. = FALSE)
+    }
+    return(effectsize(x, ci = ci, verbose = verbose))
   }
 
   .effect_size_difference(
@@ -145,7 +179,15 @@ hedges_g <- function(x,
 
 #' @rdname cohens_d
 #' @export
-glass_delta <- function(x, y = NULL, data = NULL, mu = 0, ci = 0.95, iterations = 200, verbose = TRUE, ..., correction) {
+glass_delta <- function(x,
+                        y = NULL,
+                        data = NULL,
+                        mu = 0,
+                        ci = 0.95,
+                        iterations = 200,
+                        verbose = TRUE,
+                        ...,
+                        correction) {
   if (!missing(correction)) {
     warning("`correction` argument is deprecated. To apply bias correction, use `hedges_g()`.",
       call. = FALSE, immediate. = TRUE
@@ -178,6 +220,7 @@ glass_delta <- function(x, y = NULL, data = NULL, mu = 0, ci = 0.95, iterations 
                                     paired = FALSE,
                                     ci = 0.95,
                                     verbose = TRUE,
+                                    iterations = NULL,
                                     ...) {
   out <- .deal_with_cohens_d_arguments(x, y, data, verbose)
   x <- out$x
@@ -242,6 +285,7 @@ glass_delta <- function(x, y = NULL, data = NULL, mu = 0, ci = 0.95, iterations 
   types <- c("d" = "Cohens_d", "g" = "Hedges_g", "delta" = "Glass_delta")
   colnames(out) <- types[type]
 
+  ci_method <- NULL
   if (is.numeric(ci)) {
     stopifnot(length(ci) == 1, ci < 1, ci > 0)
 
@@ -254,10 +298,13 @@ glass_delta <- function(x, y = NULL, data = NULL, mu = 0, ci = 0.95, iterations 
 
       out$CI_low <- ts[1] * sqrt(hn)
       out$CI_high <- ts[2] * sqrt(hn)
+      ci_method <- list(method = "ncp", distribution = "t")
     } else if (type == "delta") {
       if (requireNamespace("boot", quietly = TRUE)) {
         out <- cbind(out, .delta_ci(x, y, mu = mu, ci = ci, ...))
+        ci_method <- list(method = "bootstrap", iterations = iterations)
       } else {
+        ci <- NULL
         warning("'boot' package required for estimating CIs for Glass' delta. Please install the package and try again.", call. = FALSE)
       }
     }
@@ -285,6 +332,8 @@ glass_delta <- function(x, y = NULL, data = NULL, mu = 0, ci = 0.95, iterations 
   attr(out, "correction") <- correction
   attr(out, "pooled_sd") <- pooled_sd
   attr(out, "mu") <- mu
+  attr(out, "ci") <- ci
+  attr(out, "ci_method") <- ci_method
   return(out)
 }
 
@@ -314,8 +363,9 @@ glass_delta <- function(x, y = NULL, data = NULL, mu = 0, ci = 0.95, iterations 
 
   # Formula
   if (inherits(x, "formula")) {
-    if (length(x) != 3)
+    if (length(x) != 3) {
       stop("Formula must have the 'outcome ~ group'.", call. = FALSE)
+    }
 
     mf <- stats::model.frame(stats::lm(formula = x, data = data))
 
@@ -388,10 +438,12 @@ glass_delta <- function(x, y = NULL, data = NULL, mu = 0, ci = 0.95, iterations 
     i = seq_along(c(x, y))
   )
 
-  R <- boot::boot(data = data,
-                  statistic = boot_delta,
-                  R = iterations,
-                  mu = mu)
+  R <- boot::boot(
+    data = data,
+    statistic = boot_delta,
+    R = iterations,
+    mu = mu
+  )
 
   out <- as.data.frame(
     bayestestR::ci(na.omit(R$t), ci = ci, verbose = FALSE)
@@ -399,4 +451,3 @@ glass_delta <- function(x, y = NULL, data = NULL, mu = 0, ci = 0.95, iterations 
   out$CI <- ci
   out
 }
-

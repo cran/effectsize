@@ -14,6 +14,7 @@ t_to_d <- function(t, df_error, paired = FALSE, ci = 0.95, pooled, ...) {
 
   res <- data.frame(d = paired * t / sqrt(df_error))
 
+  ci_method <- NULL
   if (is.numeric(ci)) {
     stopifnot(length(ci) == 1, ci < 1, ci > 0)
     res$CI <- ci
@@ -25,9 +26,13 @@ t_to_d <- function(t, df_error, paired = FALSE, ci = 0.95, pooled, ...) {
 
     res$CI_low <- paired * ts[, 1] / sqrt(df_error)
     res$CI_high <- paired * ts[, 2] / sqrt(df_error)
+
+    ci_method <- list(method = "ncp", distribution = "t")
   }
 
   class(res) <- c("effectsize_table", "see_effectsize_table", class(res))
+  attr(res, "ci") <- ci
+  attr(res, "ci_method") <- ci_method
   return(res)
 }
 
@@ -55,6 +60,7 @@ z_to_d <- function(z, n, paired = FALSE, ci = 0.95, pooled, ...) {
 
   res <- data.frame(d = paired * z / sqrt(n))
 
+  ci_method <- NULL
   if (is.numeric(ci)) {
     stopifnot(length(ci) == 1, ci < 1, ci > 0)
     res$CI <- ci
@@ -67,9 +73,13 @@ z_to_d <- function(z, n, paired = FALSE, ci = 0.95, pooled, ...) {
 
     res$CI_low <- paired * zs[, 1] / sqrt(n)
     res$CI_high <- paired * zs[, 2] / sqrt(n)
+
+    ci_method <- list(method = "normal")
   }
 
   class(res) <- c("effectsize_table", "see_effectsize_table", class(res))
+  attr(res, "ci") <- ci
+  attr(res, "ci_method") <- ci_method
   return(res)
 }
 
@@ -81,17 +91,9 @@ z_to_d <- function(z, n, paired = FALSE, ci = 0.95, pooled, ...) {
 
 #' @rdname t_to_r
 #' @export
-F_to_d <- function(f, df, df_error, paired = FALSE, ci = 0.95, pooled, ...) {
-  if (!missing(pooled)) {
-    paired <- pooled
-    warning(
-      "Argument 'pooled' is deprecated, use 'paired' instead. Setting paired <- pooled.",
-      call. = FALSE
-    )
-  }
-
+F_to_d <- function(f, df, df_error, paired = FALSE, ci = 0.95, ...) {
   if (df > 1) {
     stop("Cannot convert F with more than 1 df to (partial) r.")
   }
-  t_to_d(sqrt(f), df_error, paired, ci)
+  t_to_d(sqrt(f), df_error, paired, ci, ...)
 }

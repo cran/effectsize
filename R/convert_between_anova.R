@@ -15,14 +15,18 @@
 #' If a partial Eta-Squared is used, the resulting Cohen's *f* is a
 #' partial-Cohen's *f*; If a less biased estimate of variance explained is used
 #' (such as Epsilon- or Omega-Squared), the resulting Cohen's *f* is likewise a
-#' less biaed estimate of Cohen's *f*.
+#' less biased estimate of Cohen's *f*.
 #'
 #' @seealso [eta_squared()] for more details.
 #' @family convert between effect sizes
 #'
 #' @references
-#' - Cohen, J. (1988). Statistical power analysis for the behavioral sciences (2nd Ed.). New York: Routledge.
-#' - Steiger, J. H. (2004). Beyond the F test: Effect size confidence intervals and tests of close fit in the analysis of variance and contrast analysis. Psychological Methods, 9, 164-182.
+#' - Cohen, J. (1988). Statistical power analysis for the behavioral sciences
+#' (2nd Ed.). New York: Routledge.
+#'
+#' - Steiger, J. H. (2004). Beyond the F test: Effect size confidence intervals
+#' and tests of close fit in the analysis of variance and contrast analysis.
+#' Psychological Methods, 9, 164-182.
 #'
 #' @export
 eta2_to_f2 <- function(es) {
@@ -46,7 +50,7 @@ f2_to_eta2 <- function(f2) {
 #' @export
 #' @rdname eta2_to_f2
 f_to_eta2 <- function(f) {
-  f2_to_eta2(f ^ 2)
+  f2_to_eta2(f^2)
 }
 
 
