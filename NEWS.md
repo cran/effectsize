@@ -1,3 +1,16 @@
+# effectsize 0.4.4-1
+
+## New features
+
+- `standardize_parameters()` + `eta_sqaured()` support `tidymodels` (when that the underlying model is supported; #311 ).
+- `cohens_d()` family now supports `Pairs()` objects as input.
+- `standardize_parameters()` gains the `include_response` argument (default to `TRUE`) ( #309 ). 
+
+
+## Bug fixes
+
+- `kendalls_w()` now actually returns correct effect size. Previous estimates were incorrect, and based on transposing the groups and blocks.
+
 # effectsize 0.4.4
 
 `effectsize` now supports `R >= 3.4`.

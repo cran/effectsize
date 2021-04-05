@@ -441,7 +441,7 @@ cohens_f_squared <- function(model, partial = TRUE, ci = 0.9, squared = TRUE,
     if (verbose) {
       txt_type <- ifelse(isTRUE(generalized) || is.character(generalized), "generalized", "partial")
       message(
-        "For one-way between subjects designs, ", txt_type, " ", type, " squared is equvilant to ", type, " squared.\n",
+        "For one-way between subjects designs, ", txt_type, " ", type, " squared is equivalent to ", type, " squared.\n",
         "Returning ", type, " squared."
       )
     }
@@ -880,7 +880,7 @@ cohens_f_squared <- function(model, partial = TRUE, ci = 0.9, squared = TRUE,
   if (verbose && (partial || isTRUE(generalized) || is.character(generalized))) {
     txt_type <- ifelse(isTRUE(generalized) || is.character(generalized), "generalized", "partial")
     message(
-      "For one-way between subjects designs, ", txt_type, " ", type, " squared is equvilant to ", type, " squared.\n",
+      "For one-way between subjects designs, ", txt_type, " ", type, " squared is equivalent to ", type, " squared.\n",
       "Returning ", type, " squared."
     )
   }
@@ -1163,6 +1163,26 @@ cohens_f_squared <- function(model, partial = TRUE, ci = 0.9, squared = TRUE,
 }
 
 .anova_es.anova.rms <- .anova_es.rms
+
+
+#' @export
+.anova_es.model_fit <- function(model,
+                                type = c("eta", "omega", "epsilon"),
+                                partial = TRUE,
+                                generalized = FALSE,
+                                ci = 0.9,
+                                verbose = TRUE,
+                                ...) {
+  .anova_es(
+    model$fit,
+    type = type,
+    partial = partial,
+    generalized = generalized,
+    ci = ci,
+    verbose = verbose,
+    ...
+  )
+}
 
 # Utils -------------------------------------------------------------------
 

@@ -6,24 +6,22 @@
 #' @inheritParams cohens_d
 #' @param x Can be one of:
 #'   - A numeric vector, or a character name of one in `data`.
-#'   - A formula in to form of `x ~ groups` (for `rank_biserial()` and
-#'   `rank_epsilon_squared()`) or `x ~ groups | blocks` (for `kendalls_w()`).
+#'   - A formula in to form of `DV ~ groups` (for `rank_biserial()` and
+#'   `rank_epsilon_squared()`) or `DV ~ groups | blocks` (for `kendalls_w()`;
+#'   See details for the `blocks` and `groups` terminology used here).
 #'   - A list of vectors (for `rank_epsilon_squared()`).
-#'   - A matrix of `blocks x groups` (for `kendalls_w()`).
+#'   - A matrix of `blocks x groups` (for `kendalls_w()`). See details for the
+#'   `blocks` and `groups` terminology used here.
 #' @param y An optional numeric vector of data values to compare to `x`, or a
 #'   character name of one in `data`. Ignored if `x` is not a vector.
-#' @param groups A vector or factor object giving the group for the
+#' @param groups,blocks A factor vector giving the group / block for the
 #'   corresponding elements of `x`, or a character name of one in `data`.
 #'   Ignored if `x` is not a vector.
-#' @param blocks A vector giving the block for the corresponding elements of
-#'   `x`, or a character name of one in `data`. Ignored if `x` is not a vector.
 #' @param mu a number indicating the value around which (a-)symmetry (for
 #'   one-sample or paired samples) or shift (for independent samples) is to be
 #'   estimated. See [stats::wilcox.test].
 #'
 #' @details
-#' Compute effect sizes for non-parametric (rank sum) tests.
-#' \cr\cr
 #' The rank-biserial correlation is appropriate for non-parametric tests of
 #' differences - both for the one sample or paired samples case, that would
 #' normally be tested with Wilcoxon's Signed Rank Test (giving the
@@ -43,15 +41,24 @@
 #' indicating larger differences between groups.
 #' \cr\cr
 #' Kendall's *W* is appropriate for non-parametric tests of differences between
-#' 2 or more dependent samples (a rank based rmANOVA). See
-#' [stats::friedman.test]. Values range from 0 to 1, with larger values
-#' indicating larger differences between groups.
+#' 2 or more dependent samples (a rank based rmANOVA), where each `group` (e.g.,
+#' experimental condition) was measured for each `block` (e.g., subject). This
+#' measure is also common as a measure of reliability of the rankings of the
+#' `groups` between raters (`blocks`). See [stats::friedman.test]. Values range
+#' from 0 to 1, with larger values indicating larger differences between groups
+#' / higher agreement between raters.
+#'
+#' ## Ties
+#' When tied values occur, they are each given the average of the ranks that
+#' would have been given had no ties occurred. No other corrections have been
+#' implemented yet.
 #'
 #' # Confidence Intervals
 #' Confidence Intervals are estimated using the bootstrap method.
 #'
-#' @return A data frame with the effect size (`r_rank_biserial`, `Kendalls_W` or
-#'   `rank_epsilon_squared`) and its CI (`CI_low` and `CI_high`).
+#' @return A data frame with the effect size (`r_rank_biserial`,
+#'   `rank_epsilon_squared` or `Kendalls_W`) and its CI (`CI_low` and
+#'   `CI_high`).
 #'
 #' @family effect size indices
 #'
@@ -256,6 +263,7 @@ kendalls_w <- function(x,
                        data = NULL,
                        ci = 0.95,
                        iterations = 200,
+                       verbose = TRUE,
                        ...) {
   if (inherits(x, "htest")) {
     if (!grepl("Friedman", x$method)) {
@@ -267,16 +275,18 @@ kendalls_w <- function(x,
   ## prep data
   data <- .kendalls_w_data(x, groups, blocks, data)
   data <- stats::na.omit(data)
+  rankings <- apply(data, 1, ranktransform, verbose = verbose)
+  rankings <- t(rankings) # keep dims
 
   ## compute
-  W <- .kendalls_w(data)
+  W <- .kendalls_w(rankings)
   out <- data.frame(Kendalls_W = W)
 
   ## CI
   ci_method <- NULL
   if (is.numeric(ci)) {
     if (requireNamespace("boot", quietly = TRUE)) {
-      out <- cbind(out, .kendalls_w_ci(data, ci, iterations))
+      out <- cbind(out, .kendalls_w_ci(rankings, ci, iterations))
       ci_method <- list(method = "bootstrap", iterations = iterations)
     } else {
       ci <- NULL
@@ -364,14 +374,13 @@ kendalls_w <- function(x,
 
 
 #' @keywords internal
-#' @importFrom stats friedman.test
-.kendalls_w <- function(ratings) {
-  # TODO add ties corrction?
-  n <- nrow(ratings)
-  m <- ncol(ratings)
+.kendalls_w <- function(rankings) {
+  # TODO add ties correction?
+  n <- ncol(rankings) # items
+  m <- nrow(rankings) # judges
 
-  ratings.rank <- apply(ratings, 2, rank)
-  S <- var(apply(ratings.rank, 1, sum)) * (n - 1)
+  R <- colSums(rankings)
+  S <- var(R) * (n - 1)
   W <- (12 * S) / (m^2 * (n^3 - n))
 }
 
@@ -393,7 +402,7 @@ kendalls_w <- function(x,
       .data <- .data[.i, ]
       .x <- .data$x
       .y <- .data$y
-      suppressWarnings(.r_rbs(.x, .y, mu = mu, paired = TRUE))
+      .r_rbs(.x, .y, mu = mu, paired = TRUE, verbose = FALSE)
     }
   } else {
     data <- data.frame(
@@ -404,7 +413,7 @@ kendalls_w <- function(x,
       .x <- sample(x, replace = TRUE)
       .y <- sample(y, replace = TRUE)
 
-      suppressWarnings(.r_rbs(.x, .y, mu = mu, paired = FALSE))
+      .r_rbs(.x, .y, mu = mu, paired = FALSE, verbose = FALSE)
     }
   }
 
@@ -451,11 +460,11 @@ kendalls_w <- function(x,
   stopifnot(length(ci) == 1, ci < 1, ci > 0)
 
   boot_w <- function(.data, .i) {
-    .kendalls_w(t(.data[.i, ]))
+    .kendalls_w(.data[.i, ]) # sample rows
   }
 
   R <- boot::boot(
-    data = t(data),
+    data = data,
     statistic = boot_w,
     R = iterations
   )
@@ -471,21 +480,17 @@ kendalls_w <- function(x,
 
 
 #' @keywords internal
-#' @importFrom stats model.frame lm
+#' @importFrom stats model.frame
 .rank_anova_xg <- function(x, groups, data) {
   if (inherits(frm <- x, "formula")) {
-    if (length(frm) != 3) {
-      stop("Formula must have the 'outcome ~ group'.", call. = FALSE)
-    }
+    mf <- stats::model.frame(formula = frm, data = data)
 
-    mf <- stats::model.frame(stats::lm(formula = frm, data = data))
+    if (length(frm) != 3 | ncol(mf) != 2) {
+      stop("Formula must have the form of 'outcome ~ group'.", call. = FALSE)
+    }
 
     x <- mf[[1]]
-    if (ncol(mf) == 2) {
-      groups <- factor(mf[[2]])
-    } else {
-      stop("Formula must have the 'outcome ~ group'.", call. = FALSE)
-    }
+    groups <- factor(mf[[2]])
   } else if (inherits(x, "list")) {
     groups <- rep(seq_along(x), sapply(x, length))
     x <- unsplit(x, groups)
@@ -500,20 +505,22 @@ kendalls_w <- function(x,
 }
 
 #' @keywords internal
-#' @importFrom stats model.frame lm reshape
+#' @importFrom stats model.frame reshape
 .kendalls_w_data <- function(x, groups, blocks, data = NULL) {
   if (inherits(frm <- x, "formula")) {
     if ((length(frm) != 3L) ||
       (length(frm[[3L]]) != 3L) ||
-      (frm[[3L]][[1L]] != as.name("|")) ||
-      (length(frm[[3L]][[2L]]) != 1L) ||
-      (length(frm[[3L]][[3L]]) != 1L)) {
+      (frm[[3L]][[1L]] != as.name("|"))) {
       stop("Formula must have the 'x ~ groups | blocks'.", call. = FALSE)
     }
 
     frm[[3L]][[1L]] <- as.name("+")
 
-    mf <- stats::model.frame(stats::lm(formula = frm, data = data))
+    mf <- stats::model.frame(formula = frm, data = data)
+
+    if (ncol(mf) != 3) {
+      stop("Formula must have only two terms on the RHS.", call. = FALSE)
+    }
 
     x <- mf[[1]]
     groups <- mf[[2]]

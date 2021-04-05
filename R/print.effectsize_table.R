@@ -51,6 +51,17 @@ print.effectsize_std_params <- function(x, digits = 2, ...) {
     footer <- c(footer, "cyan")
   }
 
+  # include_response
+  if (!attr(x, "include_response")) {
+    msg <- "(Response is unstandardized)\n"
+    if (length(footer)) {
+      footer[1] <- paste0(footer[1], msg)
+    } else {
+      footer <- paste0("\n", msg)
+      footer <- c(footer, "cyan")
+    }
+  }
+
   attr(x, "table_footer") <- footer
   attr(x, "table_caption") <- caption
   attr(x, "table_subtitle") <- subtitle

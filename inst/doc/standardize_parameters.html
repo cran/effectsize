@@ -297,7 +297,7 @@ standardization**, described below
 <div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>correlation<span class="sc">::</span><span class="fu">correlation</span>(<span class="at">data =</span> hardlyworking[,<span class="dv">1</span>], <span class="co"># the outcome of salary</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>                         <span class="at">data2 =</span> hardlyworking[,<span class="sc">-</span><span class="dv">1</span>], <span class="co"># the predictors</span></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>                         <span class="at">partial =</span> <span class="cn">TRUE</span>) <span class="co"># get partial correlations</span></span></code></pre></div>
-<pre><code>&gt; # Correlation table (pearson-method)
+<pre><code>&gt; # Correlation Matrix (pearson-method)
 &gt; 
 &gt; Parameter1 | Parameter2 |    r |       95% CI | t(498) |         p
 &gt; ------------------------------------------------------------------
@@ -512,7 +512,8 @@ standardization**, described below
 &gt; factor(cyl)6 |               0.73 | [-2.04,  3.66]
 &gt; factor(cyl)8 |               0.70 | [-3.13,  4.78]
 &gt; 
-&gt; - Scaled by two SD(s) from the mean.</code></pre>
+&gt; - Scaled by two SD(s) from the mean.
+&gt; (Response is unstandardized)</code></pre>
 <div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co"># standardize_parameters(mod_b, method = &quot;posthoc&quot;, two_sd = TRUE)</span></span>
 <span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="co"># standardize_parameters(mod_b, method = &quot;basic&quot;)</span></span></code></pre></div>
 <p>These can then be converted to OR (with <code>exp()</code>) and discussed as the “<em>change in Odds as a function of a change in one SD of x</em>.”</p>
@@ -530,7 +531,8 @@ standardization**, described below
 &gt; factor(cyl)6 |              2.08 | [0.13,    39.04]
 &gt; factor(cyl)8 |              2.02 | [0.04,   119.12]
 &gt; 
-&gt; - Scaled by two SD(s) from the mean.</code></pre>
+&gt; - Scaled by two SD(s) from the mean.
+&gt; (Response is unstandardized)</code></pre>
 </div>
 </div>
 <div id="cohens-f" class="section level1">

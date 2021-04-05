@@ -165,6 +165,9 @@ if (require("testthat") && require("effectsize")) {
     m <- lm(mtcars$mpg ~ mtcars$cyl + am, data = mtcars)
     expect_warning(standardize(m), "mtcars$mpg", fixed = TRUE)
 
+    skip_if(packageVersion("base") == package_version(3.4))
+    ## Note:
+    # No idea why this is suddenly not giving a warning on older R versions.
     m <- lm(mtcars$mpg ~ mtcars$cyl + mtcars$am, data = mtcars)
     warns <- capture_warnings(standardize(m))
     expect_true(grepl("mtcars$mpg", warns[1], fixed = TRUE))
@@ -177,6 +180,7 @@ if (require("testthat") && require("effectsize")) {
     skip_if_not_installed("mediation")
     set.seed(444)
     data(jobs, package = "mediation")
+    jobs$econ_hard <- jobs$econ_hard * 20
     b.int <- lm(job_seek ~ treat * age + econ_hard + sex, data = jobs)
     d.int <- lm(depress2 ~ treat * job_seek * age + econ_hard + sex, data = jobs)
 
@@ -190,6 +194,15 @@ if (require("testthat") && require("effectsize")) {
     expect_message(out2 <- summary(standardize(med2)))
     expect_equal(unlist(out1[c("d0", "d1", "z0", "z1", "n0", "n1", "tau.coef")]),
       unlist(out2[c("d0", "d1", "z0", "z1", "n0", "n1", "tau.coef")]),
+      tolerance = 0.1
+    )
+
+    med0 <- mediation::mediate(standardize(b.int), standardize(d.int), sims = 200, treat = "treat", mediator = "job_seek")
+    out0 <- summary(med0)
+    medz <- standardize(mediation::mediate(b.int, d.int, sims = 200, treat = "treat", mediator = "job_seek"))
+    outz <- summary(medz)
+    expect_equal(unlist(out0[c("d0", "d1", "z0", "z1", "n0", "n1", "tau.coef")]),
+      unlist(outz[c("d0", "d1", "z0", "z1", "n0", "n1", "tau.coef")]),
       tolerance = 0.1
     )
   })

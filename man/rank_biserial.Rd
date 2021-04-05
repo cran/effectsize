@@ -32,16 +32,27 @@ cliffs_delta(
 
 rank_epsilon_squared(x, groups, data = NULL, ci = 0.95, iterations = 200, ...)
 
-kendalls_w(x, groups, blocks, data = NULL, ci = 0.95, iterations = 200, ...)
+kendalls_w(
+  x,
+  groups,
+  blocks,
+  data = NULL,
+  ci = 0.95,
+  iterations = 200,
+  verbose = TRUE,
+  ...
+)
 }
 \arguments{
 \item{x}{Can be one of:
 \itemize{
 \item A numeric vector, or a character name of one in \code{data}.
-\item A formula in to form of \code{x ~ groups} (for \code{rank_biserial()} and
-\code{rank_epsilon_squared()}) or \code{x ~ groups | blocks} (for \code{kendalls_w()}).
+\item A formula in to form of \code{DV ~ groups} (for \code{rank_biserial()} and
+\code{rank_epsilon_squared()}) or \code{DV ~ groups | blocks} (for \code{kendalls_w()};
+See details for the \code{blocks} and \code{groups} terminology used here).
 \item A list of vectors (for \code{rank_epsilon_squared()}).
-\item A matrix of \verb{blocks x groups} (for \code{kendalls_w()}).
+\item A matrix of \verb{blocks x groups} (for \code{kendalls_w()}). See details for the
+\code{blocks} and \code{groups} terminology used here.
 }}
 
 \item{y}{An optional numeric vector of data values to compare to \code{x}, or a
@@ -65,24 +76,20 @@ size on \code{x - y}.}
 
 \item{...}{Arguments passed to or from other methods.}
 
-\item{groups}{A vector or factor object giving the group for the
+\item{groups, blocks}{A factor vector giving the group / block for the
 corresponding elements of \code{x}, or a character name of one in \code{data}.
 Ignored if \code{x} is not a vector.}
-
-\item{blocks}{A vector giving the block for the corresponding elements of
-\code{x}, or a character name of one in \code{data}. Ignored if \code{x} is not a vector.}
 }
 \value{
-A data frame with the effect size (\code{r_rank_biserial}, \code{Kendalls_W} or
-\code{rank_epsilon_squared}) and its CI (\code{CI_low} and \code{CI_high}).
+A data frame with the effect size (\code{r_rank_biserial},
+\code{rank_epsilon_squared} or \code{Kendalls_W}) and its CI (\code{CI_low} and
+\code{CI_high}).
 }
 \description{
 Compute the rank-biserial correlation, Cliff's \emph{delta}, rank Epsilon squared,
 and Kendall's \emph{W} effect sizes for non-parametric (rank sum) tests.
 }
 \details{
-Compute effect sizes for non-parametric (rank sum) tests.
-\cr\cr
 The rank-biserial correlation is appropriate for non-parametric tests of
 differences - both for the one sample or paired samples case, that would
 normally be tested with Wilcoxon's Signed Rank Test (giving the
@@ -102,9 +109,18 @@ differences between 2 or more samples (a rank based ANOVA). See
 indicating larger differences between groups.
 \cr\cr
 Kendall's \emph{W} is appropriate for non-parametric tests of differences between
-2 or more dependent samples (a rank based rmANOVA). See
-\link[stats:friedman.test]{stats::friedman.test}. Values range from 0 to 1, with larger values
-indicating larger differences between groups.
+2 or more dependent samples (a rank based rmANOVA), where each \code{group} (e.g.,
+experimental condition) was measured for each \code{block} (e.g., subject). This
+measure is also common as a measure of reliability of the rankings of the
+\code{groups} between raters (\code{blocks}). See \link[stats:friedman.test]{stats::friedman.test}. Values range
+from 0 to 1, with larger values indicating larger differences between groups
+/ higher agreement between raters.
+\subsection{Ties}{
+
+When tied values occur, they are each given the average of the ranks that
+would have been given had no ties occurred. No other corrections have been
+implemented yet.
+}
 }
 \section{Confidence Intervals}{
 Confidence Intervals are estimated using the bootstrap method.

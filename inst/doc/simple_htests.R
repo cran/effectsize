@@ -162,22 +162,20 @@ rank_epsilon_squared(group_data)
 
 ## -----------------------------------------------------------------------------
 # Subjects are COLUMNS
-(ReactionTimes <- t(matrix(
-  c(
-    398, 338, 520,
+(ReactionTimes <- matrix(
+  c(398, 338, 520,
     325, 388, 555,
     393, 363, 561,
     367, 433, 470,
     286, 492, 536,
     362, 475, 496,
-    253, 334, 610
-  ),
+    253, 334, 610),
   nrow = 7, byrow = TRUE,
   dimnames = list(
     paste0("Subject", 1:7),
     c("Congruent", "Neutral", "Incongruent")
   )
-)))
+))
 
 friedman.test(ReactionTimes)
 
