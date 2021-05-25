@@ -24,7 +24,7 @@ print(data, digits = 3)
 cohens_d(Outcome ~ Group, data = data)
 
 ## ---- warning=FALSE-----------------------------------------------------------
-correlation::correlation(data)[2, ]
+correlation::correlation(data, include_factors = TRUE)[2, ]
 
 ## -----------------------------------------------------------------------------
 d_to_r(-0.31)

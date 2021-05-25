@@ -204,8 +204,8 @@ div.csl-indent {
 &gt; -0.31     | [-1.54, 0.95]
 &gt; 
 &gt; - Estimated using pooled SD.</code></pre>
-<p>But we can also treat the 2-level <code>group</code> variable as a numeric variable, and compute Pearon’s <em>r</em>:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>correlation<span class="sc">::</span><span class="fu">correlation</span>(data)[<span class="dv">2</span>, ]</span></code></pre></div>
+<p>But we can also treat the 2-level <code>group</code> variable as a numeric variable, and compute Pearson’s <em>r</em>:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>correlation<span class="sc">::</span><span class="fu">correlation</span>(data, <span class="at">include_factors =</span> <span class="cn">TRUE</span>)[<span class="dv">2</span>, ]</span></code></pre></div>
 <pre><code>&gt; # Correlation Matrix (pearson-method)
 &gt; 
 &gt; Parameter1 | Parameter2 |     r |        95% CI |  t(8) |      p

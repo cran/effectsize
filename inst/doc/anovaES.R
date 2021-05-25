@@ -2,7 +2,7 @@
 library(knitr)
 options(knitr.kable.NA = "")
 options(digits = 2)
-knitr::opts_chunk$set(comment = ">")
+knitr::opts_chunk$set(comment = ">", warning = FALSE)
 
 set.seed(1)
 pkgs <- c("effectsize", "parameters", "car", "afex")
@@ -36,7 +36,7 @@ eta_squared(m, partial = FALSE)
 eta_squared(m) # partial = TRUE by default
 
 ## -----------------------------------------------------------------------------
-eta_squared(car::Anova(m, type = 3), partial = FALSE)
+eta_squared(car::Anova(m, type = 2), partial = FALSE)
 
 eta_squared(car::Anova(m, type = 3)) # partial = TRUE by default
 

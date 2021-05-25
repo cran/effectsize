@@ -13,10 +13,10 @@ rank_biserial(
   data = NULL,
   mu = 0,
   ci = 0.95,
-  iterations = 200,
   paired = FALSE,
   verbose = TRUE,
-  ...
+  ...,
+  iterations
 )
 
 cliffs_delta(
@@ -66,8 +66,6 @@ estimated. See \link[stats:wilcox.test]{stats::wilcox.test}.}
 
 \item{ci}{Confidence Interval (CI) level}
 
-\item{iterations}{The number of bootstrap replicates for computing confidence intervals. Only applies when \code{ci} is not \code{NULL}.}
-
 \item{paired}{If \code{TRUE}, the values of \code{x} and \code{y} are considered as paired.
 This produces an effect size that is equivalent to the one-sample effect
 size on \code{x - y}.}
@@ -75,6 +73,10 @@ size on \code{x - y}.}
 \item{verbose}{Toggle warnings and messages on or off.}
 
 \item{...}{Arguments passed to or from other methods.}
+
+\item{iterations}{The number of bootstrap replicates for computing confidence
+intervals. Only applies when \code{ci} is not \code{NULL}. (Deprecated for
+\code{rank_biserial()}).}
 
 \item{groups, blocks}{A factor vector giving the group / block for the
 corresponding elements of \code{x}, or a character name of one in \code{data}.
@@ -86,8 +88,9 @@ A data frame with the effect size (\code{r_rank_biserial},
 \code{CI_high}).
 }
 \description{
-Compute the rank-biserial correlation, Cliff's \emph{delta}, rank Epsilon squared,
-and Kendall's \emph{W} effect sizes for non-parametric (rank sum) tests.
+Compute the rank-biserial correlation \eqn{(r_{rb})}{}, Cliff's \emph{delta}
+\eqn{(\delta)}{}, rank epsilon squared \eqn{(\varepsilon^2)}{}, and Kendall's
+\emph{W} effect sizes for non-parametric (rank sum) tests.
 }
 \details{
 The rank-biserial correlation is appropriate for non-parametric tests of
@@ -103,7 +106,7 @@ the first sample, to \code{+1} indicating that all values of the second sample a
 larger than the first sample. (Cliff's \emph{delta} is an alias to the
 rank-biserial correlation in the two sample case.)
 \cr\cr
-The rank Epsilon squared is appropriate for non-parametric tests of
+The rank epsilon squared is appropriate for non-parametric tests of
 differences between 2 or more samples (a rank based ANOVA). See
 \link[stats:kruskal.test]{stats::kruskal.test}. Values range from 0 to 1, with larger values
 indicating larger differences between groups.
@@ -123,7 +126,10 @@ implemented yet.
 }
 }
 \section{Confidence Intervals}{
-Confidence Intervals are estimated using the bootstrap method.
+Confidence intervals for the rank-biserial correlation (and Cliff's \emph{delta})
+are estimated using the normal approximation (via Fisher's transformation).
+Confidence intervals for rank Epsilon squared, and Kendall's \emph{W} are
+estimated using the bootstrap method (using the \code{{boot}} package).
 }
 
 \examples{

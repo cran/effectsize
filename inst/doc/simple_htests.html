@@ -179,7 +179,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 &gt; 
 &gt; data:  mpg by am
 &gt; t = -4, df = 30, p-value = 3e-04
-&gt; alternative hypothesis: true difference in means is not equal to 0
+&gt; alternative hypothesis: true difference in means between group 0 and group 1 is not equal to 0
 &gt; 95 percent confidence interval:
 &gt;  -10.85  -3.64
 &gt; sample estimates:
@@ -197,8 +197,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 &gt; --------------------------
 &gt; -1.44     | [-2.21, -0.65]
 &gt; 
-&gt; - Estimated using pooled SD.
-&gt; - Bias corrected using Hedges and Olkin&#39;s method.</code></pre>
+&gt; - Estimated using pooled SD.</code></pre>
 <p>If variances cannot be assumed to be equal, it is possible to get estimates that are not based on the pooled standard deviation:</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(mpg <span class="sc">~</span> am, <span class="at">data =</span> mtcars, <span class="at">var.equal =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <pre><code>&gt; 
@@ -206,7 +205,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 &gt; 
 &gt; data:  mpg by am
 &gt; t = -4, df = 18, p-value = 0.001
-&gt; alternative hypothesis: true difference in means is not equal to 0
+&gt; alternative hypothesis: true difference in means between group 0 and group 1 is not equal to 0
 &gt; 95 percent confidence interval:
 &gt;  -11.28  -3.21
 &gt; sample estimates:
@@ -215,21 +214,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cohens_d</span>(mpg <span class="sc">~</span> am, <span class="at">data =</span> mtcars, <span class="at">pooled_sd =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <pre><code>&gt; Cohen&#39;s d |         95% CI
 &gt; --------------------------
-&gt; -1.41     | [-2.17, -0.51]
+&gt; -1.41     | [-2.26, -0.53]
 &gt; 
 &gt; - Estimated using un-pooled SD.</code></pre>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hedges_g</span>(mpg <span class="sc">~</span> am, <span class="at">data =</span> mtcars, <span class="at">pooled_sd =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <pre><code>&gt; Hedges&#39; g |         95% CI
 &gt; --------------------------
-&gt; -1.38     | [-2.12, -0.50]
+&gt; -1.35     | [-2.17, -0.51]
 &gt; 
-&gt; - Estimated using un-pooled SD.
-&gt; - Bias corrected using Hedges and Olkin&#39;s method.</code></pre>
+&gt; - Estimated using un-pooled SD.</code></pre>
 <p>In cases where the differences between the variances are substantial, it is also common to standardize the difference based only on the standard deviation of one of the groups (usually the “control” group); this effect size is known as Glass’ <span class="math inline">\(\Delta\)</span> (delta)</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glass_delta</span>(mpg <span class="sc">~</span> am, <span class="at">data =</span> mtcars)</span></code></pre></div>
 <pre><code>&gt; Glass&#39; delta |         95% CI
 &gt; -----------------------------
-&gt; -1.17        | [-2.23, -0.67]</code></pre>
+&gt; -1.17        | [-1.93, -0.39]</code></pre>
 <p>(Note that the standard deviation is taken from the <em>second</em> sample.)</p>
 </div>
 <div id="one-sample-and-paired-samples" class="section level2">
@@ -254,9 +252,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hedges_g</span>(extra <span class="sc">~</span> group, <span class="at">data =</span> sleep, <span class="at">paired =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <pre><code>&gt; Hedges&#39; g |         95% CI
 &gt; --------------------------
-&gt; -1.17     | [-2.04, -0.40]
-&gt; 
-&gt; - Bias corrected using Hedges and Olkin&#39;s method.</code></pre>
+&gt; -1.17     | [-2.04, -0.40]</code></pre>
 </div>
 <div id="for-a-bayesian-t-test" class="section level2">
 <h2>For a Bayesian <em>t</em>-test</h2>
@@ -272,9 +268,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">effectsize</span>(BFt, <span class="at">test =</span> <span class="cn">NULL</span>)</span></code></pre></div>
 <pre><code>&gt; Summary of Posterior Distribution
 &gt; 
-&gt; Parameter | Median |         89% CI
+&gt; Parameter | Median |         95% CI
 &gt; -----------------------------------
-&gt; Cohens_d  |  -1.28 | [-1.94, -0.64]</code></pre>
+&gt; Cohens_d  |  -1.29 | [-2.09, -0.51]</code></pre>
 </div>
 </div>
 <div id="one-way-anova" class="section level1">
@@ -352,15 +348,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">effectsize</span>(BFX, <span class="at">type =</span> <span class="st">&quot;cramers_v&quot;</span>, <span class="at">test =</span> <span class="cn">NULL</span>)</span></code></pre></div>
 <pre><code>&gt; Summary of Posterior Distribution
 &gt; 
-&gt; Parameter | Median |       89% CI
+&gt; Parameter | Median |       95% CI
 &gt; ---------------------------------
-&gt; Cramers_v |   0.18 | [0.14, 0.21]</code></pre>
+&gt; Cramers_v |   0.18 | [0.14, 0.22]</code></pre>
 <div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">effectsize</span>(BFX, <span class="at">type =</span> <span class="st">&quot;phi&quot;</span>, <span class="at">test =</span> <span class="cn">NULL</span>)</span></code></pre></div>
 <pre><code>&gt; Summary of Posterior Distribution
 &gt; 
-&gt; Parameter | Median |       89% CI
+&gt; Parameter | Median |       95% CI
 &gt; ---------------------------------
-&gt; phi       |   0.26 | [0.21, 0.31]</code></pre>
+&gt; phi       |   0.26 | [0.19, 0.31]</code></pre>
 <div id="comparing-two-proportions-2x2-tables" class="section level2">
 <h2>Comparing Two Proportions (2x2 tables)</h2>
 <p>For <span class="math inline">\(2\times 2\)</span> tables, in addition to Cramér’s <em>V</em> and <span class="math inline">\(\phi\)</span>, we can also compute the Odds-ratio (OR), where each column represents a different group. Values larger than 1 indicate that the odds are higher in the first group (and vice versa).</p>
@@ -435,7 +431,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Rank based tests get rank based effect sizes!</p>
 <div id="difference-in-ranks" class="section level2">
 <h2>Difference in Ranks</h2>
-<p>For two independent samples, the rank-biserial correlation (<span class="math inline">\(r_{RB}\)</span>) is a measure of relative superiority - i.e., larger values indicate a higher probability of a randomly selected observation from <em>X</em> being larger than randomly selected observation from <em>Y</em>. A value of <span class="math inline">\((-1)\)</span> indicates that all observations in the second group are larger than the first, and a value of <span class="math inline">\((+1)\)</span> indicates that all observations in the first group are larger than the second.</p>
+<p>For two independent samples, the rank-biserial correlation (<span class="math inline">\(r_{rb}\)</span>) is a measure of relative superiority - i.e., larger values indicate a higher probability of a randomly selected observation from <em>X</em> being larger than randomly selected observation from <em>Y</em>. A value of <span class="math inline">\((-1)\)</span> indicates that all observations in the second group are larger than the first, and a value of <span class="math inline">\((+1)\)</span> indicates that all observations in the first group are larger than the second.</p>
 <div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">48</span>, <span class="dv">48</span>, <span class="dv">77</span>, <span class="dv">86</span>, <span class="dv">85</span>, <span class="dv">85</span>)</span>
 <span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>B <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">14</span>, <span class="dv">34</span>, <span class="dv">34</span>, <span class="dv">77</span>)</span>
 <span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -449,8 +445,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rank_biserial</span>(A, B)</span></code></pre></div>
 <pre><code>&gt; r (rank biserial) |       95% CI
 &gt; --------------------------------
-&gt; 0.79              | [0.25, 1.00]</code></pre>
-<p>For one sample, <span class="math inline">\(r_{RB}\)</span> measures the symmetry around <span class="math inline">\(\mu\)</span> (mu; the null value), with 0 indicating perfect symmetry, <span class="math inline">\((-1)\)</span> indicates that all observations fall below <span class="math inline">\(\mu\)</span>, and <span class="math inline">\((+1)\)</span> indicates that all observations fall above <span class="math inline">\(\mu\)</span>. For paired samples the difference between the paired samples is used:</p>
+&gt; 0.79              | [0.30, 0.95]</code></pre>
+<p>For one sample, <span class="math inline">\(r_{rb}\)</span> measures the symmetry around <span class="math inline">\(\mu\)</span> (mu; the null value), with 0 indicating perfect symmetry, <span class="math inline">\((-1)\)</span> indicates that all observations fall below <span class="math inline">\(\mu\)</span>, and <span class="math inline">\((+1)\)</span> indicates that all observations fall above <span class="math inline">\(\mu\)</span>. For paired samples the difference between the paired samples is used:</p>
 <div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">1.15</span>, <span class="fl">0.88</span>, <span class="fl">0.90</span>, <span class="fl">0.74</span>, <span class="fl">1.21</span>)</span>
 <span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a><span class="fu">wilcox.test</span>(x, <span class="at">mu =</span> <span class="dv">1</span>) <span class="co"># aka Signed-Rank test</span></span></code></pre></div>
@@ -463,7 +459,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rank_biserial</span>(x, <span class="at">mu =</span> <span class="dv">1</span>)</span></code></pre></div>
 <pre><code>&gt; r (rank biserial) |        95% CI
 &gt; ---------------------------------
-&gt; -0.07             | [-1.00, 0.87]
+&gt; -0.07             | [-0.78, 0.72]
 &gt; 
 &gt; - Deviation from a difference of 1.</code></pre>
 <div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">1.83</span>, <span class="fl">0.50</span>, <span class="fl">1.62</span>, <span class="fl">2.48</span>, <span class="fl">1.68</span>, <span class="fl">1.88</span>, <span class="fl">1.55</span>, <span class="fl">3.06</span>, <span class="fl">1.30</span>)</span>
@@ -479,11 +475,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rank_biserial</span>(x, y, <span class="at">paired =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <pre><code>&gt; r (rank biserial) |       95% CI
 &gt; --------------------------------
-&gt; 0.78              | [0.20, 1.00]</code></pre>
+&gt; 0.78              | [0.30, 0.94]</code></pre>
 </div>
 <div id="rank-one-way-anova" class="section level2">
 <h2>Rank One way ANOVA</h2>
-<p>The Rank-Epsilon-Squared (<span class="math inline">\(E^2_R\)</span> or <span class="math inline">\(\epsilon^2_R\)</span>) is a measure of association for the rank based one-way ANOVA. Values range between 0 (no relative superiority between any of the groups) to 1 (complete separation - with no overlap in ranks between the groups).</p>
+<p>The Rank-Epsilon-Squared (<span class="math inline">\(\varepsilon^2\)</span>) is a measure of association for the rank based one-way ANOVA. Values range between 0 (no relative superiority between any of the groups) to 1 (complete separation - with no overlap in ranks between the groups).</p>
 <div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a>group_data <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
 <span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">g1 =</span> <span class="fu">c</span>(<span class="fl">2.9</span>, <span class="fl">3.0</span>, <span class="fl">2.5</span>, <span class="fl">2.6</span>, <span class="fl">3.2</span>), <span class="co"># normal subjects</span></span>
 <span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">g2 =</span> <span class="fu">c</span>(<span class="fl">3.8</span>, <span class="fl">2.7</span>, <span class="fl">4.0</span>, <span class="fl">2.4</span>), <span class="co"># with obstructive airway disease</span></span>
@@ -499,7 +495,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode" id="cb78"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rank_epsilon_squared</span>(group_data)</span></code></pre></div>
 <pre><code>&gt; Epsilon2 (rank) |       95% CI
 &gt; ------------------------------
-&gt; 0.06            | [0.01, 0.73]</code></pre>
+&gt; 0.06            | [0.01, 0.65]</code></pre>
 </div>
 <div id="rank-one-way-repeated-measures-anova" class="section level2">
 <h2>Rank One way Repeated-Measures ANOVA</h2>

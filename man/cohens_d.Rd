@@ -15,21 +15,20 @@ cohens_d(
   paired = FALSE,
   ci = 0.95,
   verbose = TRUE,
-  ...,
-  correction
+  ...
 )
 
 hedges_g(
   x,
   y = NULL,
   data = NULL,
-  correction = 1,
   pooled_sd = TRUE,
   mu = 0,
   paired = FALSE,
   ci = 0.95,
   verbose = TRUE,
-  ...
+  ...,
+  correction
 )
 
 glass_delta(
@@ -38,10 +37,9 @@ glass_delta(
   data = NULL,
   mu = 0,
   ci = 0.95,
-  iterations = 200,
   verbose = TRUE,
   ...,
-  correction
+  iterations
 )
 }
 \arguments{
@@ -68,12 +66,7 @@ size on \code{x - y}.}
 
 \item{...}{Arguments passed to or from other methods.}
 
-\item{correction}{Type of small sample bias correction to apply to produce
-Hedges' \emph{g}. Can be \code{1} for Hedges and Olkin's original correction
-(default) or \code{2} for Hunter and Schmidt's correction (see McGrath & Meyer,
-2006).}
-
-\item{iterations}{The number of bootstrap replicates for computing confidence intervals. Only applies when \code{ci} is not \code{NULL}.}
+\item{iterations, correction}{deprecated.}
 }
 \value{
 A data frame with the effect size ( \code{Cohens_d}, \code{Hedges_g},
@@ -86,17 +79,15 @@ estimate.)
 \cr\cr
 Both Cohen's \emph{d} and Hedges' \emph{g} are the estimated the standardized
 difference between the means of two populations. Hedges' \emph{g} provides a bias
-correction to Cohen's \emph{d} for small sample sizes. For sample sizes > 20, the
-results for both statistics are roughly equivalent. Glass’s \emph{delta} is
-appropriate when the standard deviations are significantly different between
-the populations, as it uses only the \emph{second} group's standard deviation.
+correction (using the exact method) to Cohen's \emph{d} for small sample sizes.
+For sample sizes > 20, the results for both statistics are roughly
+equivalent. Glass’s \emph{delta} is appropriate when the standard deviations are
+significantly different between the populations, as it uses only the \emph{second}
+group's standard deviation.
 }
 \details{
-\subsection{Confidence Intervals for Glass' \emph{delta}}{
-
-Confidence Intervals for Glass' \emph{delta} are estimated using the bootstrap
-method.
-}
+Set \code{pooled_sd = FALSE} for effect sizes that are to accompany a Welch's
+\emph{t}-test (Delacre et al, 2021).
 }
 \note{
 The indices here give the population estimated standardized difference.
@@ -113,6 +104,31 @@ distribution for the desired tail-probabilities, and then convert these
 more.)
 }
 
+\section{CI Contains Zero}{
+
+Keep in mind that \code{ncp} confidence intervals are inverted significance tests,
+and only inform us about which values are not significantly different than
+our sample estimate. (They do \emph{not} inform us about which values are
+plausible, likely or compatible with our data.) Thus, when CIs contain the
+value 0, this should \emph{not} be taken to mean that a null effect size is
+supported by the data; Instead this merely reflects a non-significant test
+statistic - i.e. the \emph{p}-value is greater than alpha (Morey et al., 2016).
+\cr\cr
+For positive only effect sizes (Eta squared, Cramer's V, etc.; Effect sizes
+associated with Chi-squared and F distributions), this applies also to cases
+where the lower bound of the CI is equal to 0. Even more care should be taken
+when the \emph{upper} bound is equal to 0 - this occurs when \emph{p}-value is greater
+than 1-alpha/2 making, the upper bound cannot be estimated, and the upper
+bound is arbitrarily set to 0 (Steiger, 2004). For example:\if{html}{\out{<div class="r">}}\preformatted{eta_squared(aov(mpg ~ factor(gear) + factor(cyl), mtcars[1:7, ]))
+}\if{html}{\out{</div>}}\preformatted{## # Effect Size for ANOVA (Type I)
+## 
+## Parameter    | Eta2 (partial) |       90\% CI
+## --------------------------------------------
+## factor(gear) |           0.58 | [0.00, 0.84]
+## factor(cyl)  |           0.46 | [0.00, 0.78]
+}
+}
+
 \examples{
 
 # two-sample tests -----------------------
@@ -122,13 +138,15 @@ cohens_d(mpg ~ am, data = mtcars)
 cohens_d(mpg ~ am, data = mtcars, pooled_sd = FALSE)
 cohens_d(mpg ~ am, data = mtcars, mu = -5)
 hedges_g(mpg ~ am, data = mtcars)
-if (require(boot)) glass_delta(mpg ~ am, data = mtcars)
+glass_delta(mpg ~ am, data = mtcars)
 print(cohens_d(mpg ~ am, data = mtcars), append_CL = TRUE)
 
 # other acceptable ways to specify arguments
-cohens_d(sleep$extra, sleep$group)
+glass_delta(sleep$extra, sleep$group)
 hedges_g("extra", "group", data = sleep)
 cohens_d(sleep$extra[sleep$group == 1], sleep$extra[sleep$group == 2], paired = TRUE)
+# cohens_d(Pair(extra[group == 1], extra[group == 2]) ~ 1,
+#          data = sleep, paired = TRUE)
 
 # one-sample tests -----------------------
 
@@ -144,14 +162,18 @@ interpret_delta(0.4, rules = "gignac2016")
 }
 \references{
 \itemize{
+\item Algina, J., Keselman, H. J., & Penfield, R. D. (2006). Confidence intervals
+for an effect size when variances are not equal. Journal of Modern Applied
+Statistical Methods, 5(1), 2.
 \item Cohen, J. (1988). Statistical power analysis for the behavioral
 sciences (2nd Ed.). New York: Routledge.
+\item Delacre, M., Lakens, D., Ley, C., Liu, L., & Leys, C. (2021, May 7). Why
+Hedges’ g*s based on the non-pooled standard deviation should be reported
+with Welch's t-test. https://doi.org/10.31234/osf.io/tu6mp
 \item Hedges, L. V. & Olkin, I. (1985). Statistical methods for
 meta-analysis. Orlando, FL: Academic Press.
 \item Hunter, J. E., & Schmidt, F. L. (2004). Methods of meta-analysis:
 Correcting error and bias in research findings. Sage.
-\item McGrath, R. E., & Meyer, G. J. (2006). When effect sizes disagree: the
-case of r and d. Psychological methods, 11(4), 386.
 }
 }
 \seealso{

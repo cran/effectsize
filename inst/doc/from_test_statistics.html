@@ -293,8 +293,10 @@ div.csl-indent {
 &gt; -----------------------------
 &gt; 0.73           | [0.51, 0.83]</code></pre>
 <p>We can also use <code>t_to_eta2()</code> for the slope of <code>Days</code> (which in this case gives the same result).</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>parameters<span class="sc">::</span><span class="fu">model_parameters</span>(fit_lmm, <span class="at">df_method =</span> <span class="st">&quot;satterthwaite&quot;</span>)</span></code></pre></div>
-<pre><code>&gt; Parameter   | Coefficient |   SE |           95% CI | t(17.00) |      p
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>parameters<span class="sc">::</span><span class="fu">model_parameters</span>(fit_lmm, <span class="at">effects =</span> <span class="st">&quot;fixed&quot;</span>, <span class="at">df_method =</span> <span class="st">&quot;satterthwaite&quot;</span>)</span></code></pre></div>
+<pre><code>&gt; # Fixed Effects
+&gt; 
+&gt; Parameter   | Coefficient |   SE |           95% CI | t(17.00) |      p
 &gt; -----------------------------------------------------------------------
 &gt; (Intercept) |      251.41 | 6.82 | [238.03, 264.78] |    36.84 | &lt; .001
 &gt; Days        |       10.47 | 1.55 | [  7.44,  13.50] |     6.77 | &lt; .001</code></pre>
@@ -325,8 +327,10 @@ div.csl-indent {
 <p>Similar to <span class="math inline">\(\eta^2_p\)</span>, <span class="math inline">\(r\)</span> is a signal to noise ratio, and is in fact equal to <span class="math inline">\(\sqrt{\eta^2_p}\)</span> (so it’s really a <em>partial</em> <span class="math inline">\(r\)</span>). It is often used instead of <span class="math inline">\(\eta^2_p\)</span> when discussing the <em>strength</em> of association (but I suspect people use it instead of <span class="math inline">\(\eta^2_p\)</span> because it gives a bigger number, which looks better).</p>
 <div id="for-slopes" class="section level3">
 <h3>For Slopes</h3>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>parameters<span class="sc">::</span><span class="fu">model_parameters</span>(fit_lmm, <span class="at">df_method =</span> <span class="st">&quot;satterthwaite&quot;</span>)</span></code></pre></div>
-<pre><code>&gt; Parameter   | Coefficient |   SE |           95% CI | t(17.00) |      p
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>parameters<span class="sc">::</span><span class="fu">model_parameters</span>(fit_lmm, <span class="at">effects =</span> <span class="st">&quot;fixed&quot;</span>, <span class="at">df_method =</span> <span class="st">&quot;satterthwaite&quot;</span>)</span></code></pre></div>
+<pre><code>&gt; # Fixed Effects
+&gt; 
+&gt; Parameter   | Coefficient |   SE |           95% CI | t(17.00) |      p
 &gt; -----------------------------------------------------------------------
 &gt; (Intercept) |      251.41 | 6.82 | [238.03, 264.78] |    36.84 | &lt; .001
 &gt; Days        |       10.47 | 1.55 | [  7.44,  13.50] |     6.77 | &lt; .001</code></pre>

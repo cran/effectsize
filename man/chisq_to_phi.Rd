@@ -18,7 +18,7 @@ phi_to_chisq(phi, n, ...)
 \arguments{
 \item{chisq}{The Chi-squared statistic.}
 
-\item{n}{Sample size.}
+\item{n}{Total sample size.}
 
 \item{nrow, ncol}{The number of rows/columns in the contingency table (ignored
 for Phi when \code{adjust=FALSE} and \code{CI=NULL}).}
@@ -36,15 +36,15 @@ A data frame with the effect size(s) between 0-1, and confidence
 interval(s). See \code{\link[=cramers_v]{cramers_v()}}.
 }
 \description{
-Convert between Chi square, (\eqn{\chi^2}), Cramer's V, phi (\eqn{\phi}) and
+Convert between Chi square \eqn{(\chi^2)}{}, Cramer's V, phi (\eqn{\phi}) and
 Cohen's \emph{w} for contingency tables or goodness of fit.
 }
 \details{
 These functions use the following formulae:
 \cr
-\deqn{\phi = \sqrt{\chi^2 / n}}
+\deqn{\phi = \sqrt{\chi^2 / n}}{phi = sqrt(X^2 / n)}
 \cr
-\deqn{Cramer's V = \phi / \sqrt{min(nrow,ncol)-1}}
+\deqn{Cramer's V = \phi / \sqrt{min(nrow,ncol)-1}}{Cramer's V = Phi / sqrt(min(nrow,ncol)-1)}
 \cr
 For adjusted versions, see Bergsma, 2013.
 }
@@ -63,12 +63,23 @@ more.)
 
 \section{CI Contains Zero}{
 
+Keep in mind that \code{ncp} confidence intervals are inverted significance tests,
+and only inform us about which values are not significantly different than
+our sample estimate. (They do \emph{not} inform us about which values are
+plausible, likely or compatible with our data.) Thus, when CIs contain the
+value 0, this should \emph{not} be taken to mean that a null effect size is
+supported by the data; Instead this merely reflects a non-significant test
+statistic - i.e. the \emph{p}-value is greater than alpha (Morey et al., 2016).
+\cr\cr
 For positive only effect sizes (Eta squared, Cramer's V, etc.; Effect sizes
-associated with Chi-squared and F distributions), special care should be
-taken when interpreting CIs with a lower bound equal to 0, and even more care
-should be taken when the \emph{upper} bound is equal to 0 (Steiger, 2004; Morey et
-al., 2016). For example:\if{html}{\out{<div class="r">}}\preformatted{eta_squared(aov(mpg ~ factor(gear) + factor(cyl), mtcars[1:7, ]))
-}\if{html}{\out{</div>}}\preformatted{## Parameter    | Eta2 (partial) |       90\% CI
+associated with Chi-squared and F distributions), this applies also to cases
+where the lower bound of the CI is equal to 0. Even more care should be taken
+when the \emph{upper} bound is equal to 0 - this occurs when \emph{p}-value is greater
+than 1-alpha/2 making, the upper bound cannot be estimated, and the upper
+bound is arbitrarily set to 0 (Steiger, 2004). For example:\if{html}{\out{<div class="r">}}\preformatted{eta_squared(aov(mpg ~ factor(gear) + factor(cyl), mtcars[1:7, ]))
+}\if{html}{\out{</div>}}\preformatted{## # Effect Size for ANOVA (Type I)
+## 
+## Parameter    | Eta2 (partial) |       90\% CI
 ## --------------------------------------------
 ## factor(gear) |           0.58 | [0.00, 0.84]
 ## factor(cyl)  |           0.46 | [0.00, 0.78]

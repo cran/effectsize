@@ -129,16 +129,6 @@ print.effectsize_difference <- function(x, digits = 2, append_CL = FALSE, ...) {
     footer <- c(footer, list(c(sd_type, "cyan")))
   }
 
-  if (any(colnames(x) == "Hedges_g")) {
-    correction <- sprintf(
-      "\n- Bias corrected using %s method.",
-      ifelse(attr(x, "correction") == 1, "Hedges and Olkin's", "Hunter and Schmidt's")
-    )
-
-    footer <- c(footer, list(c(correction, "cyan")))
-  }
-
-
   attr(x, "table_footer") <- footer
   attr(x, "table_caption") <- caption
   attr(x, "table_subtitle") <- subtitle
@@ -163,6 +153,40 @@ print.effectsize_difference <- function(x, digits = 2, append_CL = FALSE, ...) {
   invisible(x_orig)
 }
 
+
+#' @export
+#' @importFrom utils as.roman
+print.effectsize_anova <- function(x, digits = 2, ...) {
+  x_orig <- x
+
+  footer <- caption <- subtitle <- NULL
+
+  ## Title (caption)
+  anova_type <- attr(x, "anova_type", exact = TRUE)
+  if (is.null(anova_type) || is.na(anova_type)) {
+    caption <- "# Effect Size for ANOVA"
+  } else {
+    caption <- paste0("# Effect Size for ANOVA (Type ", utils::as.roman(anova_type), ")")
+  }
+  caption <- c(caption, "blue")
+
+  ## Footer
+  obs <- attr(x, "generalized")
+  if (is.character(obs) || isTRUE(obs)) {
+    if (isTRUE(obs)) {
+      footer <- "\n- Observed variabels: All"
+    } else {
+      footer <- paste0("\n- Observed variabels: ", paste0(obs, collapse = ", "))
+    }
+    footer <- c(footer, "cyan")
+  }
+
+  attr(x, "table_footer") <- footer
+  attr(x, "table_caption") <- caption
+  attr(x, "table_subtitle") <- subtitle
+  print.effectsize_table(x, digits = digits, ...)
+  invisible(x_orig)
+}
 
 
 # Format Methods --------------------------------------------------------

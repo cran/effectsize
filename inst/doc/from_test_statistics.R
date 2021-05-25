@@ -67,7 +67,7 @@ anova(fit_lmm)
 F_to_eta2(45.8, 1, 17)
 
 ## -----------------------------------------------------------------------------
-parameters::model_parameters(fit_lmm, df_method = "satterthwaite")
+parameters::model_parameters(fit_lmm, effects = "fixed", df_method = "satterthwaite")
 
 t_to_eta2(6.77, df_error = 17)
 
@@ -77,7 +77,7 @@ F_to_epsilon2(45.8, 1, 17)
 F_to_omega2(45.8, 1, 17)
 
 ## -----------------------------------------------------------------------------
-parameters::model_parameters(fit_lmm, df_method = "satterthwaite")
+parameters::model_parameters(fit_lmm, effects = "fixed", df_method = "satterthwaite")
 
 t_to_r(6.77, df_error = 17)
 

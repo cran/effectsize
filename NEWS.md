@@ -1,11 +1,30 @@
+# effectsize 0.4.5
+
+## New features
+
+- `eta_squared()` family now indicate the type of sum-of-squares used.
+- `rank_biserial()` estimates CIs using the normal approximation (previously used bootstrapping).  
+- `hedges_g()` now used exact bias correction (thanks to @mdelacre for the suggestion!)  
+- `glass_delta()` now estimates CIs using the NCP method based on Algina et al (2006).
+
+## Bug fixes
+
+- `eta_squared()` family returns correctly returns the type 2/3 effect sizes for mixed ANOVAs fit with `afex`.
+- `cohens_d()` family now correctly deals with missing factor levels ( #318 )
+- `cohens_d()` / `hedges_g()` minor fix for CI with unequal variances.  
+
+
+## Changes
+
+- `mad_pooled()` (the robust version of `sd_pooled()`) now correctly pools the the two samples.
+
 # effectsize 0.4.4-1
 
 ## New features
 
 - `standardize_parameters()` + `eta_sqaured()` support `tidymodels` (when that the underlying model is supported; #311 ).
 - `cohens_d()` family now supports `Pairs()` objects as input.
-- `standardize_parameters()` gains the `include_response` argument (default to `TRUE`) ( #309 ). 
-
+- `standardize_parameters()` gains the `include_response` argument (default to `TRUE`) ( #309 ).
 
 ## Bug fixes
 
