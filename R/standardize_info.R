@@ -344,9 +344,9 @@ standardize_info <- function(model, robust = FALSE, two_sd = FALSE, include_pseu
 
 # Pseudo (GLMM) -----------------------------------------------------------
 
-
-#' @importFrom insight clean_names get_random model_info find_formula get_variance get_data
-#' @importFrom parameters check_heterogeneity demean
+#' @importFrom insight clean_names get_random model_info find_formula get_variance get_data check_if_installed
+#' @importFrom performance check_heterogeneity_bias
+#' @importFrom datawizard demean
 #' @importFrom stats as.formula sd
 .std_info_pseudo <- function(model,
                              params,
@@ -362,7 +362,7 @@ standardize_info <- function(model, robust = FALSE, two_sd = FALSE, include_pseu
 
   f <- if (two_sd) 2 else 1
 
-  within_vars <- unclass(parameters::check_heterogeneity(model))
+  within_vars <- unclass(performance::check_heterogeneity_bias(model))
   id <- insight::get_random(model)[[1]]
   w <- insight::get_weights(model, na_rm = TRUE)
 
@@ -393,7 +393,7 @@ standardize_info <- function(model, robust = FALSE, two_sd = FALSE, include_pseu
     temp_d <- data.frame(model_matrix[, p_check_within, drop = FALSE])
     colnames(temp_d) <- paste0("W", seq_len(ncol(temp_d))) # overwrite because can't deal with ":"
 
-    dm <- parameters::demean(cbind(id, temp_d),
+    dm <- datawizard::demean(cbind(id, temp_d),
       select = colnames(temp_d),
       group = "id"
     )
@@ -411,7 +411,7 @@ standardize_info <- function(model, robust = FALSE, two_sd = FALSE, include_pseu
         "The following within-group terms have between-group variance:\n\t",
         paste0(also_between, collapse = ", "),
         "\nThis can inflate standardized within-group parameters associated with",
-        "\nthese terms. See help(\"demean\", package = \"parameters\") for modeling",
+        "\nthese terms. See help(\"demean\", package = \"datawizard\") for modeling",
         "\nbetween- and within-subject effects.",
         call. = FALSE
       )
@@ -422,7 +422,7 @@ standardize_info <- function(model, robust = FALSE, two_sd = FALSE, include_pseu
   ## Get 2 types of Deviation_Response_Pseudo
   sd_y_within <- sd_y_between <- 1
   if (insight::model_info(model)$is_linear) {
-    check_if_installed("lme4")
+    insight::check_if_installed("lme4")
 
     rand_name <- insight::find_random(model)$random
 

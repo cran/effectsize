@@ -6,24 +6,23 @@
 #' @param model An object of class `htest`, or a statistical model. See details.
 #' @param type The effect size of interest. See details.
 #' @param ... Arguments passed to or from other methods. See details.
-#' @inheritParams standardize
+#' @inheritParams standardize.default
 #'
 #' @details
 #'
 #' - For an object of class `htest`, data is extracted via [insight::get_data()], and passed to the relevant function according to:
 #'   - A **t-test** depending on `type`: `"cohens_d"` (default), `"hedges_g"`.
-#'   - A **correlation test** returns *r*.
-#'   - A **Chi-squared tests of independence or goodness-of-fit**, depending on `type`: `"cramers_v"` (default), `"phi"` or `"cohens_w"`, `"cohens_h"`, `"oddsratio"`, or `"riskratio"`.
+#'   - A **Chi-squared tests of independence or goodness-of-fit**, depending on `type`: `"cramers_v"` (default), `"phi"`, `"cohens_w"`, `"pearsons_c"`, `"cohens_h"`, `"oddsratio"`, or `"riskratio"`.
 #'   - A **One-way ANOVA test**, depending on `type`: `"eta"` (default), `"omega"` or `"epsilon"` -squared, `"f"`, or `"f2"`.
 #'   - A **McNemar test** returns *Cohen's g*.
-#'   - A **Fisher's Exact test** (in the 2x2 case) returns *Odds ratio*.
 #'   - A **Wilcoxon test** returns *rank biserial correlation*.
 #'   - A **Kruskal-Wallis test** returns *rank Epsilon squared*.
 #'   - A **Friedman test** returns *Kendall's W*.
+#'   (Where applicable, `ci` and `alternative` are taken from the `htest` if not otherwise provided.)
 #' - For an object of class `BFBayesFactor`, using [bayestestR::describe_posterior()],
 #'   - A **t-test** returns *Cohen's d*.
 #'   - A **correlation test** returns *r*.
-#'   - A **contingency table test**, depending on `type`: `"cramers_v"` (default), `"phi"` or `"cohens_w"`, `"cohens_h"`, `"oddsratio"`, or `"riskratio"`.
+#'   - A **contingency table test**, depending on `type`: `"cramers_v"` (default), `"phi"`, `"cohens_w"`, `"pearsons_c"`, `"cohens_h"`, `"oddsratio"`, or `"riskratio"`.
 #' - Objects of class `anova`, `aov`, or `aovlist`, depending on `type`: `"eta"` (default), `"omega"` or `"epsilon"` -squared, `"f"`, or `"f2"`.
 #' - Other objects are passed to [standardize_parameters()].
 #'
@@ -44,13 +43,15 @@
 #' effectsize(Xsq)
 #' effectsize(Xsq, type = "phi")
 #'
-#' Ts <- t.test(1:10, y = c(7:20))
-#' effectsize(Ts)
+#' Tt <- t.test(1:10, y = c(7:20), alternative = "less")
+#' effectsize(Tt)
 #'
 #' Aov <- oneway.test(extra ~ group, data = sleep, var.equal = TRUE)
 #' effectsize(Aov)
 #' effectsize(Aov, type = "omega")
 #'
+#' Wt <- wilcox.test(1:10, 7:20, mu = -3, alternative = "less")
+#' effectsize(Wt)
 #'
 #' ## Bayesian Hypothesis Testing
 #' ## ---------------------------
@@ -84,10 +85,10 @@ effectsize <- function(model, ...) {
 
 #' @export
 #' @rdname effectsize
-#' @importFrom insight get_data get_parameters
+#' @importFrom insight get_data get_parameters check_if_installed
 #' @importFrom bayestestR describe_posterior
 effectsize.BFBayesFactor <- function(model, type = NULL, verbose = TRUE, ...) {
-  check_if_installed("BayesFactor")
+  insight::check_if_installed("BayesFactor")
 
   if (length(model) > 1) {
     if (verbose) {
@@ -105,6 +106,8 @@ effectsize.BFBayesFactor <- function(model, type = NULL, verbose = TRUE, ...) {
       w = ,
       cohens_w = ,
       phi = phi,
+      c = ,
+      pearsons_c = pearsons_c,
       h = ,
       cohens_h = cohens_h,
       or = ,
@@ -133,7 +136,9 @@ effectsize.BFBayesFactor <- function(model, type = NULL, verbose = TRUE, ...) {
     stop("No effect size for this type of BayesFactor object.")
   }
 
-  bayestestR::describe_posterior(res, ...)
+  out <- bayestestR::describe_posterior(res, ...)
+  attr(out, "approximate") <- FALSE
+  out
 }
 
 
@@ -188,6 +193,7 @@ effectsize.easycorrelation <- function(model, ...) {
 
   out <- model[, r_cols, drop = FALSE]
   class(out) <- c("effectsize_table", "see_effectsize_table", "data.frame")
+  attr(out, "approximate") <- FALSE
   out
 }
 

@@ -38,6 +38,7 @@
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
@@ -163,7 +164,7 @@ div.csl-indent {
 
 <div id="TOC">
 <ul>
-<li><a href="#converting-between-r-and-d">Converting Between <em>r</em> and <em>d</em></a>
+<li><a href="#converting-between-d-r-and-or">Converting Between <em>d</em>, <em>r</em>, and <em>OR</em></a>
 <ul>
 <li><a href="#in-multiple-regression">In multiple regression</a></li>
 </ul></li>
@@ -176,8 +177,8 @@ div.csl-indent {
 </div>
 
 <p>The <code>effectsize</code> package contains function to convert among indices of effect size. This can be useful for meta-analyses, or any comparison between different types of statistical analyses.</p>
-<div id="converting-between-r-and-d" class="section level2">
-<h2>Converting Between <em>r</em> and <em>d</em></h2>
+<div id="converting-between-d-r-and-or" class="section level2">
+<h2>Converting Between <em>d</em>, <em>r</em>, and <em>OR</em></h2>
 <p>The most basic conversion is between <em>r</em> values, a measure of standardized association between two continuous measures, and <em>d</em> values (such as Cohen’s <em>d</em>), a measure of standardized differences between two groups / conditions.</p>
 <p>Let’s simulate some data:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
@@ -220,7 +221,7 @@ r \approx \frac{d}{\sqrt{d^2 + 4}}
 \]</span> And indeed, if we use <code>d_to_r()</code>, we get a pretty decent approximation:</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">d_to_r</span>(<span class="sc">-</span><span class="fl">0.31</span>)</span></code></pre></div>
 <pre><code>&gt; [1] -0.153</code></pre>
-<p>(Which also works in the other way, with <code>r_to_d(0.17) = <code>r r_to_d(0.17)</code></code>)</p>
+<p>(Which also works in the other way, with <code>r_to_d(0.17)</code> gives <code>r round(r_to_d(-0.17),3)</code>)</p>
 <p>As we can see, these are rough approximations, but they can be useful when we don’t have the raw data on hand.</p>
 <div id="in-multiple-regression" class="section level3">
 <h3>In multiple regression</h3>
@@ -284,8 +285,10 @@ d = log(OR) \times \frac{\sqrt{3}}{\pi}
 &gt; -------------------------------------------------------------
 &gt; (Intercept) |     0.41 | 0.91 | [-1.39, 2.43] |  0.44 | 0.657
 &gt; Group [1]   |    -0.81 | 1.29 | [-3.54, 1.70] | -0.63 | 0.530</code></pre>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert log(OR) (the coefficient) to d</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">oddsratio_to_d</span>(<span class="sc">-</span><span class="fl">0.81</span>, <span class="at">log =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>&gt; 
+&gt; Showing profiled confidence intervals.</code></pre>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert log(OR) (the coefficient) to d</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">oddsratio_to_d</span>(<span class="sc">-</span><span class="fl">0.81</span>, <span class="at">log =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <pre><code>&gt; [1] -0.447</code></pre>
 <div id="odds-ratios-to-risk-ratios" class="section level3">
 <h3>Odds ratios to Risk Ratios</h3>
@@ -296,19 +299,19 @@ d = log(OR) \times \frac{\sqrt{3}}{\pi}
 RR = \frac{OR}{(1 - p0 + (p0 \times OR))}  
 \]</span></p>
 <p>Where <span class="math inline">\(p0\)</span> is the base-rate risk - the probability of the event without the intervention (e.g., what is the probability of the migraine subsiding within an hour without eating any brussels sprouts). If it the base-rate risk is, say, 85%, we get a <em>RR</em> of:</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>OR <span class="ot">&lt;-</span> <span class="fl">3.5</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>baserate <span class="ot">&lt;-</span> <span class="fl">0.85</span></span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="fu">oddsratio_to_riskratio</span>(OR, baserate)</span></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>OR <span class="ot">&lt;-</span> <span class="fl">3.5</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>baserate <span class="ot">&lt;-</span> <span class="fl">0.85</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="fu">oddsratio_to_riskratio</span>(OR, baserate)</span></code></pre></div>
 <pre><code>&gt; [1] 1.12</code></pre>
 <p>That is - for every bowl of brussels sprouts, we increase the chances of reducing the migraine by a mere 12%! Is if worth it? Depends on you affinity to brussels sprouts…</p>
 <p>Note that the base-rate risk is crucial here. If instead of 85% it was only 4%, then the <em>RR</em> would be:</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>OR <span class="ot">&lt;-</span> <span class="fl">3.5</span></span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>baserate <span class="ot">&lt;-</span> <span class="fl">0.04</span></span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="fu">oddsratio_to_riskratio</span>(OR, baserate)</span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>OR <span class="ot">&lt;-</span> <span class="fl">3.5</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>baserate <span class="ot">&lt;-</span> <span class="fl">0.04</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="fu">oddsratio_to_riskratio</span>(OR, baserate)</span></code></pre></div>
 <pre><code>&gt; [1] 3.18</code></pre>
-<p>That is - for every bowl of brussels sprouts, we increase the chances of reducing the migraine by a whopping 318%! Is if worth it? I guess that still depends on you affinity to brussels sprouts…</p>
+<p>That is - for every bowl of brussels sprouts, we increase the chances of reducing the migraine by a whopping 318%! Is if worth it? I guess that still depends on your affinity to brussels sprouts…</p>
 </div>
 </div>
 <div id="references" class="section level1 unnumbered">

@@ -7,6 +7,14 @@ if (require("testthat") && require("effectsize")) {
     expect_equal(sign(rez_t$statistic), sign(rez_d$Cohens_d), ignore_attr = TRUE)
 
 
+    # Alternative -------------------------------------------------------------
+    d1 <- cohens_d(iris$Sepal.Length, iris$Sepal.Width, ci = 0.80)
+    d2 <- cohens_d(iris$Sepal.Length, iris$Sepal.Width, ci = 0.90, alternative = "l")
+    d3 <- cohens_d(iris$Sepal.Length, iris$Sepal.Width, ci = 0.90, alternative = "g")
+    expect_equal(d1$CI_high, d2$CI_high)
+    expect_equal(d1$CI_low, d3$CI_low)
+
+
     # Errors and warnings -----------------------------------------------------
     df <- data.frame(
       a = 1:10,
@@ -35,6 +43,23 @@ if (require("testthat") && require("effectsize")) {
     expect_error(cohens_d("a", "aa", data = df))
 
     expect_warning(cohens_d("b", "e", data = df))
+  })
+
+  test_that("cohens d - grouping character vector", {
+    dat <- data.frame(
+      g = rep(c("treatment", "control"), each = 100),
+      y = c(rnorm(n = 200))
+    )
+
+    d <- cohens_d(dat$y, factor(dat$g), ci = NULL)[[1]]
+    expect_equal(cohens_d(dat$y, dat$g, ci = NULL)[[1]], d)
+    expect_equal(cohens_d(y ~ g, data = dat, ci = NULL)[[1]], d)
+    expect_equal(cohens_d(y ~ factor(g), data = dat, ci = NULL)[[1]], d)
+    expect_equal(cohens_d(dat$y ~ dat$g, ci = NULL)[[1]], d)
+    expect_equal(cohens_d(dat$y ~ factor(dat$g), ci = NULL)[[1]], d)
+    expect_equal(cohens_d("y", "g", data = dat, ci = NULL)[[1]], d)
+    expect_equal(cohens_d("y", dat$g, data = dat, ci = NULL)[[1]], d)
+    expect_equal(cohens_d(dat$y, "g", data = dat, ci = NULL)[[1]], d)
   })
 
   test_that("cohens_d - mu", {

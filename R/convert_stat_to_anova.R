@@ -2,14 +2,13 @@
 #' (**partial** Eta / Omega / Epsilon squared and Cohen's f)
 #'
 #' These functions are convenience functions to convert F and t test statistics
-#' to **partial** Eta squared \eqn{(\eta{_p}^2)}{}, Omega squared
-#' \eqn{(\omega{_p}^2)}{}, Epsilon squared (\eqn{\epsilon{_p}^2;}{} an alias for the
-#' adjusted Eta squared) and Cohen's f. These are useful in cases where the
-#' various Sum of Squares and Mean Squares are not easily available or their
-#' computation is not straightforward (e.g., in liner mixed models, contrasts,
-#' etc.). For test statistics derived from `lm` and `aov` models, these
-#' functions give exact results. For all other cases, they return close
-#' approximations.
+#' to **partial** Eta- (\eqn{\eta}), Omega- (\eqn{\omega}) Epsilon-
+#' (\eqn{\epsilon}) squared (an alias for the adjusted Eta squared) and Cohen's
+#' f. These are useful in cases where the various Sum of Squares and Mean
+#' Squares are not easily available or their computation is not straightforward
+#' (e.g., in liner mixed models, contrasts, etc.). For test statistics derived
+#' from `lm` and `aov` models, these functions give exact results. For all other
+#' cases, they return close approximations.
 #' \cr
 #' See [Effect Size from Test Statistics vignette.](https://easystats.github.io/effectsize/articles/from_test_statistics.html)
 #'
@@ -28,15 +27,15 @@
 #'
 #' @details These functions use the following formulae:
 #' \cr
-#' \deqn{\eta_p^2 = \frac{F \times df_{num}}{F \times df_{num} + df_{den}}}{Eta2p = F * df1 / (F * df1 + df2)}
+#' \deqn{\eta_p^2 = \frac{F \times df_{num}}{F \times df_{num} + df_{den}}}{\eta^2_p = F * df1 / (F * df1 + df2)}
 #' \cr
-#' \deqn{\epsilon_p^2 = \frac{(F - 1) \times df_{num}}{F \times df_{num} + df_{den}}}{Epsilon2p = (F - 1) * df1 / (F * df1 + df2)}
+#' \deqn{\epsilon_p^2 = \frac{(F - 1) \times df_{num}}{F \times df_{num} + df_{den}}}{\epsilon^2_p = (F - 1) * df1 / (F * df1 + df2)}
 #' \cr
-#' \deqn{\omega_p^2 = \frac{(F - 1) \times df_{num}}{F \times df_{num} + df_{den} + 1}}{Omega2p=(F - 1) * df1 / (F * df1 + df2 + 1)}
+#' \deqn{\omega_p^2 = \frac{(F - 1) \times df_{num}}{F \times df_{num} + df_{den} + 1}}{\omega^2_p=(F - 1) * df1 / (F * df1 + df2 + 1)}
 #' \cr
-#' \deqn{f_p = \sqrt{\frac{\eta_p^2}{1-\eta_p^2}}}{f = Eta2 / (1 - Eta2)}
+#' \deqn{f_p = \sqrt{\frac{\eta_p^2}{1-\eta_p^2}}}{f = \eta^2 / (1 - \eta^2)}
 #' \cr\cr
-#' For \eqn{t}, the conversion is based on the equality of \eqn{t^2 = F} when \eqn{df_{num}=1}{df1 = 1}.
+#' For *t*, the conversion is based on the equality of \eqn{t^2 = F} when \eqn{df_{num}=1}{df1 = 1}.
 #'
 #' ## Choosing an Un-Biased Estimate
 #' Both Omega and Epsilon are unbiased estimators of the population Eta. But
@@ -46,10 +45,10 @@
 #' designs.
 #' 2. Epsilon has been found to be less biased (Carroll & Nordholm, 1975).
 #'
-#' @inheritSection effectsize-CIs Confidence Intervals
-#' @inheritSection effectsize-CIs CI Contains Zero
+#' @inheritSection effectsize_CIs Confidence (Compatibility) Intervals (CIs)
+#' @inheritSection effectsize_CIs CIs and Significance Tests
 #'
-#' @note \eqn{Adj. \eta_p^2}{adjusted (partial) Eta squared} is an alias for \eqn{\epsilon_p^2}{partial) Epsilon squared}.
+#' @note Adjusted (partial) Eta-squared is an alias for (partial) Epsilon-squared.
 #'
 #' @seealso [eta_squared()] for more details.
 #' @family effect size from test statistic
@@ -129,25 +128,25 @@
 #' Psychological Methods, 9, 164-182.
 #'
 #' @export
-F_to_eta2 <- function(f, df, df_error, ci = 0.9, ...) {
-  .F_to_pve(f, df, df_error, ci = ci, es = "eta2")
+F_to_eta2 <- function(f, df, df_error, ci = 0.95, alternative = "greater", ...) {
+  .F_to_pve(f, df, df_error, ci = ci, alternative = alternative, es = "eta2")
 }
 
 #' @rdname F_to_eta2
 #' @export
-t_to_eta2 <- function(t, df_error, ci = 0.9, ...) {
+t_to_eta2 <- function(t, df_error, ci = 0.95, alternative = "greater", ...) {
   F_to_eta2(t^2, 1, df_error, ci = ci)
 }
 
 #' @rdname F_to_eta2
 #' @export
-F_to_epsilon2 <- function(f, df, df_error, ci = 0.9, ...) {
-  .F_to_pve(f, df, df_error, ci = ci, es = "epsilon2")
+F_to_epsilon2 <- function(f, df, df_error, ci = 0.95, alternative = "greater", ...) {
+  .F_to_pve(f, df, df_error, ci = ci, alternative = alternative, es = "epsilon2")
 }
 
 #' @rdname F_to_eta2
 #' @export
-t_to_epsilon2 <- function(t, df_error, ci = 0.9, ...) {
+t_to_epsilon2 <- function(t, df_error, ci = 0.95, alternative = "greater", ...) {
   F_to_epsilon2(t^2, 1, df_error, ci = ci)
 }
 
@@ -161,13 +160,13 @@ t_to_eta2_adj <- t_to_epsilon2
 
 #' @rdname F_to_eta2
 #' @export
-F_to_omega2 <- function(f, df, df_error, ci = 0.9, ...) {
-  .F_to_pve(f, df, df_error, ci = ci, es = "omega2")
+F_to_omega2 <- function(f, df, df_error, ci = 0.95, alternative = "greater", ...) {
+  .F_to_pve(f, df, df_error, ci = ci, alternative = alternative, es = "omega2")
 }
 
 #' @rdname F_to_eta2
 #' @export
-t_to_omega2 <- function(t, df_error, ci = 0.9, ...) {
+t_to_omega2 <- function(t, df_error, ci = 0.95, alternative = "greater", ...) {
   F_to_omega2(t^2, 1, df_error, ci = ci)
 }
 
@@ -175,8 +174,8 @@ t_to_omega2 <- function(t, df_error, ci = 0.9, ...) {
 #' @rdname F_to_eta2
 #' @param squared Return Cohen's *f* or Cohen's *f*-squared?
 #' @export
-F_to_f <- function(f, df, df_error, ci = 0.9, squared = FALSE, ...) {
-  res_eta <- F_to_eta2(f, df, df_error, ci = ci)
+F_to_f <- function(f, df, df_error, ci = 0.95, alternative = "greater", squared = FALSE, ...) {
+  res_eta <- F_to_eta2(f, df, df_error, ci = ci, alternative = alternative)
 
   res <- data.frame(
     Cohens_f2_partial =
@@ -201,31 +200,34 @@ F_to_f <- function(f, df, df_error, ci = 0.9, squared = FALSE, ...) {
   class(res) <- c("effectsize_table", "see_effectsize_table", class(res))
   attr(res, "ci") <- ci
   attr(res, "ci_method") <- ci_method
+  attr(res, "alternative") <- if (is.numeric(ci)) alternative
   return(res)
 }
 
 
 #' @rdname F_to_eta2
 #' @export
-t_to_f <- function(t, df_error, ci = 0.9, squared = FALSE, ...) {
-  F_to_f(t^2, 1, df_error, ci = ci, squared = squared)
+t_to_f <- function(t, df_error, ci = 0.95, alternative = "greater", squared = FALSE, ...) {
+  F_to_f(t^2, 1, df_error, ci = ci, alternative = alternative, squared = squared)
 }
 
 #' @rdname F_to_eta2
 #' @export
-F_to_f2 <- function(f, df, df_error, ci = 0.9, squared = TRUE, ...) {
-  F_to_f(f, df = df, df_error = df_error, ci = ci, squared = squared)
+F_to_f2 <- function(f, df, df_error, ci = 0.95, alternative = "greater", squared = TRUE, ...) {
+  F_to_f(f, df = df, df_error = df_error, ci = ci, alternative = alternative, squared = squared)
 }
 
 #' @rdname F_to_eta2
 #' @export
-t_to_f2 <- function(t, df_error, ci = 0.9, squared = TRUE, ...) {
-  F_to_f(t^2, 1, df_error, ci = ci, squared = squared)
+t_to_f2 <- function(t, df_error, ci = 0.95, alternative = "greater", squared = TRUE, ...) {
+  F_to_f(t^2, 1, df_error, ci = ci, alternative = alternative, squared = squared)
 }
 
 
 #' @keywords internal
-.F_to_pve <- function(f, df, df_error, ci = 0.9, es = "eta2") {
+.F_to_pve <- function(f, df, df_error, ci = 0.95, alternative = "greater", es = "eta2") {
+  alternative <- match.arg(alternative, c("greater", "two.sided", "less"))
+
   res <- switch(tolower(es),
     eta2 = data.frame(Eta2_partial = (f * df) / (f * df + df_error)),
     epsilon2 = data.frame(Epsilon2_partial = ((f - 1) * df) / (f * df + df_error)),
@@ -237,19 +239,29 @@ t_to_f2 <- function(t, df_error, ci = 0.9, squared = TRUE, ...) {
   if (is.numeric(ci)) {
     stopifnot(length(ci) == 1, ci < 1, ci > 0)
     res$CI <- ci
+    ci.level <- if (alternative == "two.sided") ci else 2 * ci - 1
+
     # based on MBESS::ci.R2
     f <- pmax(0, (res[[1]] / df) / ((1 - res[[1]]) / df_error))
-    fs <- t(mapply(.get_ncp_F, f, df, df_error, ci))
+    fs <- t(mapply(.get_ncp_F, f, df, df_error, ci.level))
 
     # This really is a generic F_to_R2
     res$CI_low <- F_to_eta2(fs[, 1], df, df_error, ci = NULL)[[1]]
     res$CI_high <- F_to_eta2(fs[, 2], df, df_error, ci = NULL)[[1]]
 
     ci_method <- list(method = "ncp", distribution = "F")
+    if (alternative == "less") {
+      res$CI_low <- 0
+    } else if (alternative == "greater") {
+      res$CI_high <- 1
+    }
+  } else {
+    alternative <- NULL
   }
 
   class(res) <- c("effectsize_table", "see_effectsize_table", class(res))
   attr(res, "ci") <- ci
   attr(res, "ci_method") <- ci_method
+  attr(res, "alternative") <- alternative
   return(res)
 }

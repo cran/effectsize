@@ -33,6 +33,11 @@ hedges_g(mpg ~ am, data = mtcars, pooled_sd = FALSE)
 glass_delta(mpg ~ am, data = mtcars)
 
 ## -----------------------------------------------------------------------------
+t.test(mpg ~ am, data = mtcars, var.equal = TRUE, alternative = "less")
+
+cohens_d(mpg ~ am, data = mtcars, pooled_sd = TRUE, alternative = "less")
+
+## -----------------------------------------------------------------------------
 t.test(extra ~ group, data = sleep, paired = TRUE)
 
 cohens_d(extra ~ group, data = sleep, paired = TRUE)
@@ -69,13 +74,15 @@ cramers_v(Music)
 
 phi(Music)
 
+pearsons_c(Music)
+
 ## -----------------------------------------------------------------------------
-O <- c(89, 37, 30, 28, 2) # observed group sizes
-E <- c(40, 20, 20, 15, 6) # expected group sizes
+O <- c(89,  37,  130, 28,  2) # observed group sizes
+E <- c(.40, .20, .20, .15, .05) # expected group freq
 
 chisq.test(O, p = E, rescale.p = TRUE)
 
-cramers_v(O, p = E, rescale.p = TRUE)
+pearsons_c(O, p = E, rescale.p = TRUE)
 
 phi(O, p = E, rescale.p = TRUE)
 
@@ -85,6 +92,8 @@ phi(O, p = E, rescale.p = TRUE)
 effectsize(BFX, type = "cramers_v", test = NULL)
 
 effectsize(BFX, type = "phi", test = NULL)
+
+effectsize(BFX, type = "pearsons_c", test = NULL)
 
 ## -----------------------------------------------------------------------------
 (RCT <- matrix(
@@ -135,7 +144,7 @@ wilcox.test(A, B) # aka Mann–Whitney U test
 rank_biserial(A, B)
 
 ## -----------------------------------------------------------------------------
-x <- c(1.15, 0.88, 0.90, 0.74, 1.21)
+x <- c(1.15, 0.88, 0.90, 0.74, 1.21, 1.36, 0.89)
 
 wilcox.test(x, mu = 1) # aka Signed-Rank test
 

@@ -4,7 +4,7 @@
 #'
 #' @param x A standardized numeric vector.
 #' @param reference The reference vector from which to compute the mean and SD.
-#' @inheritParams standardize
+#' @inheritParams standardize.default
 #' @inheritParams insight::format_value
 #' @param ... Other arguments to pass to \code{\link[insight:format_value]{insight::format_value()}} such as \code{digits}, etc.
 #'
@@ -21,7 +21,7 @@
 format_standardize <- function(x, reference = x, robust = FALSE, digits = 1, protect_integers = TRUE, ...) {
 
   # Check if robust info stored in attributes
-  if("robust" %in% names(attributes(reference))) {
+  if ("robust" %in% names(attributes(reference))) {
     robust <- attributes(reference)$robust
   }
 
@@ -39,16 +39,16 @@ format_standardize <- function(x, reference = x, robust = FALSE, digits = 1, pro
   }
 
   # See if they are not stored as attributes
-  if("center" %in% names(attributes(reference))) {
+  if ("center" %in% names(attributes(reference))) {
     central <- attributes(reference)$center
   }
-  if("scale" %in% names(attributes(reference))) {
+  if ("scale" %in% names(attributes(reference))) {
     deviation <- attributes(reference)$scale
   }
 
 
   # Express in deviations
-  if(length(x) != length(reference) || any(x != reference)) {
+  if (length(x) != length(reference) || any(x != reference)) {
     x <- (x - central) / deviation
   }
 

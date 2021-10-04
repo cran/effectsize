@@ -73,8 +73,7 @@ standard errors (SEs) are returned as an attribute (\code{attr(x, "standard_erro
 \description{
 Compute standardized model parameters (coefficients).
 }
-\details{
-\subsection{Methods:}{
+\section{Standardization Methods:}{
 \itemize{
 \item \strong{refit}: This method is based on a complete model re-fit with a
 standardized version of the data. Hence, this method is equal to
@@ -104,6 +103,12 @@ related to a change of 0.24 of the SD of \code{y}). This does not apply to binar
 variables or factors, so the coefficients are still related to changes in
 levels. This method is not accurate and tend to give aberrant results when
 interactions are specified.
+\item \strong{basic}: This method is similar to \code{method = "posthoc"}, but treats all
+variables as continuous: it also scales the coefficient by the standard
+deviation of model's matrix' parameter of factors levels (transformed to
+integers) or binary predictors. Although being inappropriate for these cases,
+this method is the one implemented by default in other software packages,
+such as \code{\link[lm.beta:lm.beta]{lm.beta::lm.beta()}}.
 \item \strong{smart} (Standardization of Model's parameters with Adjustment,
 Reconnaissance and Transformation - \emph{experimental}): Similar to \code{method = "posthoc"} in that it does not involve model refitting. The difference is
 that the SD (or MAD if \code{robust}) of the response is computed on the relevant
@@ -112,17 +117,11 @@ intercept), B and C is entered as a predictor, the effect corresponding to B
 vs. A will be scaled by the variance of the response at the intercept only.
 As a results, the coefficients for effects of factors are similar to a Glass'
 delta.
-\item \strong{basic}: This method is similar to \code{method = "posthoc"}, but treats all
-variables as continuous: it also scales the coefficient by the standard
-deviation of model's matrix' parameter of factors levels (transformed to
-integers) or binary predictors. Although being inappropriate for these cases,
-this method is the one implemented by default in other software packages,
-such as \code{\link[lm.beta:lm.beta]{lm.beta::lm.beta()}}.
 \item \strong{pseudo} (\emph{for 2-level (G)LMMs only}): In this (post-hoc) method, the
 response and the predictor are standardized based on the level of prediction
-(levels are detected with \code{\link[parameters:demean]{parameters::check_heterogeneity()}}): Predictors
+(levels are detected with \code{\link[performance:check_heterogeneity_bias]{performance::check_heterogeneity_bias()}}): Predictors
 are standardized based on their SD at level of prediction (see also
-\code{\link[parameters:demean]{parameters::demean()}}); The outcome (in linear LMMs) is standardized based
+\code{\link[datawizard:demean]{datawizard::demean()}}); The outcome (in linear LMMs) is standardized based
 on a fitted random-intercept-model, where \code{sqrt(random-intercept-variance)}
 is used for level 2 predictors, and \code{sqrt(residual-variance)} is used for
 level 1 predictors (Hoffman 2015, page 342). A warning is given when a
@@ -130,18 +129,17 @@ within-group varialbe is found to have access between-group variance.
 }
 }
 
-\subsection{Transformed Variables}{
+\section{Transformed Variables}{
+When the model's formula contains transformations (e.g. \code{y ~ exp(X)}) \code{method = "refit"} will give different results compared to \code{method = "basic"}
+(\code{"posthoc"} and \code{"smart"} do not support such transformations): While
+\code{"refit"} standardizes the data \emph{prior} to the transformation (e.g.
+equivalent to \code{exp(scale(X))}), the \code{"basic"} method standardizes the
+transformed data (e.g. equivalent to \code{scale(exp(X))}).
+\cr\cr
+See the \emph{Transformed Variables} section in \code{\link[=standardize.default]{standardize.default()}} for more
+details on how different transformations are dealt with when \code{method = "refit"}.
+}
 
-When the model's formula contains transformations (e.g. \code{y ~ exp(X)})
-\code{method = "refit"} might give different results compared to
-\code{method = "basic"} (\code{"posthoc"} and \code{"smart"} do not support such
-transformations): where \code{"refit"} standardizes the data prior to the
-transformation (e.g. equivalent to \code{exp(scale(X))}), the \code{"basic"} method
-standardizes the transformed data (e.g. equivalent to \code{scale(exp(X))}). See
-\code{\link[=standardize]{standardize()}} for more details on how different transformations are dealt
-with.
-}
-}
 \section{Confidence Intervals}{
 The returned confidence intervals are re-scaled versions of the
 unstandardized confidence intervals, and not "true" confidence intervals of
@@ -149,10 +147,21 @@ the standardized coefficients (cf. Jones & Waller, 2015).
 }
 
 \section{Generalized Linear Models}{
-When standardizing coefficients of a generalized model (GLM, GLMM, etc), only
-the predictors are standardized, maintaining the interpretability of the
-coefficients (e.g., in a binomial model: the exponent of the standardized
-parameter is the OR of a change of 1 SD in the predictor, etc.)
+Standardization for generalized linear models (GLM, GLMM, etc) is done only
+with respect to the predictors (while the outcome remains as-is,
+unstandardized) - maintaining the interpretability of the coefficients (e.g.,
+in a binomial model: the exponent of the standardized parameter is the OR of
+a change of 1 SD in the predictor, etc.)
+}
+
+\section{Dealing with Factors}{
+\code{standardize(model)} or \code{standardize_parameters(model, method = "refit")} do
+\emph{not} standardized categorical predictors (i.e. factors) / their
+dummy-variables, which may be a different behaviour compared to other R
+packages (such as \pkg{lm.beta}) or other software packages (like SPSS). To
+mimic such behaviours, either use \code{standardize_parameters(model, method = "basic")} to obtain post-hoc standardized parameters, or standardize the data
+with \code{datawizard::standardize(data, force = TRUE)} \emph{before} fitting the
+model.
 }
 
 \examples{
@@ -204,11 +213,9 @@ if (require("rstanarm")) {
 }
 }
 \seealso{
-\code{\link[=standardize_info]{standardize_info()}}
-
 Other standardize: 
-\code{\link{standardize_info}()},
-\code{\link{standardize}()}
+\code{\link{standardize.default}()},
+\code{\link{standardize_info}()}
 
 Other effect size indices: 
 \code{\link{cohens_d}()},

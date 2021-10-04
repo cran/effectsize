@@ -10,6 +10,18 @@ if (require("testthat") && require("effectsize")) {
     expect_equal(coef(m0), coef(model))
   })
 
+  test_that("standardize | errors", {
+    my_lm_external_formula <- function(.dat, predicted, predictor){
+      my_formula <- as.formula(paste0(predicted, "~", predictor))
+      lm(formula = my_formula, data = .dat)
+    }
+
+    m <- my_lm_external_formula(mtcars, "mpg", "am")
+
+    expect_error(standardize(m), "Try instead to standardize the data", fixed = TRUE)
+
+  })
+
 
   # Transformations ---------------------------------------------------------
   test_that("transformations", {
@@ -146,6 +158,7 @@ if (require("testthat") && require("effectsize")) {
 
   # don't standardize non-Gaussian response ------------------------------------
   test_that("standardize non-Gaussian response", {
+    skip_on_cran()
     skip_if_not_installed("lme4")
     set.seed(1234)
     data(sleepstudy, package = "lme4")
@@ -163,7 +176,7 @@ if (require("testthat") && require("effectsize")) {
   # variables evaluated in the environment $$$ ------------------------------
   test_that("variables evaluated in the environment", {
     m <- lm(mtcars$mpg ~ mtcars$cyl + am, data = mtcars)
-    w <- testthat::capture_warnings(standardize(m))
+    w <- capture_warnings(standardize(m))
     expect_match(w[1], "mtcars$mpg", fixed = TRUE)
 
     skip_if(packageVersion("base") == package_version(3.4))
@@ -177,7 +190,8 @@ if (require("testthat") && require("effectsize")) {
 
 
   # mediation models --------------------------------------------------------
-  test_that("standardize non-Gaussian response", {
+  test_that("standardize mediation", {
+    skip_on_cran()
     skip_if_not_installed("mediation")
     set.seed(444)
     data(jobs, package = "mediation")

@@ -79,13 +79,19 @@ hedges_g(mpg ~ am, data = mtcars, pooled_sd = FALSE)
 In cases where the differences between the variances are substantial, it is also
 common to standardize the difference based only on the standard deviation of one
 of the groups (usually the "control" group); this effect size is known as Glass'
-$\Delta$ (delta)
+$\Delta$ (delta) (Note that the standard deviation is taken from the *second* sample).
 
 ```{r}
 glass_delta(mpg ~ am, data = mtcars)
 ```
 
-(Note that the standard deviation is taken from the *second* sample.)
+For a one-sided hypothesis, it is also possible to construct one-sided confidence intervals:
+
+```{r}
+t.test(mpg ~ am, data = mtcars, var.equal = TRUE, alternative = "less")
+
+cohens_d(mpg ~ am, data = mtcars, pooled_sd = TRUE, alternative = "less")
+```
 
 ## One Sample and Paired Samples
 
@@ -122,10 +128,8 @@ eta_squared(onew)
 
 # Contingency Tables and Proportions
 
-For contingency tables Cramér's *V* and $\phi$ (Phi, also known as Cohen's *w*)
-indicate the strength of association with 0 indicating no association between
-the variables. While Cramér's *V* is capped at 1 (perfect association), $\phi$
-can be larger than 1.
+For contingency tables Cramér's *V*, $\phi$ (Phi, also known as Cohen's *w*) and Pearson's contingency coefficient indicate the strength of association with 0 indicating no association between the variables.
+While Cramér's *V* and Pearson's *C* are capped at 1 (perfect association), $\phi$ can be larger than 1.
 
 ```{r}
 (Music <- matrix(
@@ -146,19 +150,19 @@ chisq.test(Music)
 cramers_v(Music)
 
 phi(Music)
+
+pearsons_c(Music)
 ```
 
-These are also applicable to tests of goodness-of-fit, where small values
-indicate no deviation from the hypothetical probabilities and large values
-indicate... large deviation from the hypothetical probabilities.
+Pearson's *C* and $\phi$ are also applicable to tests of goodness-of-fit, where small values indicate no deviation from the hypothetical probabilities and large values indicate... large deviation from the hypothetical probabilities.
 
 ```{r}
-O <- c(89, 37, 30, 28, 2) # observed group sizes
-E <- c(40, 20, 20, 15, 6) # expected group sizes
+O <- c(89,  37,  130, 28,  2) # observed group sizes
+E <- c(.40, .20, .20, .15, .05) # expected group freq
 
 chisq.test(O, p = E, rescale.p = TRUE)
 
-cramers_v(O, p = E, rescale.p = TRUE)
+pearsons_c(O, p = E, rescale.p = TRUE)
 
 phi(O, p = E, rescale.p = TRUE)
 ```
@@ -171,11 +175,13 @@ These can also be extracted from the equivalent Bayesian test:
 effectsize(BFX, type = "cramers_v", test = NULL)
 
 effectsize(BFX, type = "phi", test = NULL)
+
+effectsize(BFX, type = "pearsons_c", test = NULL)
 ```
 
 ## Comparing Two Proportions (2x2 tables)
 
-For $2\times 2$ tables, in addition to Cramér's *V* and $\phi$, we can also
+For $2\times 2$ tables, in addition to Cramér's *V*, $\phi$ and Pearson's *C*, we can also
 compute the Odds-ratio (OR), where each column represents a different group.
 Values larger than 1 indicate that the odds are higher in the first group (and
 vice versa).
@@ -266,7 +272,7 @@ above $\mu$. For paired samples the difference between the paired samples is
 used:
 
 ```{r}
-x <- c(1.15, 0.88, 0.90, 0.74, 1.21)
+x <- c(1.15, 0.88, 0.90, 0.74, 1.21, 1.36, 0.89)
 
 wilcox.test(x, mu = 1) # aka Signed-Rank test
 

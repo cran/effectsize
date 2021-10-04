@@ -81,11 +81,18 @@ if (require("testthat") && require("effectsize")) {
     #### One way-between
     expect_message(eta_squared(aov(mpg ~ factor(gear), mtcars)))
     expect_message(eta_squared(aov(mpg ~ factor(gear) + am, mtcars)), regexp = NA)
+
+    #### Alternative
+    m <- aov(mpg ~ factor(gear) + am, mtcars)
+    et1 <- eta_squared(m)
+    et2 <- eta_squared(m, ci = 0.9, alternative = "two.sided")
+    expect_equal(et1$CI_low, et2$CI_low)
   })
 
 
   # aovlist -----------------------------------------------------------------
   test_that("aovlist", {
+    skip_on_cran()
     df <- iris
     df$Sepal.Big <- ifelse(df$Sepal.Width >= 3, "Yes", "No")
 
@@ -177,8 +184,6 @@ if (require("testthat") && require("effectsize")) {
     rownames(fsD) <- rownames(fs) <- 1
     expect_equal(fsD, fs, tolerance = 0.01, ignore_attr = TRUE)
 
-
-    skip_if_not_installed("performance")
     fsD <- cohens_f_squared(m1, model2 = m2)
     R2_1 <- performance::r2(m1)[[1]]
     R2_2 <- performance::r2(m2)[[1]]
@@ -284,11 +289,13 @@ if (require("testthat") && require("effectsize")) {
 
     ef <- omega_squared(m, partial = TRUE)
     expect_equal(ef$Omega2_partial,
-                 c(0.3115, 0.1814, 0.2221, 0.2637, 0.1512, -0.0173, -0.0171),
-                 tolerance = 0.01)
+      c(0.3115, 0.1814, 0.2221, 0.2637, 0.1512, -0.0173, -0.0171),
+      tolerance = 0.01
+    )
     expect_equal(ef$CI_low,
-                 c(0, 0, 0, 0, 0, 0, 0),
-                 tolerance = 0.01)
+      c(0, 0, 0, 0, 0, 0, 0),
+      tolerance = 0.01
+    )
     # TODO Why are we getting diferent results on different systems and R releases?
     # expect_equal(ef$CI_high,
     #              c(0.5814, 0.5036, 0.5052, 0.4589, 0.3023, 0, 0),
@@ -304,9 +311,10 @@ if (require("testthat") && require("effectsize")) {
     data(obk.long, package = "afex")
 
     mod <- afex::aov_ez("id", "value", obk.long,
-                        between = c("treatment", "gender"),
-                        within = c("phase", "hour"),
-                        observed = "gender")
+      between = c("treatment", "gender"),
+      within = c("phase", "hour"),
+      observed = "gender"
+    )
 
     x <- eta_squared(mod, generalized = TRUE)
     a <- anova(mod, observed = "gender")
@@ -346,6 +354,7 @@ if (require("testthat") && require("effectsize")) {
 
   # Include intercept -------------------------------------------------------
   test_that("include_intercept | car", {
+    skip_on_cran()
     skip_if_not_installed("car")
 
     m <- lm(mpg ~ factor(cyl) * factor(am), data = mtcars)

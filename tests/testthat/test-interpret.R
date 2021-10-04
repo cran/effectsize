@@ -1,5 +1,6 @@
 if (require("testthat") && require("effectsize")) {
-  test_that("interpret", {
+  # interpret generic ----
+  test_that("interpret generic", {
     rules_grid <- rules(c(0.01, 0.05), c("very significant", "significant", "not significant"))
     expect_equal(interpret(0.001, rules_grid)[1], "very significant")
     expect_equal(interpret(0.021, rules_grid)[1], "significant")
@@ -19,7 +20,7 @@ if (require("testthat") && require("effectsize")) {
     expect_equal(interpret(c(0, 1), r2)[], c("few", "many"), ignore_attr = TRUE)
   })
 
-
+  # interpret types ----
   test_that("interpret_r", {
     expect_equal(interpret_r(0.21)[1], "medium")
     expect_equal(interpret_r(0.21, "cohen1988")[1], "small")
@@ -46,15 +47,21 @@ if (require("testthat") && require("effectsize")) {
   })
 
 
-  test_that("interpret_d", {
-    expect_equal(interpret_d(0.021)[1], "very small")
-    expect_equal(interpret_d(1.3, "sawilowsky2009")[1], "very large")
-    expect_equal(interpret_d(c(0.45, 0.85), "cohen1988")[1:2], c("small", "large"))
-    expect_equal(interpret_d(c(0.45, 0.85), "lovakov2021")[1:2], c("medium", "large"))
-    expect_equal(interpret_d(0.6, rules(c(0.5), c("A", "B")))[1], "B")
-    expect_error(interpret_d(0.6, "DUPA"))
+  test_that("interpret_cohens_d", {
+    expect_equal(interpret_cohens_d(0.021)[1], "very small")
+    expect_equal(interpret_cohens_d(1.3, "sawilowsky2009")[1], "very large")
+    expect_equal(interpret_cohens_d(c(0.45, 0.85), "cohen1988")[1:2], c("small", "large"))
+    expect_equal(interpret_cohens_d(c(0.45, 0.85), "lovakov2021")[1:2], c("medium", "large"))
+    expect_equal(interpret_cohens_d(0.6, rules(c(0.5), c("A", "B")))[1], "B")
+    expect_error(interpret_cohens_d(0.6, "DUPA"))
   })
 
+  test_that("interpret_cohens_g", {
+    expect_equal(interpret_cohens_g(0.021)[1], "very small")
+    expect_equal(interpret_cohens_g(c(0.10, 0.35), "cohen1988")[1:2], c("small", "large"))
+    expect_equal(interpret_cohens_g(0.6, rules(c(0.5), c("A", "B")))[1], "B")
+    expect_error(interpret_cohens_g(0.6, "DUPA"))
+  })
 
 
   test_that("interpret_rope", {
@@ -169,5 +176,54 @@ if (require("testthat") && require("effectsize")) {
     expect_equal(interpret_pnfi(c(.5, .99)), c("poor", "satisfactory"), ignore_attr = TRUE)
     expect_equal(interpret_rmsea(c(.1, .05)), c("poor", "satisfactory"), ignore_attr = TRUE)
     expect_equal(interpret_srmr(c(.1, .05)), c("poor", "satisfactory"), ignore_attr = TRUE)
+
+    cr <- rules(c(0.5), c("A", "B"))
+    expect_equal(interpret_gfi(0.6, cr), "B", ignore_attr = TRUE)
+    expect_equal(interpret_agfi(0.6, cr), "B", ignore_attr = TRUE)
+    expect_equal(interpret_nfi(0.6, cr), "B", ignore_attr = TRUE)
+    expect_equal(interpret_nnfi(0.6, cr), "B", ignore_attr = TRUE)
+    expect_equal(interpret_cfi(0.6, cr), "B", ignore_attr = TRUE)
+    expect_equal(interpret_rfi(0.6, cr), "B", ignore_attr = TRUE)
+    expect_equal(interpret_ifi(0.6, cr), "B", ignore_attr = TRUE)
+    expect_equal(interpret_pnfi(0.6, cr), "B", ignore_attr = TRUE)
+    expect_equal(interpret_rmsea(0.6, cr), "B", ignore_attr = TRUE)
+    expect_equal(interpret_srmr(0.6, cr), "B", ignore_attr = TRUE)
+
+    expect_error(interpret_gfi(0.6, "DUPA"))
+    expect_error(interpret_agfi(0.6, "DUPA"))
+    expect_error(interpret_nfi(0.6, "DUPA"))
+    expect_error(interpret_nnfi(0.6, "DUPA"))
+    expect_error(interpret_cfi(0.6, "DUPA"))
+    expect_error(interpret_rfi(0.6, "DUPA"))
+    expect_error(interpret_ifi(0.6, "DUPA"))
+    expect_error(interpret_pnfi(0.6, "DUPA"))
+    expect_error(interpret_rmsea(0.6, "DUPA"))
+    expect_error(interpret_srmr(0.6, "DUPA"))
+  })
+
+  test_that("interpret_icc", {
+    expect_equal(interpret_icc(c(0.45, 0.55, 0.8, 0.95)), c("poor", "moderate", "good", "excellent"), ignore_attr = TRUE)
+    expect_equal(interpret_icc(0.6, rules(c(0.5), c("A", "B")))[1], "B")
+    expect_error(interpret_icc(0.6, "DUPA"))
+  })
+
+  test_that("interpret_pf", {
+    expect_equal(interpret_pd(c(0.9, 0.99)), c("not significant", "significant"), ignore_attr = TRUE)
+    expect_equal(interpret_pd(c(0.9, 0.99), "makowski2019"), c("uncertain", "likely existing"), ignore_attr = TRUE)
+    expect_equal(interpret_pd(0.6, rules(c(0.5), c("A", "B")))[1], "B")
+    expect_error(interpret_pd(0.6, "DUPA"))
+  })
+
+  # interpret effectsize_table ----
+  test_that("interpret effectsize_table", {
+    d <- cohens_d(mpg ~ am, data = mtcars)
+
+    expect_error(interpret(d))
+
+    d_ <- interpret(d, rules = "cohen1988")
+    expect_equal(d_[["Interpretation"]], "large", ignore_attr = TRUE)
+    expect_s3_class(d_[["Interpretation"]], "effectsize_interpret")
+    expect_output(print(d_), "large")
+    expect_output(print(d_), "Interpretation rule: cohen1988")
   })
 }

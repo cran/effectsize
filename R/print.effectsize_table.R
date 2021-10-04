@@ -10,6 +10,17 @@
 print.effectsize_table <- function(x, digits = 2, ...) {
   x_orig <- x
 
+  if (!is.null(alt <- attr(x, "alternative")) && alt != "two.sided") {
+    ci_footer <- sprintf(
+      "\n- One-sided CIs: %s bound fixed at (%s).",
+      if (alt == "less") "lower" else "upper",
+      as.character(if (alt == "less") x$CI_low[1] else x$CI_high[1])
+    )
+
+    attr(x, "table_footer") <-
+      c(attr(x, "table_footer"), list(c(ci_footer, "cyan")))
+  }
+
   x <- format(x, digits = digits)
 
   cat(insight::export_table(x, digits = digits, ...))
@@ -27,7 +38,14 @@ format.effectsize_table <- function(x, digits = 2, ...) {
   attr(x, "ci") <- NULL
   attr(x, "ci_method") <- NULL
 
-  insight::format_table(x, digits = digits, ci_digits = digits, preserve_attributes = TRUE, ...)
+  out <- insight::format_table(x, digits = digits, ci_digits = digits, preserve_attributes = TRUE, ...)
+  if (!is.null(rule_name <- attr(x, "rule_name", exact = TRUE))) {
+    attr(out, "table_footer") <- c(
+      attr(out, "table_footer"),
+      list(c(paste0("\n(Interpretation rule: ", rule_name, ")"), "blue"))
+    )
+  }
+  out
 }
 
 
@@ -178,7 +196,7 @@ print.effectsize_anova <- function(x, digits = 2, ...) {
     } else {
       footer <- paste0("\n- Observed variabels: ", paste0(obs, collapse = ", "))
     }
-    footer <- c(footer, "cyan")
+    footer <- list(c(footer, "cyan"))
   }
 
   attr(x, "table_footer") <- footer

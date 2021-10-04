@@ -3,6 +3,7 @@
 #' @param bf Value or vector of Bayes factor (BF) values.
 #' @param rules Can be `"jeffreys1961"` (default), `"raftery1995"` or custom set
 #'   of [rules()] (for the *absolute magnitude* of evidence).
+#' @param log Is the `bf` value `log(bf)`?
 #' @param include_value Include the value in the output.
 #' @inheritParams insight::format_bf
 #'
@@ -44,10 +45,11 @@
 #' @export
 interpret_bf <- function(bf,
                          rules = "jeffreys1961",
+                         log = FALSE,
                          include_value = FALSE,
                          protect_ratio = TRUE,
                          exact = TRUE) {
-  match.call()
+  if (log) bf <- exp(bf)
 
   if (any(bf < 0, na.rm = TRUE)) {
     warning("Negative BFs detected. These are not possible. Ignoring.")

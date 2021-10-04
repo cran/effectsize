@@ -38,6 +38,7 @@
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
@@ -217,9 +218,13 @@ standardization**, described below
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>r <span class="ot">&lt;-</span> <span class="fu">cor.test</span>(attitude<span class="sc">$</span>rating, attitude<span class="sc">$</span>complaints)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">effectsize</span>(r)</span></code></pre></div>
-<pre><code>&gt; r    |       95% CI
-&gt; -------------------
-&gt; 0.83 | [0.66, 0.91]</code></pre>
+<pre><code>&gt; Pearson&#39;s product-moment correlation
+&gt; 
+&gt; Parameter1      |          Parameter2 |    r |       95% CI | t(28) |      p
+&gt; ----------------------------------------------------------------------------
+&gt; attitude$rating | attitude$complaints | 0.83 | [0.66, 0.91] |  7.74 | &lt; .001
+&gt; 
+&gt; Alternative hypothesis: true correlation is not equal to 0</code></pre>
 </div>
 <div id="standardized-differences" class="section level2">
 <h2>Standardized Differences</h2>
@@ -303,7 +308,7 @@ standardization**, described below
 &gt; ------------------------------------------------------------------
 &gt; data       | xtra_hours | 0.87 | [0.85, 0.89] |  39.79 | &lt; .001***
 &gt; data       |    n_comps | 0.71 | [0.66, 0.75] |  22.40 | &lt; .001***
-&gt; data       |        age | 0.09 | [0.01, 0.18] |   2.09 | 0.221    
+&gt; data       |        age | 0.09 | [0.01, 0.18] |   2.09 | 0.037*   
 &gt; data       |  seniority | 0.19 | [0.10, 0.27] |   4.30 | &lt; .001***
 &gt; 
 &gt; p-value adjustment method: Holm (1979)
@@ -348,10 +353,10 @@ standardization**, described below
 <pre><code>&gt; Parameter     | Coefficient |     SE |              95% CI | t(494) |      p
 &gt; ----------------------------------------------------------------------------
 &gt; (Intercept)   |     9805.17 | 446.73 | [8927.44, 10682.89] |  21.95 | &lt; .001
-&gt; xtra_hours    |     1221.39 |  30.72 | [1161.03,  1281.75] |  39.76 | &lt; .001
-&gt; n_comps       |     2944.95 | 131.12 | [2687.32,  3202.57] |  22.46 | &lt; .001
-&gt; age_g [31-35] |      393.40 | 241.02 | [ -80.16,   866.96] |   1.63 | 0.103 
-&gt; age_g [36-45] |      596.31 | 427.75 | [-244.12,  1436.75] |   1.39 | 0.164 
+&gt; xtra hours    |     1221.39 |  30.72 | [1161.03,  1281.75] |  39.76 | &lt; .001
+&gt; n comps       |     2944.95 | 131.12 | [2687.32,  3202.57] |  22.46 | &lt; .001
+&gt; age g [31-35] |      393.40 | 241.02 | [ -80.16,   866.96] |   1.63 | 0.103 
+&gt; age g [36-45] |      596.31 | 427.75 | [-244.12,  1436.75] |   1.39 | 0.164 
 &gt; seniority     |      443.92 | 102.38 | [ 242.77,   645.08] |   4.34 | &lt; .001</code></pre>
 <p>It seems like the best or most important predictor is <code>n_comps</code> as it has the coefficient. However, it is hard to compare among predictors, as they are on different scales. To address this issue, we must have all the predictors on the same scale - usually in the arbitrary unit of <em>standard deviations</em>.</p>
 <div id="refit-re-fitting-the-model-with-standardized-data" class="section level3">
@@ -413,10 +418,10 @@ standardization**, described below
 <pre><code>&gt; Parameter     | Coefficient |   SE |        95% CI | t(494) |      p
 &gt; --------------------------------------------------------------------
 &gt; (Intercept)   |       -0.05 | 0.03 | [-0.11, 0.02] |  -1.47 | 0.142 
-&gt; xtra_hours    |        0.77 | 0.02 | [ 0.73, 0.81] |  39.76 | &lt; .001
-&gt; n_comps       |        0.39 | 0.02 | [ 0.36, 0.43] |  22.46 | &lt; .001
-&gt; age_g [31-35] |        0.06 | 0.04 | [-0.01, 0.14] |   1.63 | 0.103 
-&gt; age_g [36-45] |        0.10 | 0.07 | [-0.04, 0.23] |   1.39 | 0.164 
+&gt; xtra hours    |        0.77 | 0.02 | [ 0.73, 0.81] |  39.76 | &lt; .001
+&gt; n comps       |        0.39 | 0.02 | [ 0.36, 0.43] |  22.46 | &lt; .001
+&gt; age g [31-35] |        0.06 | 0.04 | [-0.01, 0.14] |   1.63 | 0.103 
+&gt; age g [36-45] |        0.10 | 0.07 | [-0.04, 0.23] |   1.39 | 0.164 
 &gt; seniority     |        0.08 | 0.02 | [ 0.04, 0.12] |   4.34 | &lt; .001</code></pre>
 </div>
 <div id="posthoc-refit-without-refitting" class="section level3">
@@ -480,9 +485,9 @@ standardization**, described below
 &gt; Parameter   | Coefficient (std.) |         95% CI
 &gt; -------------------------------------------------
 &gt; (Intercept) |               0.00 | [ 0.00,  0.00]
-&gt; cyl         |              -0.74 | [-1.23, -0.26]
-&gt; amAutomatic |               0.47 | [ 0.01,  0.93]
-&gt; vs          |               0.20 | [-0.47,  0.87]</code></pre>
+&gt; cyl         |              -0.74 | [-1.25, -0.23]
+&gt; amAutomatic |               0.47 | [-0.01,  0.95]
+&gt; vs          |               0.20 | [-0.50,  0.90]</code></pre>
 <div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># compare to:</span></span>
 <span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="fu">standardize_parameters</span>(m, <span class="at">method =</span> <span class="st">&quot;basic&quot;</span>, <span class="at">df_method =</span> <span class="st">&quot;satterthwaite&quot;</span>)</span></code></pre></div>
 <pre><code>&gt; # Standardization method: basic
@@ -490,9 +495,9 @@ standardization**, described below
 &gt; Parameter   | Coefficient (std.) |         95% CI
 &gt; -------------------------------------------------
 &gt; (Intercept) |               0.00 | [ 0.00,  0.00]
-&gt; cyl         |              -0.63 | [-1.05, -0.22]
-&gt; amAutomatic |               0.25 | [ 0.00,  0.50]
-&gt; vs          |               0.11 | [-0.25,  0.47]</code></pre>
+&gt; cyl         |              -0.63 | [-1.07, -0.20]
+&gt; amAutomatic |               0.25 | [-0.01,  0.51]
+&gt; vs          |               0.11 | [-0.27,  0.48]</code></pre>
 </div>
 <div id="standardizing-parameters-in-generalized-linear-models" class="section level2">
 <h2>Standardizing Parameters In Generalized Linear Models</h2>
@@ -545,9 +550,11 @@ f^{2}={R_{AB}^{2}-R_{A}^{2} \over 1-R_{AB}^{2}}
 <span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>m2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(salary <span class="sc">~</span> xtra_hours <span class="sc">+</span> n_comps <span class="sc">+</span> seniority, <span class="at">data =</span> hardlyworking)</span>
 <span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cohens_f_squared</span>(m1, <span class="at">model2 =</span> m2)</span></code></pre></div>
-<pre><code>&gt; Cohen&#39;s f2 (partial) |       90% CI | R2_delta
-&gt; ----------------------------------------------
-&gt; 1.19                 | [0.99, 1.40] |     0.17</code></pre>
+<pre><code>&gt; Cohen&#39;s f2 (partial) |           95% CI | R2_delta
+&gt; --------------------------------------------------
+&gt; 1.19                 | [0.99,      Inf] |     0.17
+&gt; 
+&gt; - One-sided CIs: upper bound fixed at (Inf).</code></pre>
 <!-- ## Methods Comparison -->
 <!-- We will use the "refit" method as the baseline. We will then compute the
 differences between these standardized parameters and the ones provided by the

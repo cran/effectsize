@@ -14,6 +14,7 @@ cohens_d(
   mu = 0,
   paired = FALSE,
   ci = 0.95,
+  alternative = "two.sided",
   verbose = TRUE,
   ...
 )
@@ -26,6 +27,7 @@ hedges_g(
   mu = 0,
   paired = FALSE,
   ci = 0.95,
+  alternative = "two.sided",
   verbose = TRUE,
   ...,
   correction
@@ -37,6 +39,7 @@ glass_delta(
   data = NULL,
   mu = 0,
   ci = 0.95,
+  alternative = "two.sided",
   verbose = TRUE,
   ...,
   iterations
@@ -62,6 +65,11 @@ size on \code{x - y}.}
 
 \item{ci}{Confidence Interval (CI) level}
 
+\item{alternative}{a character string specifying the alternative hypothesis;
+Controls the type of CI returned: \code{"two.sided"} (default, two-sided CI),
+\code{"greater"} or \code{"less"} (one-sided CI). Partial matching is allowed (e.g.,
+\code{"g"}, \code{"l"}, \code{"two"}...). See \emph{One-Sided CIs} in \link{effectsize_CIs}.}
+
 \item{verbose}{Toggle warnings and messages on or off.}
 
 \item{...}{Arguments passed to or from other methods.}
@@ -74,8 +82,8 @@ A data frame with the effect size ( \code{Cohens_d}, \code{Hedges_g},
 }
 \description{
 Compute effect size indices for standardized differences: Cohen's \emph{d},
-Hedges' \emph{g} and Glass’s \emph{delta}. (This function returns the \strong{population}
-estimate.)
+Hedges' \emph{g} and Glass’s \emph{delta} (\eqn{\Delta}). (This function returns the
+\strong{population} estimate.)
 \cr\cr
 Both Cohen's \emph{d} and Hedges' \emph{g} are the estimated the standardized
 difference between the means of two populations. Hedges' \emph{g} provides a bias
@@ -94,71 +102,105 @@ The indices here give the population estimated standardized difference.
 Some statistical packages give the sample estimate instead (without
 applying Bessel's correction).
 }
-\section{Confidence Intervals}{
+\section{Confidence (Compatibility) Intervals (CIs)}{
 
-Unless stated otherwise, confidence intervals are estimated using the
-Noncentrality parameter method; These methods searches for a the best
-non-central parameters (\code{ncp}s) of the noncentral t-, F- or Chi-squared
-distribution for the desired tail-probabilities, and then convert these
-\code{ncp}s to the corresponding effect sizes. (See full \link{effectsize-CIs} for
-more.)
-}
-
-\section{CI Contains Zero}{
-
-Keep in mind that \code{ncp} confidence intervals are inverted significance tests,
-and only inform us about which values are not significantly different than
-our sample estimate. (They do \emph{not} inform us about which values are
-plausible, likely or compatible with our data.) Thus, when CIs contain the
-value 0, this should \emph{not} be taken to mean that a null effect size is
-supported by the data; Instead this merely reflects a non-significant test
-statistic - i.e. the \emph{p}-value is greater than alpha (Morey et al., 2016).
+Unless stated otherwise, confidence (compatibility) intervals (CIs) are
+estimated using the noncentrality parameter method (also called the "pivot
+method"). This method finds the noncentrality parameter ("\emph{ncp}") of a
+noncentral \emph{t}, \emph{F}, or \eqn{\chi^2} distribution that places the observed
+\emph{t}, \emph{F}, or \eqn{\chi^2} test statistic at the desired probability point of
+the distribution. For example, if the observed \emph{t} statistic is 2.0, with 50
+degrees of freedom, for which cumulative noncentral \emph{t} distribution is \emph{t} =
+2.0 the .025 quantile (answer: the noncentral \emph{t} distribution with \emph{ncp} =
+.04)? After estimating these confidence bounds on the \emph{ncp}, they are
+converted into the effect size metric to obtain a confidence interval for the
+effect size (Steiger, 2004).
 \cr\cr
-For positive only effect sizes (Eta squared, Cramer's V, etc.; Effect sizes
-associated with Chi-squared and F distributions), this applies also to cases
-where the lower bound of the CI is equal to 0. Even more care should be taken
-when the \emph{upper} bound is equal to 0 - this occurs when \emph{p}-value is greater
-than 1-alpha/2 making, the upper bound cannot be estimated, and the upper
-bound is arbitrarily set to 0 (Steiger, 2004). For example:\if{html}{\out{<div class="r">}}\preformatted{eta_squared(aov(mpg ~ factor(gear) + factor(cyl), mtcars[1:7, ]))
-}\if{html}{\out{</div>}}\preformatted{## # Effect Size for ANOVA (Type I)
-## 
-## Parameter    | Eta2 (partial) |       90\% CI
-## --------------------------------------------
-## factor(gear) |           0.58 | [0.00, 0.84]
-## factor(cyl)  |           0.46 | [0.00, 0.78]
+For additional details on estimation and troubleshooting, see \link{effectsize_CIs}.
 }
+
+\section{CIs and Significance Tests}{
+
+"Confidence intervals on measures of effect size convey all the information
+in a hypothesis test, and more." (Steiger, 2004). Confidence (compatibility)
+intervals and p values are complementary summaries of parameter uncertainty
+given the observed data. A dichotomous hypothesis test could be performed
+with either a CI or a p value. The 100 (1 - \eqn{\alpha})\% confidence
+interval contains all of the parameter values for which \emph{p} > \eqn{\alpha}
+for the current data and model. For example, a 95\% confidence interval
+contains all of the values for which p > .05.
+\cr\cr
+Note that a confidence interval including 0 \emph{does not} indicate that the null
+(no effect) is true. Rather, it suggests that the observed data together with
+the model and its assumptions combined do not provided clear evidence against
+a parameter value of 0 (same as with any other value in the interval), with
+the level of this evidence defined by the chosen \eqn{\alpha} level (Rafi &
+Greenland, 2020; Schweder & Hjort, 2016; Xie & Singh, 2013). To infer no
+effect, additional judgments about what parameter values are "close enough"
+to 0 to be negligible are needed ("equivalence testing"; Bauer & Kiesser,
+1996).
 }
 
 \examples{
+\donttest{
+data(mtcars)
+mtcars$am <- factor(mtcars$am)
 
-# two-sample tests -----------------------
+# Two Independent Samples ----------
 
-# using formula interface
-cohens_d(mpg ~ am, data = mtcars)
+(d <- cohens_d(mpg ~ am, data = mtcars))
+# Same as:
+# cohens_d("mpg", "am", data = mtcars)
+# cohens_d(mtcars$mpg[mtcars$am=="0"], mtcars$mpg[mtcars$am=="1"])
+
+# More options:
 cohens_d(mpg ~ am, data = mtcars, pooled_sd = FALSE)
 cohens_d(mpg ~ am, data = mtcars, mu = -5)
+cohens_d(mpg ~ am, data = mtcars, alternative = "less")
 hedges_g(mpg ~ am, data = mtcars)
 glass_delta(mpg ~ am, data = mtcars)
-print(cohens_d(mpg ~ am, data = mtcars), append_CL = TRUE)
 
-# other acceptable ways to specify arguments
-glass_delta(sleep$extra, sleep$group)
-hedges_g("extra", "group", data = sleep)
-cohens_d(sleep$extra[sleep$group == 1], sleep$extra[sleep$group == 2], paired = TRUE)
-# cohens_d(Pair(extra[group == 1], extra[group == 2]) ~ 1,
-#          data = sleep, paired = TRUE)
 
-# one-sample tests -----------------------
+# One Sample ----------
 
-cohens_d("wt", data = mtcars, mu = 3)
-hedges_g("wt", data = mtcars, mu = 3)
+cohens_d(wt ~ 1, data = mtcars)
 
-# interpretation -----------------------
+# same as:
+# cohens_d("wt", data = mtcars)
+# cohens_d(mtcars$wt)
 
-interpret_d(0.4, rules = "cohen1988")
-d_to_common_language(0.4)
-interpret_g(0.4, rules = "sawilowsky2009")
-interpret_delta(0.4, rules = "gignac2016")
+# More options:
+cohens_d(wt ~ 1, data = mtcars, mu = 3)
+hedges_g(wt ~ 1, data = mtcars, mu = 3)
+
+
+# Paired Samples ----------
+
+data(sleep)
+
+cohens_d(Pair(extra[group == 1], extra[group == 2]) ~ 1, data = sleep)
+
+# same as:
+# cohens_d(sleep$extra[sleep$group == 1], sleep$extra[sleep$group == 2], paired = TRUE)
+
+# More options:
+cohens_d(Pair(extra[group == 1], extra[group == 2]) ~ 1, data = sleep, mu = -1)
+hedges_g(Pair(extra[group == 1], extra[group == 2]) ~ 1, data = sleep)
+
+
+# Interpretation -----------------------
+interpret_cohens_d(-1.48, rules = "cohen1988")
+interpret_hedges_g(-1.48, rules = "sawilowsky2009")
+interpret_glass_delta(-1.48, rules = "gignac2016")
+# Or:
+interpret(d, rules = "sawilowsky2009")
+
+# Common Language Effect Sizes
+d_to_common_language(1.48)
+# Or:
+print(d, append_CL = TRUE)
+}
+
 }
 \references{
 \itemize{

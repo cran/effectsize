@@ -37,20 +37,19 @@ input model. See details.
 \item For an object of class \code{htest}, data is extracted via \code{\link[insight:get_data]{insight::get_data()}}, and passed to the relevant function according to:
 \itemize{
 \item A \strong{t-test} depending on \code{type}: \code{"cohens_d"} (default), \code{"hedges_g"}.
-\item A \strong{correlation test} returns \emph{r}.
-\item A \strong{Chi-squared tests of independence or goodness-of-fit}, depending on \code{type}: \code{"cramers_v"} (default), \code{"phi"} or \code{"cohens_w"}, \code{"cohens_h"}, \code{"oddsratio"}, or \code{"riskratio"}.
+\item A \strong{Chi-squared tests of independence or goodness-of-fit}, depending on \code{type}: \code{"cramers_v"} (default), \code{"phi"}, \code{"cohens_w"}, \code{"pearsons_c"}, \code{"cohens_h"}, \code{"oddsratio"}, or \code{"riskratio"}.
 \item A \strong{One-way ANOVA test}, depending on \code{type}: \code{"eta"} (default), \code{"omega"} or \code{"epsilon"} -squared, \code{"f"}, or \code{"f2"}.
 \item A \strong{McNemar test} returns \emph{Cohen's g}.
-\item A \strong{Fisher's Exact test} (in the 2x2 case) returns \emph{Odds ratio}.
 \item A \strong{Wilcoxon test} returns \emph{rank biserial correlation}.
 \item A \strong{Kruskal-Wallis test} returns \emph{rank Epsilon squared}.
 \item A \strong{Friedman test} returns \emph{Kendall's W}.
+(Where applicable, \code{ci} and \code{alternative} are taken from the \code{htest} if not otherwise provided.)
 }
 \item For an object of class \code{BFBayesFactor}, using \code{\link[bayestestR:describe_posterior]{bayestestR::describe_posterior()}},
 \itemize{
 \item A \strong{t-test} returns \emph{Cohen's d}.
 \item A \strong{correlation test} returns \emph{r}.
-\item A \strong{contingency table test}, depending on \code{type}: \code{"cramers_v"} (default), \code{"phi"} or \code{"cohens_w"}, \code{"cohens_h"}, \code{"oddsratio"}, or \code{"riskratio"}.
+\item A \strong{contingency table test}, depending on \code{type}: \code{"cramers_v"} (default), \code{"phi"}, \code{"cohens_w"}, \code{"pearsons_c"}, \code{"cohens_h"}, \code{"oddsratio"}, or \code{"riskratio"}.
 }
 \item Objects of class \code{anova}, \code{aov}, or \code{aovlist}, depending on \code{type}: \code{"eta"} (default), \code{"omega"} or \code{"epsilon"} -squared, \code{"f"}, or \code{"f2"}.
 \item Other objects are passed to \code{\link[=standardize_parameters]{standardize_parameters()}}.
@@ -68,13 +67,15 @@ Xsq <- chisq.test(contingency_table)
 effectsize(Xsq)
 effectsize(Xsq, type = "phi")
 
-Ts <- t.test(1:10, y = c(7:20))
-effectsize(Ts)
+Tt <- t.test(1:10, y = c(7:20), alternative = "less")
+effectsize(Tt)
 
 Aov <- oneway.test(extra ~ group, data = sleep, var.equal = TRUE)
 effectsize(Aov)
 effectsize(Aov, type = "omega")
 
+Wt <- wilcox.test(1:10, 7:20, mu = -3, alternative = "less")
+effectsize(Wt)
 
 ## Bayesian Hypothesis Testing
 ## ---------------------------

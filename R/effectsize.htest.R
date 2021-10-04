@@ -1,19 +1,34 @@
 #' @export
 #' @rdname effectsize
 effectsize.htest <- function(model, type = NULL, verbose = TRUE, ...) {
+  # Get data?
+  data <- insight::get_data(model)
+  approx <- is.null(data)
+
+  dots <- list(...)
+
   if (grepl("t-test", model$method)) {
     # t-test ----
-    if (is.null(data <- insight::get_data(model))) {
+    if (is.null(dots$alternative)) dots$alternative <- model$alternative
+    if (is.null(dots$ci)) dots$ci <- attr(model$conf.int,"conf.level")
+    if (is.null(dots$mu)) dots$mu <- model$null.value
+
+    if (approx) {
       if (verbose) {
         warning("Unable to retrieve data from htest object. Using t_to_d() approximation.")
       }
-      out <- t_to_d(
-        unname(model$statistic),
-        unname(model$parameter),
-        paired = !grepl("Two", model$method),
-        ...
+
+      f <- t_to_d
+      args <- list(
+        t = unname(model$statistic),
+        df_error = unname(model$parameter),
+        paired = !grepl("Two", model$method)
       )
     } else {
+      if (grepl(" by ", model$data.name, fixed = TRUE)) {
+        data[[2]] <- factor(data[[2]])
+      }
+
       if (is.null(type)) type <- "d"
       f <- switch(tolower(type),
         d = ,
@@ -22,53 +37,72 @@ effectsize.htest <- function(model, type = NULL, verbose = TRUE, ...) {
         hedges_g = hedges_g
       )
 
-      if (grepl(" by ", model$data.name, fixed = TRUE)) {
-        data[[2]] <- factor(data[[2]])
-      }
-
-      out <- f(data[[1]], if (ncol(data) == 2) data[[2]],
-        mu = model$null.value,
+      args <- list(
+        x = data[[1]],
+        y = if (ncol(data) == 2) data[[2]],
         paired = !grepl("Two", model$method),
         pooled_sd = !grepl("Welch", model$method),
-        verbose = verbose,
-        ...
+        verbose = verbose
       )
     }
-
-    return(out)
-  } else if (grepl("correlation", model$method)) {
-    # correlation ----
-    out <- t_to_r(1, 1, ci = NULL)
-    out$r <- unname(model$estimate)
-    out$CI <- attr(model$conf.int, "conf.level")
-    out$CI_low <- model$conf.int[1]
-    out$CI_high <- model$conf.int[2]
-    attr(out, "ci") <- out$CI
+    out <- do.call(f, c(args, dots))
+    attr(out, "approximate") <- approx
     return(out)
   } else if (grepl("Pearson's Chi-squared", model$method) ||
     grepl("Chi-squared test for given probabilities", model$method)) {
     # Chisq ----
     if (is.null(type)) type <- "cramers_v"
 
-    f <- switch(tolower(type),
-      v = ,
-      cramers_v = cramers_v,
-      w = ,
-      cohens_w = ,
-      phi = phi,
-      or = ,
-      oddsratio = oddsratio,
-      rr = ,
-      riskratio = riskratio,
-      h = ,
-      cohens_h = cohens_h
-    )
+    if (grepl("(c|v|w|phi)$", tolower(type))) {
+      f <- switch(tolower(type),
+        v = ,
+        cramers_v = chisq_to_cramers_v,
+        w = ,
+        cohens_w = ,
+        phi = chisq_to_phi,
+        c = ,
+        pearsons_c = chisq_to_pearsons_c
+      )
+
+      Obs <- model$observed
+      Exp <- model$expected
+
+      if (!is.null(dim(Exp))) {
+        if (any(c(colSums(Obs), rowSums(Obs)) == 0L)) {
+          stop("Cannot have empty rows/columns in the contingency tables.", call. = FALSE)
+        }
+        nr <- nrow(Obs)
+        nc <- ncol(Obs)
+      } else {
+        nr <- length(Obs)
+        nc <- 1
+      }
+
+      out <- f(
+        chisq = .chisq(Obs, Exp),
+        n = sum(Obs),
+        nrow = nr,
+        ncol = nc,
+        ...
+      )
+      attr(out, "approximate") <- FALSE
+      return(out)
+    } else {
+      f <- switch(tolower(type),
+        or = ,
+        oddsratio = oddsratio,
+        rr = ,
+        riskratio = riskratio,
+        h = ,
+        cohens_h = cohens_h
+      )
+    }
 
     out <- f(x = model$observed, ...)
     return(out)
   } else if (grepl("One-way", model$method)) {
     # one way anove ----
-    if (grepl("not assuming", model$method, fixed = TRUE) && verbose) {
+    if (approx <- grepl("not assuming", model$method, fixed = TRUE) && verbose) {
       warning("`var.equal = FALSE` - effect size is an approximation.", call. = FALSE)
     }
 
@@ -98,10 +132,11 @@ effectsize.htest <- function(model, type = NULL, verbose = TRUE, ...) {
       ...
     )
     colnames(out)[1] <- sub("_partial", "", colnames(out)[1])
+    attr(out, "approximate") <- approx
     return(out)
   } else if (grepl("McNemar", model$method)) {
     # McNemar ----
-    if (is.null(data <- insight::get_data(model))) {
+    if (approx) {
       stop("Unable to retrieve data from htest object.",
         "\nTry using 'cohens_g()' directly.",
         call. = FALSE
@@ -114,42 +149,30 @@ effectsize.htest <- function(model, type = NULL, verbose = TRUE, ...) {
       out <- cohens_g(data[[1]], data[[2]], ...)
     }
     return(out)
-  } else if (grepl("Fisher's Exact", model$method)) {
-    # Fisher's Exact ----
-    if (is.null(model$estimate)) {
-      stop("Cannot extract effect size for Fisher's exact test on a table larger than 2x2.",
-        call. = FALSE
-      )
-    }
-
-    out <- oddsratio(c(1, 2), c(1, 2), ci = NULL)
-    out[[1]] <- unname(model$estimate)
-    out$CI <- attr(model$conf.int, "conf.level")
-    out$CI_low <- model$conf.int[1]
-    out$CI_high <- model$conf.int[2]
-    attr(out, "ci") <- out$CI
-    attr(out, "table_footer") <- c("\n- Maximum likelihood estimate (MLE) of the OR.", "cyan")
-    return(out)
   } else if (grepl("Wilcoxon", model$method)) {
     # Wilcoxon ----
-    if (is.null(data <- insight::get_data(model))) {
+    if (is.null(dots$alternative)) dots$alternative <- model$alternative
+    if (is.null(dots$ci)) dots$ci <- attr(model$conf.int,"conf.level")
+    if (is.null(dots$mu)) dots$mu <- model$null.value
+
+    if (approx) {
       stop("Unable to retrieve data from htest object.",
         "\nTry using 'rank_biserial()' directly.",
         call. = FALSE
       )
     }
 
-    paired <- grepl("signed rank", model$method, fixed = TRUE)
-    mu <- model$null.value
-
-    x <- data[[1]]
-    y <- if (ncol(data) == 2) data[[2]]
-
-    out <- rank_biserial(x, y, mu = mu, paired = paired, ...)
+    f <- rank_biserial
+    args <- list(
+      x = data[[1]],
+      y = if (ncol(data) == 2) data[[2]],
+      paired = grepl("signed rank", model$method, fixed = TRUE)
+    )
+    out <- do.call(f, c(args, dots))
     return(out)
   } else if (grepl("Kruskal-Wallis", model$method)) {
     # Kruskal-Wallis ----
-    if (is.null(data <- insight::get_data(model))) {
+    if (approx) {
       stop("Unable to retrieve data from htest object.",
         "\nTry using 'rank_epsilon_squared()' directly.",
         call. = FALSE
@@ -163,7 +186,7 @@ effectsize.htest <- function(model, type = NULL, verbose = TRUE, ...) {
     return(out)
   } else if (grepl("Friedman", model$method)) {
     # Friedman ----
-    if (is.null(data <- insight::get_data(model))) {
+    if (approx) {
       stop("Unable to retrieve data from htest object.",
         "\nTry using 'kendalls_w()' directly.",
         call. = FALSE
@@ -171,16 +194,22 @@ effectsize.htest <- function(model, type = NULL, verbose = TRUE, ...) {
     }
 
     if (inherits(data, "table")) {
-      data <- data.frame(
-        x = c(data),
-        groups = rep(colnames(data), each = nrow(data)),
-        blocks = rep(rownames(data), ncol(data))
-      )
+      data <- as.data.frame(data)[c("Freq", "Var2", "Var1")]
     }
 
     out <- kendalls_w(data[[1]], data[[2]], data[[3]], ...)
     return(out)
   } else {
-    stop("This 'htest' method is not (yet?) supported.", call. = FALSE)
+    # Other ----
+    if (verbose) warning("This 'htest' method is not (yet?) supported.\n",
+                         "Returning 'parameters::model_parameters(model)'.",
+                         call. = FALSE)
+    parameters::model_parameters(model, verbose = verbose, ...)
   }
+}
+
+
+#' @keywords internal
+.chisq <- function(Obs, Exp) {
+  sum(((Obs - Exp)^2) / Exp)
 }

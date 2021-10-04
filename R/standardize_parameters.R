@@ -10,7 +10,7 @@
 #'   standardized. If `FALSE`, only the predictors will be standardized. For
 #'   GLMs the response value will never be standardized (see *Generalized Linear
 #'   Models* section).
-#' @inheritParams standardize
+#' @inheritParams standardize.default
 #' @inheritParams chisq_to_phi
 #' @param ... For `standardize_parameters()`, arguments passed to
 #'   [parameters::model_parameters], such as:
@@ -21,7 +21,8 @@
 #' @param parameters Deprecated.
 #'
 #' @details
-#' ## Methods:
+#'
+#' # Standardization Methods:
 #' - **refit**: This method is based on a complete model re-fit with a
 #' standardized version of the data. Hence, this method is equal to
 #' standardizing the variables before fitting the model. It is the "purest" and
@@ -48,6 +49,12 @@
 #' variables or factors, so the coefficients are still related to changes in
 #' levels. This method is not accurate and tend to give aberrant results when
 #' interactions are specified.
+#' - **basic**: This method is similar to `method = "posthoc"`, but treats all
+#' variables as continuous: it also scales the coefficient by the standard
+#' deviation of model's matrix' parameter of factors levels (transformed to
+#' integers) or binary predictors. Although being inappropriate for these cases,
+#' this method is the one implemented by default in other software packages,
+#' such as [lm.beta::lm.beta()].
 #' - **smart** (Standardization of Model's parameters with Adjustment,
 #' Reconnaissance and Transformation - *experimental*): Similar to `method =
 #' "posthoc"` in that it does not involve model refitting. The difference is
@@ -57,43 +64,35 @@
 #' vs. A will be scaled by the variance of the response at the intercept only.
 #' As a results, the coefficients for effects of factors are similar to a Glass'
 #' delta.
-#' - **basic**: This method is similar to `method = "posthoc"`, but treats all
-#' variables as continuous: it also scales the coefficient by the standard
-#' deviation of model's matrix' parameter of factors levels (transformed to
-#' integers) or binary predictors. Although being inappropriate for these cases,
-#' this method is the one implemented by default in other software packages,
-#' such as [lm.beta::lm.beta()].
 #' - **pseudo** (*for 2-level (G)LMMs only*): In this (post-hoc) method, the
 #' response and the predictor are standardized based on the level of prediction
-#' (levels are detected with [parameters::check_heterogeneity()]): Predictors
+#' (levels are detected with [performance::check_heterogeneity_bias()]): Predictors
 #' are standardized based on their SD at level of prediction (see also
-#' [parameters::demean()]); The outcome (in linear LMMs) is standardized based
+#' [datawizard::demean()]); The outcome (in linear LMMs) is standardized based
 #' on a fitted random-intercept-model, where `sqrt(random-intercept-variance)`
 #' is used for level 2 predictors, and `sqrt(residual-variance)` is used for
 #' level 1 predictors (Hoffman 2015, page 342). A warning is given when a
 #' within-group varialbe is found to have access between-group variance.
 #'
-#' ## Transformed Variables
-#' When the model's formula contains transformations (e.g. `y ~ exp(X)`)
-#' `method = "refit"` might give different results compared to
-#' `method = "basic"` (`"posthoc"` and `"smart"` do not support such
-#' transformations): where `"refit"` standardizes the data prior to the
-#' transformation (e.g. equivalent to `exp(scale(X))`), the `"basic"` method
-#' standardizes the transformed data (e.g. equivalent to `scale(exp(X))`). See
-#' [standardize()] for more details on how different transformations are dealt
-#' with.
+#' # Transformed Variables
+#' When the model's formula contains transformations (e.g. `y ~ exp(X)`) `method
+#' = "refit"` will give different results compared to `method = "basic"`
+#' (`"posthoc"` and `"smart"` do not support such transformations): While
+#' `"refit"` standardizes the data *prior* to the transformation (e.g.
+#' equivalent to `exp(scale(X))`), the `"basic"` method standardizes the
+#' transformed data (e.g. equivalent to `scale(exp(X))`).
+#' \cr\cr
+#' See the *Transformed Variables* section in [standardize.default()] for more
+#' details on how different transformations are dealt with when `method =
+#' "refit"`.
 #'
 #' # Confidence Intervals
-#'
 #' The returned confidence intervals are re-scaled versions of the
 #' unstandardized confidence intervals, and not "true" confidence intervals of
 #' the standardized coefficients (cf. Jones & Waller, 2015).
 #'
-#' # Generalized Linear Models
-#' When standardizing coefficients of a generalized model (GLM, GLMM, etc), only
-#' the predictors are standardized, maintaining the interpretability of the
-#' coefficients (e.g., in a binomial model: the exponent of the standardized
-#' parameter is the OR of a change of 1 SD in the predictor, etc.)
+#' @inheritSection standardize.default Generalized Linear Models
+#' @inheritSection standardize.default Dealing with Factors
 #'
 #' @return A data frame with the standardized parameters (`Std_*`, depending on
 #'   the model type) and their CIs (`CI_low` and `CI_high`). Where applicable,
@@ -102,7 +101,6 @@
 #'
 #' @family standardize
 #' @family effect size indices
-#' @seealso [standardize_info()]
 #'
 #' @examples
 #' library(effectsize)

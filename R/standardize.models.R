@@ -1,16 +1,66 @@
-#' @rdname standardize
+#' Re-fit a model with standardized data
+#'
+#' Performs a standardization of data (z-scoring) using
+#' [`datawizard::standardize()`] and then re-fits the model to the standardized
+#' data.
+#' \cr\cr
+#' Standardization is done by completely refitting the model on the standardized
+#' data. Hence, this approach is equal to standardizing the variables *before*
+#' fitting the model and will return a new model object. This method is
+#' particularly recommended for complex models that include interactions or
+#' transformations (e.g., polynomial or spline terms). The `robust` (default to
+#' `FALSE`) argument enables a robust standardization of data, based on the
+#' `median` and the `MAD` instead of the `mean` and the `SD`.
+#'
+#' @param x A statistical model.
+#' @param weights If `TRUE` (default), a weighted-standardization is carried out.
 #' @param include_response For a model, if `TRUE` (default), the response value
 #'   will also be standardized. If `FALSE`, only the predictors will be
 #'   standardized. Note that for certain models (logistic regression, count
 #'   models, ...), the response value will never be standardized, to make
 #'   re-fitting the model work. (For `mediate` models, only applies to the y
 #'   model; m model's response will always be standardized.)
+#' @inheritParams datawizard::standardize
+#'
+#' @return A statistical model fitted on standardized data
+#'
+#' @details
+#'
+#' # Generalized Linear Models
+#' Standardization for generalized linear models (GLM, GLMM, etc) is done only
+#' with respect to the predictors (while the outcome remains as-is,
+#' unstandardized) - maintaining the interpretability of the coefficients (e.g.,
+#' in a binomial model: the exponent of the standardized parameter is the OR of
+#' a change of 1 SD in the predictor, etc.)
+#'
+#' # Dealing with Factors
+#' `standardize(model)` or `standardize_parameters(model, method = "refit")` do
+#' *not* standardized categorical predictors (i.e. factors) / their
+#' dummy-variables, which may be a different behaviour compared to other R
+#' packages (such as \pkg{lm.beta}) or other software packages (like SPSS). To
+#' mimic such behaviours, either use `standardize_parameters(model, method =
+#' "basic")` to obtain post-hoc standardized parameters, or standardize the data
+#' with `datawizard::standardize(data, force = TRUE)` *before* fitting the
+#' model.
+#'
+#' # Transformed Variables
+#' When the model's formula contains transformations (e.g. `y ~ exp(X)`) the
+#' transformation effectively takes place after standardization (e.g.,
+#' `exp(scale(X))`). Since some transformations are undefined for none positive
+#' values, such as `log()` and `sqrt()`, the releven variables are shifted (post
+#' standardization) by `Z - min(Z) + 1` or `Z - min(Z)` (respectively).
+#'
+#' @family standardize
+#' @examples
+#' model <- lm(Infant.Mortality ~ Education * Fertility, data = swiss)
+#' coef(standardize(model))
+#'
 #' @importFrom stats update
 #' @importFrom insight get_data model_info find_response get_response find_weights get_weights
+#' @importFrom datawizard standardize
 #' @importFrom utils capture.output
-#'
-#' @inheritSection standardize_parameters Generalized Linear Models
 #' @export
+#' @aliases standardize-models
 standardize.default <- function(x,
                                 robust = FALSE,
                                 two_sd = FALSE,
@@ -21,11 +71,22 @@ standardize.default <- function(x,
   m_info <- insight::model_info(x)
   data <- insight::get_data(x)
 
+  if (insight::is_multivariate(x) && inherits(x, "brmsfit")) {
+    stop("multivariate brmsfit models not supported.",
+      "\nAs an alternative: you may standardize your data (and adjust your priors), and re-fit the model.",
+      call. = FALSE
+    )
+  } else if (m_info$is_bayesian) {
+    warning("Standardizing variables without adjusting priors may lead to bogus results unless priors are auto-scaled.",
+      call. = FALSE, immediate. = TRUE
+    )
+  }
+
   # for models with specific scale of the response value (e.g. count models
   # with positive integers, or beta with ratio between 0 and 1), we need to
   # make sure that the original response value will be restored after
   # standardizing, as these models also require a non-standardized response.
-  if (.no_response_standardize(m_info) || !include_response) {
+  if (!include_response || .no_response_standardize(m_info)) {
     resp <- unique(c(insight::find_response(x), insight::find_response(x, combine = FALSE)))
   } else if (include_response && two_sd) {
     resp <- unique(c(insight::find_response(x), insight::find_response(x, combine = FALSE)))
@@ -66,7 +127,7 @@ standardize.default <- function(x,
   if (length(do_standardize)) {
     w <- insight::get_weights(x, na_rm = TRUE)
 
-    data_std <- standardize(data[do_standardize],
+    data_std <- datawizard::standardize(data[do_standardize],
       robust = robust,
       two_sd = two_sd,
       weights = if (weights) w else NULL,
@@ -75,7 +136,7 @@ standardize.default <- function(x,
 
     if (!.no_response_standardize(m_info) && include_response && two_sd) {
       # if two_sd, it must not affect the response!
-      data_std[resp] <- standardize(data[resp],
+      data_std[resp] <- datawizard::standardize(data[resp],
         robust = robust,
         two_sd = FALSE,
         weights = if (weights) w else NULL,
@@ -121,16 +182,23 @@ standardize.default <- function(x,
 
   # update model with standardized data
 
-  if (inherits(x, "brmsfit")) {
-    text <- utils::capture.output(model_std <- stats::update(x, newdata = data_std))
-  } else if (inherits(x, "biglm")) {
-    text <- utils::capture.output(model_std <- stats::update(x, moredata = data_std))
-  } else if (inherits(x, "mixor")) {
-    data_std <- data_std[order(data_std[, random_group_factor, drop = FALSE]), ]
-    text <- utils::capture.output(model_std <- stats::update(x, data = data_std))
-  } else {
-    text <- utils::capture.output(model_std <- stats::update(x, data = data_std))
-  }
+  tryCatch({
+    if (inherits(x, "brmsfit")) {
+      text <- utils::capture.output(model_std <- stats::update(x, newdata = data_std))
+    } else if (inherits(x, "biglm")) {
+      text <- utils::capture.output(model_std <- stats::update(x, moredata = data_std))
+    } else {
+      if (inherits(x, "mixor")) {
+        data_std <- data_std[order(data_std[, random_group_factor, drop = FALSE]), ]
+      }
+      text <- utils::capture.output(model_std <- stats::update(x, data = data_std))
+    }
+  }, error = function(er) {
+    stop("Unable to refit the model with standardized data.\n",
+         "Failed with the following error:\n\"", er, "\b\"\n\n",
+         "Try instead to standardize the data (standardize(data)) and refit the model manually.",
+         call. = FALSE)
+  })
 
   model_std
 }
@@ -189,7 +257,7 @@ standardize.coxph <- function(x,
   if (length(pred)) {
     w <- insight::get_weights(x, na_rm = TRUE)
 
-    data_std <- standardize(data[pred],
+    data_std <- datawizard::standardize(data[pred],
       robust = robust,
       two_sd = two_sd,
       weights = if (weights) w else NULL,
@@ -228,12 +296,12 @@ standardize.mediate <- function(x,
   m_data <- insight::get_data(m)
 
   # std models and data
-  y_std <- standardize(y,
+  y_std <- datawizard::standardize(y,
     robust = robust, two_sd = two_sd,
     weights = weights, verbose = verbose,
     include_response = include_response, ...
   )
-  m_std <- standardize(m,
+  m_std <- datawizard::standardize(m,
     robust = robust, two_sd = two_sd,
     weights = weights, verbose = verbose,
     include_response = TRUE, ...
@@ -303,7 +371,7 @@ standardize.mediate <- function(x,
     temp_data_std <- m_data_std
   }
 
-  change_scale(val,
+  datawizard::change_scale(val,
     to = range(temp_data_std[[cov_nm]]),
     range = range(temp_data[[cov_nm]])
   )

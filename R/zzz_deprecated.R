@@ -1,59 +1,46 @@
+#' Deprecated functions
+#'
+#' @param ... Arguments to the deprecated function.
+#'
+#' @details
+#' - `interpret_d` is now [`interpret_cohens_d`].
+#' - `interpret_g` is now [`interpret_hedges_g`].
+#' - `interpret_delta` is now [`interpret_glass_delta`].
+#' - `interpret_parameters` for *standardized parameters* was incorrect. Use [`interpret_r`] instead.
+#'
+#' @rdname effectsize_deprecated
+#' @name effectsize_deprecated
+NULL
+
+
+#' @rdname effectsize_deprecated
 #' @export
-odds_to_d <- function(odds, log = FALSE, ...) {
-  .Deprecated("oddsratio_to_d")
-  oddsratio_to_d(odds, log = log)
+interpret_d <- function(...) {
+
+  ## TODO deprecate later
+  # .Deprecated("interpret_cohens_d")
+
+  message("'interpret_d()' is now deprecated. Please use 'interpret_cohens_d()'.")
+  interpret_cohens_d(...)
 }
 
+#' @rdname effectsize_deprecated
 #' @export
-logodds_to_d <- function(odds, log = TRUE, ...) {
-  .Deprecated("logoddsratio_to_d")
-  logoddsratio_to_d(odds, log = log, ...)
+interpret_g <- function(...) {
+  .Deprecated("interpret_hedges_g")
+  interpret_hedges_g(...)
 }
 
+#' @rdname effectsize_deprecated
 #' @export
-d_to_odds <- function(d, log = FALSE, ...) {
-  .Deprecated("d_to_oddsratio")
-  d_to_oddsratio(d, log = log)
+interpret_delta <- function(...) {
+  .Deprecated("interpret_glass_delta")
+  interpret_glass_delta(...)
 }
 
+#' @rdname effectsize_deprecated
 #' @export
-odds_to_r <- function(odds, log = FALSE, ...) {
-  .Deprecated("oddsratio_to_r")
-  oddsratio_to_r(odds, log = log)
+interpret_parameters <- function(...) {
+  .Deprecated("interpret_r")
+  interpret_r(...)
 }
-
-
-#' @export
-logodds_to_r <- function(odds, log = TRUE, ...) {
-  .Deprecated("logoddsratio_to_r")
-  odds_to_r(odds, log = log, ...)
-}
-
-#' @export
-r_to_odds <- function(r, log = FALSE, ...) {
-  .Deprecated("r_to_oddsratio")
-  d_to_odds(r_to_d(r), log = log)
-}
-
-#' @export
-interpret_odds <- function(odds, rules = "chen2010", log = FALSE) {
-  .Deprecated("interpret_oddsratio")
-  interpret_oddsratio(odds, rules = rules, log = log)
-}
-
-
-
-
-
-
-#' @export
-convert_odds_to_d <- odds_to_d
-
-#' @export
-convert_d_to_odds <- d_to_odds
-
-#' @export
-convert_odds_to_r <- odds_to_r
-
-#' @export
-convert_r_to_odds <- r_to_odds

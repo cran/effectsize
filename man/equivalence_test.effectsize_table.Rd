@@ -15,10 +15,10 @@
 \item{x}{An effect size table, such as returned by \code{\link[=cohens_d]{cohens_d()}},
 \code{\link[=eta_squared]{eta_squared()}}, \code{\link[=F_to_r]{F_to_r()}}, etc.}
 
-\item{range}{The range of practical equivalence of an effect. If a single
-value is provided, the test is done against \code{c(-range, range)}. For effect
-sizes that cannot be negative, the lower bound is set to 0. If \code{"default"},
-will be set to \verb{[-.1, .1]}.}
+\item{range}{The range of practical equivalence of an effect. For one-sides
+CIs, a single value can be proved for the lower / upper bound to test
+against (but see more details below). For two-sided CIs, a single value is
+duplicated to \code{c(-range, range)}. If \code{"default"}, will be set to \verb{[-.1, .1]}.}
 
 \item{rule}{How should acceptance and rejection be decided? See details.}
 
@@ -36,7 +36,7 @@ The CIs used in the equivalence test are the ones in the provided effect size
 table. For results equivalent (ha!) to those that can be obtained using the
 TOST approach (e.g., Lakens, 2017), appropriate CIs should be extracted using
 the function used to make the effect size table (\code{cohens_d}, \code{eta_squared},
-\code{F_to_r}, etc). See examples.
+\code{F_to_r}, etc), with \code{alternative = "two.sided"}. See examples.
 \subsection{The Different Rules}{
 \itemize{
 \item \code{"classic"} - \strong{the classic method}:
@@ -62,17 +62,21 @@ the function used to make the effect size table (\code{cohens_d}, \code{eta_squa
 }
 \examples{
 \donttest{
-model <- aov(mpg ~ factor(am) * factor(cyl), data = mtcars)
-es <- eta_squared(model)
-equivalence_test(es, range = 0.15)
+
+model <- aov(mpg ~ hp + am * factor(cyl), data = mtcars)
+es <- eta_squared(model, ci = 0.9, alternative = "two.sided")
+equivalence_test(es, range = 0.30) # TOST
+
+RCT <- matrix(c(71, 101,
+                50, 100), nrow = 2)
+OR <- oddsratio(RCT, alternative = "greater")
+equivalence_test(OR, range = 1)
 
 ds <- t_to_d(
   t = c(0.45, -0.65, 7, -2.2, 2.25),
   df_error = c(675, 525, 2000, 900, 1875),
-  ci = 0.9
-) # TOST approach
-equivalence_test(ds, range = 0.2)
-
+  ci = 0.9, alternative = "two.sided" # TOST
+)
 # Can also plot
 if (require(see)) plot(equivalence_test(ds, range = 0.2))
 if (require(see)) plot(equivalence_test(ds, range = 0.2, rule = "cet"))

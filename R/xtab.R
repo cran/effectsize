@@ -1,23 +1,33 @@
 #' Effect size for contingency tables
 #'
-#' Compute Cramer's *V*, phi (\eqn{\phi}), Cohen's *w* (an alias of phi), Odds
-#' ratios, Risk ratios, Cohen's *h* and Cohen's *g* for contingency tables or
-#' goodness-of-fit. See details.
+#' Compute Cramer's *V*, phi (\eqn{\phi}), Cohen's *w* (an alias of phi),
+#' Pearson's contingency coefficient, Odds ratios, Risk ratios, Cohen's *h* and
+#' Cohen's *g* for contingency tables or goodness-of-fit. See details.
 #'
 #' @inheritParams stats::chisq.test
 #' @param ci Confidence Interval (CI) level
+#' @param alternative a character string specifying the alternative hypothesis;
+#'   Controls the type of CI returned: `"two.sided"` (two-sided CI; default for
+#'   Cramer's *V*, phi (\eqn{\phi}), and Cohen's *w*), `"greater"` (default for
+#'   OR, RR, Cohen's *h* and Cohen's *g*) or `"less"` (one-sided CI). Partial
+#'   matching is allowed (e.g., `"g"`, `"l"`, `"two"`...). See *One-Sided CIs*
+#'   in [effectsize_CIs].
 #' @param adjust Should the effect size be bias-corrected? Defaults to `FALSE`.
-#' @param CI Deprecated in favor of `ci`.
 #' @param ... Arguments passed to [stats::chisq.test()], such as `p`. Ignored
 #'   for `cohens_g()`.
 #'
 #' @details
-#' Cramer's *V* and phi (\eqn{\phi}) are effect sizes for tests of independence
-#' in 2D contingency tables, or for goodness-of-fit in 1D tables. For 2-by-2
-#' tables, they are identical, and are equal to the simple correlation between
-#' two dichotomous variables, ranging between  0 (no dependence) and 1 (perfect
-#' dependence). For larger tables, Cramer's *V* should be used, as it is bounded
-#' between 0-1, whereas phi can be larger than 1.
+#' Cramer's *V*, phi (\eqn{\phi}) and Pearson's *C* are effect sizes for tests
+#' of independence in 2D contingency tables. For 2-by-k tables, Cramer's *V* and
+#' phi are identical, and are equal to the simple correlation between two
+#' dichotomous variables, ranging between  0 (no dependence) and 1 (perfect
+#' dependence). For larger tables, Cramer's *V* or Pearson's *C* should be used,
+#' as they are bounded between 0-1, whereas phi can be larger than 1 (upper
+#' bound is `sqrt(min(nrow, ncol) - 1))`).
+#' \cr\cr
+#' For goodness-of-fit in 1D tables Pearson's *C* or phi can be used. Phi has no
+#' upper bound (can be arbitrarily large, depending on the expected
+#' distribution), while Pearson's *C* is bounded between 0-1.
 #' \cr\cr
 #' For 2-by-2 contingency tables, Odds ratios, Risk ratios and Cohen's *h* can
 #' also be estimated. Note that these are computed with each **column**
@@ -39,11 +49,12 @@
 #' estimated using the standard normal parametric method (see Katz et al., 1978;
 #' Szumilas, 2010).
 #' \cr\cr
-#' See *Confidence Intervals* and *CI Contains Zero* sections for *phi*, Cohen's
-#' *w* and Cramer's *V*.
+#' See *Confidence (Compatibility) Intervals (CIs)*, *CIs and Significance
+#' Tests*, and *One-Sided CIs* sections for *phi*, Cohen's *w*, Cramer's *V* and
+#' Pearson's *C*.
 #'
-#' @inheritSection effectsize-CIs Confidence Intervals
-#' @inheritSection effectsize-CIs CI Contains Zero
+#' @inheritSection effectsize_CIs Confidence (Compatibility) Intervals (CIs)
+#' @inheritSection effectsize_CIs CIs and Significance Tests
 #'
 #' @return A data frame with the effect size (`Cramers_v`, `phi` (possibly with
 #'   the suffix `_adjusted`), `Odds_ratio`, `Risk_ratio` (possibly with the
@@ -54,38 +65,37 @@
 #' @family effect size indices
 #'
 #' @examples
-#' M <- rbind(
-#'   c(150, 130, 35, 55),
-#'   c(100, 50, 10, 40),
-#'   c(165, 65, 2, 25)
-#' )
-#' dimnames(M) <- list(
-#'   Study = c("Psych", "Econ", "Law"),
-#'   Music = c("Pop", "Rock", "Jazz", "Classic")
-#' )
+#' M <-
+#'   matrix(c(150, 100, 165,
+#'            130, 50, 65,
+#'            35, 10, 2,
+#'            55, 40, 25), nrow = 4,
+#'          dimnames = list(
+#'            Music = c("Pop", "Rock", "Jazz", "Classic"),
+#'            Study = c("Psych", "Econ", "Law")))
 #' M
 #'
+#' # Note that Phi is not bound to [0-1], but instead
+#' # the upper bound for phi is sqrt(min(nrow, ncol) - 1)
 #' phi(M)
 #'
 #' cramers_v(M)
 #'
+#' pearsons_c(M)
 #'
 #'
 #' ## 2-by-2 tables
 #' ## -------------
-#' (RCT <- matrix(
-#'   c(
-#'     71, 30,
-#'     50, 100
-#'   ),
-#'   nrow = 2, byrow = TRUE,
-#'   dimnames = list(
-#'     Diagnosis = c("Sick", "Recovered"),
-#'     Group = c("Treatment", "Control")
-#'   )
-#' )) # note groups are COLUMNS
+#' RCT <-
+#'   matrix(c(71, 30,
+#'            50, 100), nrow = 2, byrow = TRUE,
+#'          dimnames = list(
+#'            Diagnosis = c("Sick", "Recovered"),
+#'            Group = c("Treatment", "Control")))
+#' RCT # note groups are COLUMNS
 #'
 #' oddsratio(RCT)
+#' oddsratio(RCT, alternative = "greater")
 #'
 #' riskratio(RCT)
 #'
@@ -95,17 +105,17 @@
 #'
 #' ## Dependent (Paired) Contingency Tables
 #' ## -------------------------------------
-#' Performance <- rbind(
-#'   c(794, 86),
-#'   c(150, 570)
-#' )
-#' dimnames(Performance) <- list(
-#'   "1st Survey" = c("Approve", "Disapprove"),
-#'   "2nd Survey" = c("Approve", "Disapprove")
-#' )
+#
+#' Performance <-
+#'   matrix(c(794, 150,
+#'            86, 570), nrow = 2,
+#'          dimnames = list(
+#'            "1st Survey" = c("Approve", "Disapprove"),
+#'            "2nd Survey" = c("Approve", "Disapprove")))
 #' Performance
 #'
 #' cohens_g(Performance)
+#'
 #' @references
 #' - Cohen, J. (1988). Statistical power analysis for the behavioral sciences (2nd Ed.). New York: Routledge.
 #' - Katz, D. J. S. M., Baptista, J., Azen, S. P., & Pike, M. C. (1978). Obtaining confidence intervals for the risk ratio in cohort studies. Biometrics, 469-474.
@@ -113,48 +123,28 @@
 #'
 #' @importFrom stats chisq.test
 #' @export
-phi <- function(x, y = NULL, ci = 0.95, adjust = FALSE, CI, ...) {
-  if (!missing(CI)) {
-    ci <- CI
-    warning("'CI' argument is deprecated. Use 'ci' instead.")
+phi <- function(x, y = NULL, ci = 0.95, alternative = "greater", adjust = FALSE, ...) {
+  alternative <- match.arg(alternative, c("greater", "two.sided", "less"))
+
+  if (inherits(x, "BFBayesFactor")) {
+    if (!inherits(x@numerator[[1]], "BFcontingencyTable")) {
+      stop("'x' is not a Chi-squared test!", call. = FALSE)
+    }
+    return(effectsize(x, type = "phi", adjust = adjust, ci = ci, alternative = alternative))
   }
+
 
   if (inherits(x, "htest")) {
     if (!(grepl("Pearson's Chi-squared", x$method) ||
       grepl("Chi-squared test for given probabilities", x$method))) {
       stop("'x' is not a Chi-squared test!", call. = FALSE)
     }
-    return(effectsize(x, type = "phi", adjust = adjust, ci = ci))
-  } else if (inherits(x, "BFBayesFactor")) {
-    if (!inherits(x@numerator[[1]], "BFcontingencyTable")) {
-      stop("'x' is not a Chi-squared test!", call. = FALSE)
-    }
-    return(effectsize(x, type = "phi", adjust = adjust, ci = ci))
-  }
-
-  res <- suppressWarnings(stats::chisq.test(x, y, ...))
-  Obs <- res$observed
-  Exp <- res$expected
-
-  if (!is.null(dim(Exp))) {
-    if (any(c(colSums(Obs), rowSums(Obs)) == 0L)) {
-      stop("Cannot have empty rows/columns in the contingency tables.", call. = FALSE)
-    }
-    nr <- nrow(Obs)
-    nc <- ncol(Obs)
   } else {
-    nr <- length(Obs)
-    nc <- 1
+    x <- suppressWarnings(stats::chisq.test(x, y, ...))
+    x$data.name <- NULL
   }
 
-  chisq_to_phi(
-    chisq = .chisq(Obs, Exp),
-    n = sum(Obs),
-    nrow = nr,
-    ncol = nc,
-    ci = ci,
-    adjust = adjust
-  )
+  effectsize(x, type = "phi", adjust = adjust, ci = ci, alternative = alternative)
 }
 
 #' @rdname phi
@@ -164,48 +154,56 @@ cohens_w <- phi
 #' @rdname phi
 #' @importFrom stats chisq.test
 #' @export
-cramers_v <- function(x, y = NULL, ci = 0.95, adjust = FALSE, CI, ...) {
-  if (!missing(CI)) {
-    ci <- CI
-    warning("'CI' argument is deprecated. Use 'ci' instead.")
+cramers_v <- function(x, y = NULL, ci = 0.95, alternative = "greater", adjust = FALSE, ...) {
+  alternative <- match.arg(alternative, c("greater", "two.sided", "less"))
+
+  if (inherits(x, "BFBayesFactor")) {
+    if (!inherits(x@numerator[[1]], "BFcontingencyTable")) {
+      stop("'x' is not a Chi-squared test!", call. = FALSE)
+    }
+    return(effectsize(x, type = "cramers_v", adjust = adjust, ci = ci, alternative = alternative))
   }
+
 
   if (inherits(x, "htest")) {
     if (!(grepl("Pearson's Chi-squared", x$method) ||
       grepl("Chi-squared test for given probabilities", x$method))) {
       stop("'x' is not a Chi-squared test!", call. = FALSE)
     }
-    return(effectsize(x, type = "cramers_v", adjust = adjust, ci = ci))
-  } else if (inherits(x, "BFBayesFactor")) {
+  } else {
+    x <- suppressWarnings(stats::chisq.test(x, y, ...))
+    x$data.name <- NULL
+  }
+
+  effectsize(x, type = "cramers_v", adjust = adjust, ci = ci, alternative = alternative)
+}
+
+
+#' @rdname phi
+#' @importFrom stats chisq.test
+#' @export
+pearsons_c <- function(x, y = NULL, ci = 0.95, alternative = "greater", adjust = FALSE, ...) {
+  alternative <- match.arg(alternative, c("greater", "two.sided", "less"))
+
+  if (inherits(x, "BFBayesFactor")) {
     if (!inherits(x@numerator[[1]], "BFcontingencyTable")) {
       stop("'x' is not a Chi-squared test!", call. = FALSE)
     }
-    return(effectsize(x, type = "cramers_v", adjust = adjust, ci = ci))
+    return(effectsize(x, type = "pearsons_c", adjust = adjust, ci = ci, alternative = alternative))
   }
 
-  res <- suppressWarnings(stats::chisq.test(x, y, ...))
-  Obs <- res$observed
-  Exp <- res$expected
 
-  if (!is.null(dim(Exp))) {
-    if (any(c(colSums(Obs), rowSums(Obs)) == 0L)) {
-      stop("Cannot have empty rows/columns in the contingency tables.", call. = FALSE)
+  if (inherits(x, "htest")) {
+    if (!(grepl("Pearson's Chi-squared", x$method) ||
+          grepl("Chi-squared test for given probabilities", x$method))) {
+      stop("'x' is not a Chi-squared test!", call. = FALSE)
     }
-    nr <- nrow(Obs)
-    nc <- ncol(Obs)
   } else {
-    nr <- length(Obs)
-    nc <- 1
+    x <- suppressWarnings(stats::chisq.test(x, y, ...))
+    x$data.name <- NULL
   }
 
-  chisq_to_cramers_v(
-    chisq = .chisq(Obs, Exp),
-    n = sum(Obs),
-    nrow = nr,
-    ncol = nc,
-    ci = ci,
-    adjust = adjust
-  )
+  effectsize(x, type = "pearsons_c", adjust = adjust, ci = ci, alternative = alternative)
 }
 
 
@@ -213,13 +211,15 @@ cramers_v <- function(x, y = NULL, ci = 0.95, adjust = FALSE, CI, ...) {
 #' @inheritParams oddsratio_to_d
 #' @export
 #' @importFrom stats chisq.test qnorm
-oddsratio <- function(x, y = NULL, ci = 0.95, log = FALSE, ...) {
+oddsratio <- function(x, y = NULL, ci = 0.95, alternative = "two.sided", log = FALSE, ...) {
+  alternative <- match.arg(alternative, c("two.sided", "less", "greater"))
+
   if (inherits(x, "htest")) {
     if (grepl("Pearson's Chi-squared", x$method) ||
       grepl("Chi-squared test for given probabilities", x$method)) {
-      return(effectsize(x, type = "or", log = log, ci = ci))
+      return(effectsize(x, type = "or", log = log, ci = ci, alternative = alternative))
     } else if (grepl("Fisher's Exact", x$method)) {
-      return(effectsize(x, ...))
+      return(effectsize(x, alternative = alternative, ...))
     } else {
       stop("'x' is not a Chi-squared / Fisher's Exact test!", call. = FALSE)
     }
@@ -250,8 +250,9 @@ oddsratio <- function(x, y = NULL, ci = 0.95, log = FALSE, ...) {
   if (is.numeric(ci)) {
     stopifnot(length(ci) == 1, ci < 1, ci > 0)
     res$CI <- ci
+    ci.level <- if (alternative == "two.sided") ci else 2 * ci - 1
 
-    alpha <- 1 - ci
+    alpha <- 1 - ci.level
 
     SE_logodds <- sqrt(sum(1 / Obs))
     Z_logodds <- stats::qnorm(alpha / 2, lower.tail = FALSE)
@@ -261,6 +262,13 @@ oddsratio <- function(x, y = NULL, ci = 0.95, log = FALSE, ...) {
     res$CI_high <- confs[2]
 
     ci_method <- list(method = "normal")
+    if (alternative == "less") {
+      res$CI_low <- 0
+    } else if (alternative == "greater") {
+      res$CI_high <- Inf
+    }
+  } else {
+    alternative <- NULL
   }
 
   if (log) {
@@ -273,6 +281,8 @@ oddsratio <- function(x, y = NULL, ci = 0.95, log = FALSE, ...) {
   attr(res, "ci") <- ci
   attr(res, "ci_method") <- ci_method
   attr(res, "log") <- log
+  attr(res, "approximate") <- FALSE
+  attr(res, "alternative") <- alternative
   return(res)
 }
 
@@ -280,13 +290,15 @@ oddsratio <- function(x, y = NULL, ci = 0.95, log = FALSE, ...) {
 #' @inheritParams oddsratio_to_d
 #' @export
 #' @importFrom stats chisq.test qnorm
-riskratio <- function(x, y = NULL, ci = 0.95, log = FALSE, ...) {
+riskratio <- function(x, y = NULL, ci = 0.95, alternative = "two.sided", log = FALSE, ...) {
+  alternative <- match.arg(alternative, c("two.sided", "less", "greater"))
+
   if (inherits(x, "htest")) {
     if (!(grepl("Pearson's Chi-squared", x$method) ||
       grepl("Chi-squared test for given probabilities", x$method))) {
       stop("'x' is not a Chi-squared test!", call. = FALSE)
     }
-    return(effectsize(x, type = "rr", log = log, ci = ci))
+    return(effectsize(x, type = "rr", log = log, ci = ci, alternative = alternative))
   } else if (inherits(x, "BFBayesFactor")) {
     if (!inherits(x@numerator[[1]], "BFcontingencyTable")) {
       stop("'x' is not a Chi-squared test!", call. = FALSE)
@@ -317,8 +329,9 @@ riskratio <- function(x, y = NULL, ci = 0.95, log = FALSE, ...) {
   if (is.numeric(ci)) {
     stopifnot(length(ci) == 1, ci < 1, ci > 0)
     res$CI <- ci
+    ci.level <- if (alternative == "two.sided") ci else 2 * ci - 1
 
-    alpha <- 1 - ci
+    alpha <- 1 - ci.level
 
     SE_logRR <- sqrt(p1 / ((1 - p1) * n1)) + sqrt(p2 / ((1 - p2) * n2))
     Z_logRR <- stats::qnorm(alpha / 2, lower.tail = FALSE)
@@ -328,6 +341,13 @@ riskratio <- function(x, y = NULL, ci = 0.95, log = FALSE, ...) {
     res$CI_high <- confs[2]
 
     ci_method <- list(method = "normal")
+    if (alternative == "less") {
+      res$CI_low <- 0
+    } else if (alternative == "greater") {
+      res$CI_high <- Inf
+    }
+  } else {
+    alternative <- NULL
   }
 
   if (log) {
@@ -340,19 +360,23 @@ riskratio <- function(x, y = NULL, ci = 0.95, log = FALSE, ...) {
   attr(res, "ci") <- ci
   attr(res, "ci_method") <- ci_method
   attr(res, "log") <- log
+  attr(res, "approximate") <- FALSE
+  attr(res, "alternative") <- alternative
   return(res)
 }
 
 #' @rdname phi
 #' @export
 #' @importFrom stats qnorm
-cohens_h <- function(x, y = NULL, ci = 0.95, ...) {
+cohens_h <- function(x, y = NULL, ci = 0.95, alternative = "two.sided", ...) {
+  alternative <- match.arg(alternative, c("two.sided", "less", "greater"))
+
   if (inherits(x, "htest")) {
     if (!(grepl("Pearson's Chi-squared", x$method) ||
       grepl("Chi-squared test for given probabilities", x$method))) {
       stop("'x' is not a Chi-squared test!", call. = FALSE)
     }
-    return(effectsize(x, type = "cohens_h", ci = ci))
+    return(effectsize(x, type = "cohens_h", ci = ci, alternative = alternative))
   } else if (inherits(x, "BFBayesFactor")) {
     if (!inherits(x@numerator[[1]], "BFcontingencyTable")) {
       stop("'x' is not a Chi-squared test!", call. = FALSE)
@@ -382,21 +406,31 @@ cohens_h <- function(x, y = NULL, ci = 0.95, ...) {
   ci_method <- NULL
   if (is.numeric(ci)) {
     stopifnot(length(ci) == 1, ci < 1, ci > 0)
+    out$CI <- ci
+    ci.level <- if (alternative == "two.sided") ci else 2 * ci - 1
 
-    alpha <- (1 - ci) / 2
+    alpha <- 1 - ci.level
 
     se_arcsin <- sqrt(0.25 * (1 / n1 + 1 / n2))
-    Zc <- stats::qnorm(alpha, lower.tail = FALSE)
-    out$CI <- ci
+    Zc <- stats::qnorm(alpha / 2, lower.tail = FALSE)
     out$CI_low <- H - Zc * (2 * se_arcsin)
     out$CI_high <- H + Zc * (2 * se_arcsin)
 
     ci_method <- list(method = "normal")
+    if (alternative == "less") {
+      out$CI_low <- -pi
+    } else if (alternative == "greater") {
+      out$CI_high <- pi
+    }
+  } else {
+    alternative <- NULL
   }
 
   class(out) <- c("effectsize_table", "see_effectsize_table", class(out))
   attr(out, "ci") <- ci
   attr(out, "ci_method") <- ci_method
+  attr(out, "approximate") <- FALSE
+  attr(out, "alternative") <- alternative
   return(out)
 }
 
@@ -404,12 +438,14 @@ cohens_h <- function(x, y = NULL, ci = 0.95, ...) {
 #' @rdname phi
 #' @export
 #' @importFrom stats complete.cases prop.test
-cohens_g <- function(x, y = NULL, ci = 0.95, ...) {
+cohens_g <- function(x, y = NULL, ci = 0.95, alternative = "two.sided", ...) {
+  alternative <- match.arg(alternative, c("two.sided", "less", "greater"))
+
   if (inherits(x, "htest")) {
     if (!grepl("McNemar", x$method)) {
       stop("'x' is not a McNemar test!", call. = FALSE)
     }
-    return(effectsize(x, ci = ci))
+    return(effectsize(x, ci = ci, alternative = alternative))
   }
 
 
@@ -444,11 +480,15 @@ cohens_g <- function(x, y = NULL, ci = 0.95, ...) {
 
   ci_method <- NULL
   if (is.numeric(ci)) {
+    stopifnot(length(ci) == 1, ci < 1, ci > 0)
+    out$CI <- ci
+
     n <- sum(b) + sum(c)
     k <- P * n
 
     res <- stats::prop.test(k, n,
       p = 0.5,
+      alternative = alternative,
       conf.level = ci,
       correct = FALSE
     )
@@ -463,12 +503,7 @@ cohens_g <- function(x, y = NULL, ci = 0.95, ...) {
   class(out) <- c("effectsize_table", "see_effectsize_table", class(out))
   attr(out, "ci") <- ci
   attr(out, "ci_method") <- ci_method
+  attr(out, "approximate") <- FALSE
+  attr(out, "alternative") <- alternative
   return(out)
-}
-
-
-
-#' @keywords internal
-.chisq <- function(Obs, Exp) {
-  sum(((Obs - Exp)^2) / Exp)
 }

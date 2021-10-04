@@ -14,6 +14,7 @@ conversion of indices such as Cohen’s *d*, *r*, odds-ratios, etc.
 ## Installation
 
 [![CRAN](http://www.r-pkg.org/badges/version/effectsize)](https://cran.r-project.org/package=effectsize)
+[![R-universe](https://img.shields.io/badge/R--universe%20%F0%9F%9A%80-easystats-brightgreen)](https://easystats.r-universe.dev/)
 [![R-check](https://github.com/easystats/effectsize/workflows/R-check/badge.svg)](https://github.com/easystats/effectsize/actions)
 [![pkgdown](https://github.com/easystats/effectsize/workflows/pkgdown/badge.svg)](https://github.com/easystats/effectsize/actions)
 [![Codecov test
@@ -26,12 +27,22 @@ CRAN:
 install.packages("effectsize")
 ```
 
-Or this one to install the latest development version:
+Or you can install the latest development version `0.4.99` from
+[*R-universe*](https://easystats.r-universe.dev):
 
 ``` r
-install.packages("remotes")
-remotes::install_github("easystats/effectsize")
+install.packages("effectsize", repos = "https://easystats.r-universe.dev")
 ```
+
+<!-- Or from *GitHub*: -->
+
+<!-- ```{r, warning=FALSE, message=FALSE, eval=FALSE} -->
+
+<!-- if (!require("remotes")) install.packages("remotes") -->
+
+<!-- remotes::install_github("easystats/effectsize") -->
+
+<!-- ``` -->
 
 ## Documentation
 
@@ -44,23 +55,21 @@ Click on the buttons above to access the package
 [**easystats blog**](https://easystats.github.io/blog/posts/), and
 check-out these vignettes:
 
--   [**Data
-    Standardization**](https://easystats.github.io/effectsize/articles/standardize_data.html)
--   **Effect Sizes**
-    -   [**Parameter and Model
+  - **Effect Sizes**
+      - [**Parameter and Model
         Standardization**](https://easystats.github.io/effectsize/articles/standardize_parameters.html)
-    -   [**ANOVA Effect
+      - [**ANOVA Effect
         Sizes**](https://easystats.github.io/effectsize/articles/anovaES.html)
-    -   [**Effect Sizes in Bayesian
+      - [**Effect Sizes in Bayesian
         Models**](https://easystats.github.io/effectsize/articles/bayesian_models.html)  
-    -   [**For Simple Hypothesis
+      - [**For Simple Hypothesis
         Tests**](https://easystats.github.io/effectsize/articles/simple_htests.html)  
--   **Effect Sizes Conversion**
-    -   [**Between Effect
+  - **Effect Sizes Conversion**
+      - [**Between Effect
         Sizes**](https://easystats.github.io/effectsize/articles/convert.html)
-    -   [**Effect Size from Test
+      - [**Effect Size from Test
         Statistics**](https://easystats.github.io/effectsize/articles/from_test_statistics.html)
--   [**Automated Interpretation of Indices of Effect
+  - [**Automated Interpretation of Indices of Effect
     Size**](https://easystats.github.io/effectsize/articles/interpret.html)
 
 # Features
@@ -111,23 +120,29 @@ model <- aov(mpg ~ factor(gear), data = mtcars)
 eta_squared(model)
 ## # Effect Size for ANOVA
 ## 
-## Parameter    | Eta2 |       90% CI
+## Parameter    | Eta2 |       95% CI
 ## ----------------------------------
-## factor(gear) | 0.43 | [0.18, 0.59]
+## factor(gear) | 0.43 | [0.18, 1.00]
+## 
+## - One-sided CIs: upper bound fixed at (1).
 
 omega_squared(model)
 ## # Effect Size for ANOVA
 ## 
-## Parameter    | Omega2 |       90% CI
+## Parameter    | Omega2 |       95% CI
 ## ------------------------------------
-## factor(gear) |   0.38 | [0.14, 0.55]
+## factor(gear) |   0.38 | [0.14, 1.00]
+## 
+## - One-sided CIs: upper bound fixed at (1).
 
 epsilon_squared(model)
 ## # Effect Size for ANOVA
 ## 
-## Parameter    | Epsilon2 |       90% CI
+## Parameter    | Epsilon2 |       95% CI
 ## --------------------------------------
-## factor(gear) |     0.39 | [0.14, 0.56]
+## factor(gear) |     0.39 | [0.14, 1.00]
+## 
+## - One-sided CIs: upper bound fixed at (1).
 ```
 
 And more…
@@ -171,8 +186,11 @@ The package also provides ways of converting between different effect
 sizes.
 
 ``` r
-convert_d_to_r(d = 1)
-## [1] 0.447
+d_to_r(d = 0.2)
+## [1] 0.0995
+
+oddsratio_to_riskratio(2.6, p0 = 0.4)
+## [1] 1.59
 ```
 
 And for recovering effect sizes from test statistics.
@@ -189,9 +207,11 @@ F_to_r(15, df = 1, df_error = 60)
 ## 0.45 | [0.22, 0.61]
 
 F_to_eta2(15, df = 1, df_error = 60)
-## Eta2 (partial) |       90% CI
+## Eta2 (partial) |       95% CI
 ## -----------------------------
-## 0.20           | [0.07, 0.34]
+## 0.20           | [0.07, 1.00]
+## 
+## - One-sided CIs: upper bound fixed at (1).
 ```
 
 ## Effect Size Interpretation
@@ -210,83 +230,20 @@ here**](https://easystats.github.io/effectsize/articles/interpret.html))
 and can be easily changed.
 
 ``` r
-interpret_d(d = 0.45, rules = "cohen1988")
+interpret_cohens_d(d = 0.45, rules = "cohen1988")
 ## [1] "small"
 ## (Rules: cohen1988)
 
-interpret_d(d = 0.45, rules = "gignac2016")
+interpret_cohens_d(d = 0.45, rules = "gignac2016")
 ## [1] "moderate"
 ## (Rules: gignac2016)
-```
-
-## Utilities
-
-*Data Standardization, Normalization, Scaling, and Rank-Transforming*
-
-Many indices of effect size stem out, or are related, to
-[*standardization*](https://easystats.github.io/effectsize/articles/standardize_parameters.html).
-Thus, it is expected that `effectsize` provides functions to standardize
-data.
-
-A standardization sets the mean and SD to 0 and 1:
-
-``` r
-library(parameters) # for describe_distribution
-
-df <- standardize(attitude)
-describe_distribution(df$rating)
-##      Mean | SD |  IQR |         Range | Skewness | Kurtosis |  n | n_Missing
-## ----------------------------------------------------------------------------
-## -5.46e-16 |  1 | 1.29 | [-2.02, 1.67] |    -0.40 |    -0.49 | 30 |         0
-```
-
-Alternatively, normalization is similar to standardization in that it is
-a linear translation of the parameter space (i.e., it does not change
-the shape of the data distribution). However, it puts the values within
-a 0 - 1 range, which can be useful in cases where you want to compare or
-visualise data on the same scale.
-
-``` r
-df <- normalize(attitude)
-describe_distribution(df$rating)
-## Mean |   SD |  IQR |        Range | Skewness | Kurtosis |  n | n_Missing
-## ------------------------------------------------------------------------
-## 0.55 | 0.27 | 0.35 | [0.00, 1.00] |    -0.40 |    -0.49 | 30 |         0
-```
-
-This is a special case of a rescaling function, which can be used to
-rescale the data to an arbitrary new scale. Let’s change all numeric
-variables to “percentages”:
-
-``` r
-df <- change_scale(attitude, to = c(0, 100)) 
-describe_distribution(df$rating)
-##  Mean |    SD |   IQR |          Range | Skewness | Kurtosis |  n | n_Missing
-## -----------------------------------------------------------------------------
-## 54.74 | 27.05 | 35.00 | [0.00, 100.00] |    -0.40 |    -0.49 | 30 |         0
-```
-
-For some robust statistics, one might also want to transform the numeric
-values into *ranks*, which can be performed using the `ranktransform()`
-function.
-
-``` r
-ranktransform(c(1, 3, -2, 6, 6, 0.5))
-## [1] 3.0 4.0 1.0 5.5 5.5 2.0
-```
-
-or signed-ranks:
-
-``` r
-ranktransform(c(1, 3, -2, 6, 6, 0.5), sign = TRUE)
-## [1]  2.0  4.0 -3.0  5.5  5.5  1.0
 ```
 
 ### Citation
 
 In order to cite this package, please use the following citation:
 
--   Ben-Shachar M, Lüdecke D, Makowski D (2020). effectsize: Estimation
+  - Ben-Shachar M, Lüdecke D, Makowski D (2020). effectsize: Estimation
     of Effect Size Indices and Standardized Parameters. *Journal of Open
     Source Software*, *5*(56), 2815. doi: 10.21105/joss.02815
 

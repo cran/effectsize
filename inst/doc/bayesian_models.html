@@ -38,6 +38,7 @@
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
@@ -208,12 +209,12 @@ div.csl-indent {
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>parameters<span class="sc">::</span><span class="fu">model_parameters</span>(mod, <span class="at">test =</span> <span class="cn">NULL</span>)</span></code></pre></div>
 <pre><code>&gt; # Fixed effects
 &gt; 
-&gt; Parameter   |   Median |              89% CI |  Rhat |     ESS |                      Prior
+&gt; Parameter   |   Median |              95% CI |  Rhat |     ESS |                      Prior
 &gt; -------------------------------------------------------------------------------------------
-&gt; (Intercept) | 10023.20 | [9365.61, 10724.72] | 0.999 | 5405.00 | Normal (20000 +- 15495.02)
-&gt; xtra_hours  |  1236.25 | [1189.92,  1285.99] | 1.000 | 4756.00 |      Normal (0 +- 1587.80)
-&gt; n_comps     |  2964.35 | [2754.07,  3165.00] | 1.000 | 5032.00 |      Normal (0 +- 3755.71)
-&gt; seniority   |   439.46 | [ 286.51,   605.06] | 0.999 | 4283.00 |      Normal (0 +- 2702.93)</code></pre>
+&gt; (Intercept) | 10023.20 | [9212.29, 10889.54] | 0.999 | 5405.00 | Normal (20000 +- 15495.02)
+&gt; xtra_hours  |  1236.25 | [1177.38,  1294.31] | 1.000 | 4756.00 |      Normal (0 +- 1587.80)
+&gt; n_comps     |  2964.35 | [2701.67,  3207.82] | 1.000 | 5032.00 |      Normal (0 +- 3755.71)
+&gt; seniority   |   439.46 | [ 248.63,   636.66] | 0.999 | 4283.00 |      Normal (0 +- 2702.93)</code></pre>
 <pre><code>&gt; 
 &gt; Using highest density intervals as credible intervals.</code></pre>
 <p>Looking at the un-standardized (“raw”) parameters, it looks like all predictors positively predict workers’ salaries, but which has the highest predictive power? Unfortunately, the predictors are not on the same scale (hours, compliments, years), so comparing them is hard when looking at the raw data. This is where standardization comes in.</p>
@@ -221,6 +222,8 @@ div.csl-indent {
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(effectsize)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">standardize_parameters</span>(mod, <span class="at">method =</span> <span class="st">&quot;refit&quot;</span>, <span class="at">ci =</span> <span class="fl">0.89</span>)</span></code></pre></div>
+<pre><code>&gt; Warning: Standardizing variables without adjusting priors may lead to bogus
+&gt; results unless priors are auto-scaled.</code></pre>
 <pre><code>&gt; # Standardization method: refit
 &gt; 
 &gt; Parameter   | Median (std.) |        89% CI
@@ -230,12 +233,12 @@ div.csl-indent {
 &gt; n_comps     |          0.39 | [ 0.37, 0.42]
 &gt; seniority   |          0.08 | [ 0.05, 0.11]</code></pre>
 <p>Note that the central tendency of the posterior distribution is still the <em>median</em> - the median of the standardized posterior distribution. We can easily change this, of the type of credible interval used:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(effectsize)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">standardize_parameters</span>(mod,</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">&quot;basic&quot;</span>, <span class="at">ci =</span> <span class="fl">0.89</span>,</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">centrality =</span> <span class="st">&quot;MAP&quot;</span>, <span class="at">ci_method =</span> <span class="st">&quot;eti&quot;</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(effectsize)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">standardize_parameters</span>(mod,</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">&quot;basic&quot;</span>, <span class="at">ci =</span> <span class="fl">0.89</span>,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">centrality =</span> <span class="st">&quot;MAP&quot;</span>, <span class="at">ci_method =</span> <span class="st">&quot;eti&quot;</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>&gt; # Standardization method: basic
 &gt; 
 &gt; Parameter   | MAP (std.) |       89% CI
@@ -258,37 +261,42 @@ div.csl-indent {
 <div id="setup" class="section level2">
 <h2>Setup</h2>
 <p>Let’s factorize out data from above:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>hardlyworking<span class="sc">$</span>age_f <span class="ot">&lt;-</span> <span class="fu">cut</span>(hardlyworking<span class="sc">$</span>age,</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">25</span>, <span class="dv">35</span>, <span class="dv">45</span>), <span class="at">right =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;Young&quot;</span>, <span class="st">&quot;Less_young&quot;</span>)</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>hardlyworking<span class="sc">$</span>comps_f <span class="ot">&lt;-</span> <span class="fu">cut</span>(hardlyworking<span class="sc">$</span>n_comps,</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>),</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">include.lowest =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">right =</span> <span class="cn">FALSE</span></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(hardlyworking<span class="sc">$</span>age_f, hardlyworking<span class="sc">$</span>comps_f)</span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>hardlyworking<span class="sc">$</span>age_f <span class="ot">&lt;-</span> <span class="fu">cut</span>(hardlyworking<span class="sc">$</span>age,</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">25</span>, <span class="dv">35</span>, <span class="dv">45</span>), <span class="at">right =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;Young&quot;</span>, <span class="st">&quot;Less_young&quot;</span>)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>hardlyworking<span class="sc">$</span>comps_f <span class="ot">&lt;-</span> <span class="fu">cut</span>(hardlyworking<span class="sc">$</span>n_comps,</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>),</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">include.lowest =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">right =</span> <span class="cn">FALSE</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(hardlyworking<span class="sc">$</span>age_f, hardlyworking<span class="sc">$</span>comps_f)</span></code></pre></div>
 <pre><code>&gt;             
 &gt;              [0,1) [1,2) [2,3]
 &gt;   Young        124   188   114
 &gt;   Less_young    13    34    27</code></pre>
 <p>And fit our model:</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># use (special) effects coding</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(hardlyworking<span class="sc">$</span>age_f) <span class="ot">&lt;-</span> bayestestR<span class="sc">::</span>contr.bayes</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(hardlyworking<span class="sc">$</span>comps_f) <span class="ot">&lt;-</span> bayestestR<span class="sc">::</span>contr.bayes</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>modAOV <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(salary <span class="sc">~</span> age_f <span class="sc">*</span> comps_f,</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> hardlyworking, <span class="at">family =</span> <span class="fu">gaussian</span>(),</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">refresh =</span> <span class="dv">0</span></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># use (special) effects coding</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(hardlyworking<span class="sc">$</span>age_f) <span class="ot">&lt;-</span> bayestestR<span class="sc">::</span>contr.bayes</span></code></pre></div>
+<pre><code>&gt; Warning: &#39;contr.bayes&#39; is deprecated.
+&gt; Use &#39;contr.orthonorm&#39; instead.
+&gt; See help(&quot;Deprecated&quot;)</code></pre>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">contrasts</span>(hardlyworking<span class="sc">$</span>comps_f) <span class="ot">&lt;-</span> bayestestR<span class="sc">::</span>contr.bayes</span></code></pre></div>
+<pre><code>&gt; Warning: &#39;contr.bayes&#39; is deprecated.
+&gt; Use &#39;contr.orthonorm&#39; instead.
+&gt; See help(&quot;Deprecated&quot;)</code></pre>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>modAOV <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(salary <span class="sc">~</span> age_f <span class="sc">*</span> comps_f,</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> hardlyworking, <span class="at">family =</span> <span class="fu">gaussian</span>(),</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">refresh =</span> <span class="dv">0</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 <p>We can use <code>eta_squared_posterior()</code> to get the posterior distribution of <span class="math inline">\(eta^2\)</span> or <span class="math inline">\(eta^2_p\)</span> for each effect. Like an ANOVA table, we must make sure to use the right effects-coding and <em>SS</em>-type:</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>pes_posterior <span class="ot">&lt;-</span> <span class="fu">eta_squared_posterior</span>(modAOV,</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">draws =</span> <span class="dv">500</span>, <span class="co"># how many samples from the PPD?</span></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">partial =</span> <span class="cn">TRUE</span>, <span class="co"># partial eta squared</span></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># type 3 SS</span></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">ss_function =</span> car<span class="sc">::</span>Anova, <span class="at">type =</span> <span class="dv">3</span></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>pes_posterior <span class="ot">&lt;-</span> <span class="fu">eta_squared_posterior</span>(modAOV,</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">draws =</span> <span class="dv">500</span>, <span class="co"># how many samples from the PPD?</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">partial =</span> <span class="cn">TRUE</span>, <span class="co"># partial eta squared</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># type 3 SS</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">ss_function =</span> car<span class="sc">::</span>Anova, <span class="at">type =</span> <span class="dv">3</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>&gt; Simulating effect size... This can take a while...</code></pre>
 <pre><code>&gt; Type 3 ANOVAs only give sensible and informative results when covariates are
 &gt;   mean-centered and factors are coded with orthogonal contrasts (such as those
@@ -2290,7 +2298,7 @@ div.csl-indent {
 &gt;   mean-centered and factors are coded with orthogonal contrasts (such as those
 &gt;   produced by &#39;contr.sum&#39;, &#39;contr.poly&#39;, or &#39;contr.helmert&#39;, but *not* by the
 &gt;   default &#39;contr.treatment&#39;).</code></pre>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(pes_posterior)</span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(pes_posterior)</span></code></pre></div>
 <pre><code>&gt;   age_f comps_f age_f:comps_f
 &gt; 1 0.028   0.161        0.0024
 &gt; 2 0.030   0.117        0.0252
@@ -2298,7 +2306,7 @@ div.csl-indent {
 &gt; 4 0.035   0.112        0.0118
 &gt; 5 0.017   0.100        0.0054
 &gt; 6 0.126   0.058        0.0013</code></pre>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>bayestestR<span class="sc">::</span><span class="fu">describe_posterior</span>(pes_posterior, <span class="at">rope_range =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.1</span>), <span class="at">test =</span> <span class="st">&quot;rope&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>bayestestR<span class="sc">::</span><span class="fu">describe_posterior</span>(pes_posterior, <span class="at">rope_range =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.1</span>), <span class="at">test =</span> <span class="st">&quot;rope&quot;</span>)</span></code></pre></div>
 <pre><code>&gt; Summary of Posterior Distribution
 &gt; 
 &gt; Parameter     | Median |       95% CI |         ROPE | % in ROPE
@@ -2307,22 +2315,24 @@ div.csl-indent {
 &gt; comps_f       |   0.14 | [0.06, 0.22] | [0.00, 0.10] |    14.08%
 &gt; age_f:comps_f |   0.01 | [0.00, 0.04] | [0.00, 0.10] |      100%</code></pre>
 <p>Compare to:</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>modAOV_f <span class="ot">&lt;-</span> <span class="fu">lm</span>(salary <span class="sc">~</span> age_f <span class="sc">*</span> comps_f,</span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> hardlyworking</span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="fu">eta_squared</span>(car<span class="sc">::</span><span class="fu">Anova</span>(modAOV_f, <span class="at">type =</span> <span class="dv">3</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>modAOV_f <span class="ot">&lt;-</span> <span class="fu">lm</span>(salary <span class="sc">~</span> age_f <span class="sc">*</span> comps_f,</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> hardlyworking</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="fu">eta_squared</span>(car<span class="sc">::</span><span class="fu">Anova</span>(modAOV_f, <span class="at">type =</span> <span class="dv">3</span>))</span></code></pre></div>
 <pre><code>&gt; Type 3 ANOVAs only give sensible and informative results when covariates are
 &gt;   mean-centered and factors are coded with orthogonal contrasts (such as those
 &gt;   produced by &#39;contr.sum&#39;, &#39;contr.poly&#39;, or &#39;contr.helmert&#39;, but *not* by the
 &gt;   default &#39;contr.treatment&#39;).</code></pre>
 <pre><code>&gt; # Effect Size for ANOVA (Type III)
 &gt; 
-&gt; Parameter     | Eta2 (partial) |       90% CI
+&gt; Parameter     | Eta2 (partial) |       95% CI
 &gt; ---------------------------------------------
-&gt; age_f         |           0.03 | [0.01, 0.05]
-&gt; comps_f       |           0.13 | [0.09, 0.18]
-&gt; age_f:comps_f |       6.65e-03 | [0.00, 0.02]</code></pre>
+&gt; age_f         |           0.03 | [0.01, 1.00]
+&gt; comps_f       |           0.13 | [0.09, 1.00]
+&gt; age_f:comps_f |       6.65e-03 | [0.00, 1.00]
+&gt; 
+&gt; - One-sided CIs: upper bound fixed at (1).</code></pre>
 </div>
 </div>
 <div id="references" class="section level1 unnumbered">

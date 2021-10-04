@@ -2,9 +2,10 @@
 #'
 #' @param OR Value or vector of (log) odds ratio values.
 #' @param rules Can be "`chen2010"` (default), `"cohen1988"` (through
-#'   transformation to standardized difference, see [odds_to_d()]) or custom set
+#'   transformation to standardized difference, see [oddsratio_to_d()]) or custom set
 #'   of [rules()].
 #' @param log Are the provided values log odds ratio.
+#' @inheritParams interpret
 #'
 #' @section Rules:
 #'
@@ -15,7 +16,7 @@
 #'   - **1.68 <= OR < 3.47** - Small
 #'   - **3.47 <= OR < 6.71** - Medium
 #'   - **OR >= 6.71 ** - Large
-#' - Cohen (1988) (`"cohen1988"`, based on the [oddsratio_to_d()] conversion, see [interpret_d()])
+#' - Cohen (1988) (`"cohen1988"`, based on the [oddsratio_to_d()] conversion, see [interpret_cohens_d()])
 #'   - **OR < 1.44** - Very small
 #'   - **1.44 <= OR < 2.48** - Small
 #'   - **2.48 <= OR < 4.27** - Medium
@@ -24,7 +25,6 @@
 #' @examples
 #' interpret_oddsratio(1)
 #' interpret_oddsratio(c(5, 2))
-#' @aliases interpret_odds
 #'
 #' @references
 #' - Cohen, J. (1988). Statistical power analysis for the behavioral sciences
@@ -39,7 +39,7 @@
 #' methods, 8(4), 448.
 #'
 #' @export
-interpret_oddsratio <- function(OR, rules = "chen2010", log = FALSE) {
+interpret_oddsratio <- function(OR, rules = "chen2010", log = FALSE, ...) {
   if (log) {
     OR <- exp(abs(OR))
   } else {
@@ -49,7 +49,7 @@ interpret_oddsratio <- function(OR, rules = "chen2010", log = FALSE) {
 
   if (is.character(rules) && rules == "cohen1988") {
     d <- oddsratio_to_d(OR, log = FALSE)
-    return(interpret_d(abs(d), rules = rules))
+    return(interpret_cohens_d(abs(d), rules = rules))
   }
 
   rules <- .match.rules(
