@@ -167,26 +167,26 @@ div.csl-indent {
 <li><a href="#standardized-parameters">Standardized Parameters</a>
 <ul>
 <li><a href="#introduction">Introduction</a></li>
-<li><a href="#set-up">Set up</a></li>
+<li><a href="#setup">Setup</a></li>
 </ul></li>
 <li><a href="#eta2">Eta<sup>2</sup></a>
 <ul>
 <li><a href="#introduction-1">Introduction</a></li>
-<li><a href="#setup">Setup</a></li>
+<li><a href="#setup-1">Setup</a></li>
 </ul></li>
 <li><a href="#references">References</a></li>
 </ul>
 </div>
 
-<div id="standardized-parameters" class="section level1">
-<h1>Standardized Parameters</h1>
-<div id="introduction" class="section level2">
-<h2>Introduction</h2>
+<div id="standardized-parameters" class="section level2">
+<h2>Standardized Parameters</h2>
+<div id="introduction" class="section level3">
+<h3>Introduction</h3>
 <p>Like in OLS / ML or other frequentists methods of model parameter estimation, standardizing the parameters of Bayesian (generalized) linear regression models can allow for the comparison of so-called “effects” within and between models, variables and studies.</p>
 <p>As with frequentists methods, standardizing parameters should not be the only method of examining the role different predictors play in a particular Bayesian model, and this vignette generally assumes that the issues of model convergence, goodness of fit and model selection have already been taken care of. (Learn more about how to become a Bayesian master with <a href="https://easystats.github.io/bayestestR/">the <code>bayestestR</code> package</a>.)</p>
 </div>
-<div id="set-up" class="section level2">
-<h2>Set up</h2>
+<div id="setup" class="section level3">
+<h3>Setup</h3>
 <p>We will examine the predictive role of overtime (<code>xtra_hours</code>), number of compliments given to the boss (<code>n_comps</code>) and seniority in predicting workers salaries. Let’s fit the model:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rstanarm)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -207,16 +207,15 @@ div.csl-indent {
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>parameters<span class="sc">::</span><span class="fu">model_parameters</span>(mod, <span class="at">test =</span> <span class="cn">NULL</span>)</span></code></pre></div>
-<pre><code>&gt; # Fixed effects
-&gt; 
-&gt; Parameter   |   Median |              95% CI |  Rhat |     ESS |                      Prior
+<pre><code>&gt; Parameter   |   Median |              95% CI |  Rhat |     ESS |                      Prior
 &gt; -------------------------------------------------------------------------------------------
 &gt; (Intercept) | 10023.20 | [9212.29, 10889.54] | 0.999 | 5405.00 | Normal (20000 +- 15495.02)
 &gt; xtra_hours  |  1236.25 | [1177.38,  1294.31] | 1.000 | 4756.00 |      Normal (0 +- 1587.80)
 &gt; n_comps     |  2964.35 | [2701.67,  3207.82] | 1.000 | 5032.00 |      Normal (0 +- 3755.71)
 &gt; seniority   |   439.46 | [ 248.63,   636.66] | 0.999 | 4283.00 |      Normal (0 +- 2702.93)</code></pre>
 <pre><code>&gt; 
-&gt; Using highest density intervals as credible intervals.</code></pre>
+&gt; Uncertainty intervals (highest-density) and p values (two-tailed) computed
+&gt;   using a MCMC distribution approximation.</code></pre>
 <p>Looking at the un-standardized (“raw”) parameters, it looks like all predictors positively predict workers’ salaries, but which has the highest predictive power? Unfortunately, the predictors are not on the same scale (hours, compliments, years), so comparing them is hard when looking at the raw data. This is where standardization comes in.</p>
 <p>Like with <a href="https://easystats.github.io/effectsize/articles/standardize_parameters.html">frequentists models</a> we can choose from the same standardization methods. Let’s use the (slow) <code>&quot;refit&quot;</code> method.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(effectsize)</span>
@@ -250,16 +249,16 @@ div.csl-indent {
 <p>As we can see, working harder (or at least for longer hours) has stronger predictive power than complementing or seniority. (Do note, however, that this does not mean that if you wish to have a higher salary you should work overtime - the raw parameters seem to suggest that complementing your boss is the way to go, with one compliment worth almost 3.5 times <strong>more</strong> than a full hours’ work!)</p>
 </div>
 </div>
-<div id="eta2" class="section level1">
-<h1>Eta<sup>2</sup></h1>
-<div id="introduction-1" class="section level2">
-<h2>Introduction</h2>
+<div id="eta2" class="section level2">
+<h2>Eta<sup>2</sup></h2>
+<div id="introduction-1" class="section level3">
+<h3>Introduction</h3>
 <p>In classical frequentists models, the computation of <span class="math inline">\(\eta^2\)</span> or <span class="math inline">\(\eta^2_p\)</span> is straightforward: based on the right combinations of sums-of-squares (<em>SS</em>s), we get the correct proportion of variance accounted for by some predictor term. However such a computation is not as straightforward for Bayesian models, for various reasons (e.g., the model-<em>SS</em> and the residual-<em>SS</em> don’t necessarily sum to the total-<em>SS</em>). Although some have proposed Bayesian methods of estimating explained variance in ANOVA designs <span class="citation">(Marsman et al. 2019)</span>, these are not yet easy to implement with <code>stan</code>-based models.</p>
 <p>An alternative route to obtaining effect sizes of explained variance, is via the use of the <strong><em>posterior predictive distribution</em></strong> (<em>PPD</em>). The PPD is the Bayesian expected distribution of possible unobserved values. Thus, after observing some data, we can estimate not just the expected mean values (the conditional marginal means), but also the full <em>distribution</em> of data around these values <span class="citation">(Gelman et al. 2014, chap. 7)</span>.</p>
-<p>By sampling from the PPD, we can decompose the sample to the various <em>SS</em>s needed for the computation of explained variance measures. By repeatedly sampling from the PPD, we can generate a posterior distribution of explained variance estimates. But note that <strong>these estimates are conditioned not only on the location-parameters of the model, but also on the scale-parameters of the model!</strong> So it is vital to <a href="https://mc-stan.org/docs/2_23/stan-users-guide/meta-models-part.html#meta-models.part">validate the PPD</a> before using it to estimate explained variance measures.</p>
+<p>By sampling from the PPD, we can decompose the sample to the various <em>SS</em>s needed for the computation of explained variance measures. By repeatedly sampling from the PPD, we can generate a posterior distribution of explained variance estimates. But note that <strong>these estimates are conditioned not only on the location-parameters of the model, but also on the scale-parameters of the model!</strong> So it is vital to <a href="https://mc-stan.org/docs/2_23/stan-users-guide/meta-models-part.html#meta-models.part/">validate the PPD</a> before using it to estimate explained variance measures.</p>
 </div>
-<div id="setup" class="section level2">
-<h2>Setup</h2>
+<div id="setup-1" class="section level3">
+<h3>Setup</h3>
 <p>Let’s factorize out data from above:</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>hardlyworking<span class="sc">$</span>age_f <span class="ot">&lt;-</span> <span class="fu">cut</span>(hardlyworking<span class="sc">$</span>age,</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">25</span>, <span class="dv">35</span>, <span class="dv">45</span>), <span class="at">right =</span> <span class="cn">FALSE</span>,</span>

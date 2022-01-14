@@ -7,11 +7,11 @@
 #' @inheritParams stats::chisq.test
 #' @param ci Confidence Interval (CI) level
 #' @param alternative a character string specifying the alternative hypothesis;
-#'   Controls the type of CI returned: `"two.sided"` (two-sided CI; default for
-#'   Cramer's *V*, phi (\eqn{\phi}), and Cohen's *w*), `"greater"` (default for
-#'   OR, RR, Cohen's *h* and Cohen's *g*) or `"less"` (one-sided CI). Partial
-#'   matching is allowed (e.g., `"g"`, `"l"`, `"two"`...). See *One-Sided CIs*
-#'   in [effectsize_CIs].
+#'   Controls the type of CI returned: `"greater"` (two-sided CI; default for
+#'   Cramer's *V*, phi (\eqn{\phi}), and Cohen's *w*), `"two.sided"` (default
+#'   for OR, RR, Cohen's *h* and Cohen's *g*) or `"less"` (one-sided CI).
+#'   Partial matching is allowed (e.g., `"g"`, `"l"`, `"two"`...). See
+#'   *One-Sided CIs* in [effectsize_CIs].
 #' @param adjust Should the effect size be bias-corrected? Defaults to `FALSE`.
 #' @param ... Arguments passed to [stats::chisq.test()], such as `p`. Ignored
 #'   for `cohens_g()`.
@@ -130,7 +130,7 @@ phi <- function(x, y = NULL, ci = 0.95, alternative = "greater", adjust = FALSE,
     if (!inherits(x@numerator[[1]], "BFcontingencyTable")) {
       stop("'x' is not a Chi-squared test!", call. = FALSE)
     }
-    return(effectsize(x, type = "phi", adjust = adjust, ci = ci, alternative = alternative))
+    return(effectsize(x, type = "phi", adjust = adjust, ci = ci, ...))
   }
 
 
@@ -161,7 +161,7 @@ cramers_v <- function(x, y = NULL, ci = 0.95, alternative = "greater", adjust = 
     if (!inherits(x@numerator[[1]], "BFcontingencyTable")) {
       stop("'x' is not a Chi-squared test!", call. = FALSE)
     }
-    return(effectsize(x, type = "cramers_v", adjust = adjust, ci = ci, alternative = alternative))
+    return(effectsize(x, type = "cramers_v", adjust = adjust, ci = ci, ...))
   }
 
 
@@ -189,7 +189,7 @@ pearsons_c <- function(x, y = NULL, ci = 0.95, alternative = "greater", adjust =
     if (!inherits(x@numerator[[1]], "BFcontingencyTable")) {
       stop("'x' is not a Chi-squared test!", call. = FALSE)
     }
-    return(effectsize(x, type = "pearsons_c", adjust = adjust, ci = ci, alternative = alternative))
+    return(effectsize(x, type = "pearsons_c", adjust = adjust, ci = ci, ...))
   }
 
 
@@ -227,7 +227,7 @@ oddsratio <- function(x, y = NULL, ci = 0.95, alternative = "two.sided", log = F
     if (!inherits(x@numerator[[1]], "BFcontingencyTable")) {
       stop("'x' is not a Chi-squared test!", call. = FALSE)
     }
-    return(effectsize(x, type = "or", log = log, ci = ci))
+    return(effectsize(x, type = "or", log = log, ci = ci, ...))
   }
 
   res <- suppressWarnings(stats::chisq.test(x, y, ...))
@@ -303,7 +303,7 @@ riskratio <- function(x, y = NULL, ci = 0.95, alternative = "two.sided", log = F
     if (!inherits(x@numerator[[1]], "BFcontingencyTable")) {
       stop("'x' is not a Chi-squared test!", call. = FALSE)
     }
-    return(effectsize(x, type = "rr", log = log, ci = ci))
+    return(effectsize(x, type = "rr", log = log, ci = ci, ...))
   }
 
   res <- suppressWarnings(stats::chisq.test(x, y, ...))
@@ -381,7 +381,7 @@ cohens_h <- function(x, y = NULL, ci = 0.95, alternative = "two.sided", ...) {
     if (!inherits(x@numerator[[1]], "BFcontingencyTable")) {
       stop("'x' is not a Chi-squared test!", call. = FALSE)
     }
-    return(effectsize(x, type = "cohens_h", ci = ci))
+    return(effectsize(x, type = "cohens_h", ci = ci, ...))
   }
 
   res <- suppressWarnings(stats::chisq.test(x, y, ...))

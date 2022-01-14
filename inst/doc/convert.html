@@ -234,17 +234,20 @@ r \approx \frac{d}{\sqrt{d^2 + 4}}
 &gt; (Intercept) |       26.58 |     1.43 | [23.67, 29.50] | 18.65 | &lt; .001
 &gt; am          |        5.28 |     1.08 | [ 3.07,  7.48] |  4.89 | &lt; .001
 &gt; hp          |       -0.06 | 7.86e-03 | [-0.07, -0.04] | -7.50 | &lt; .001</code></pre>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># A couple of ways to get partial-d:</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fl">5.28</span> <span class="sc">/</span> <span class="fu">sigma</span>(fit)</span></code></pre></div>
+<pre><code>&gt; 
+&gt; Uncertainty intervals (equal-tailed) and p values (two-tailed) computed using a
+&gt;   Wald t-distribution approximation.</code></pre>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># A couple of ways to get partial-d:</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fl">5.28</span> <span class="sc">/</span> <span class="fu">sigma</span>(fit)</span></code></pre></div>
 <pre><code>&gt; [1] 1.81</code></pre>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t_to_d</span>(<span class="fl">4.89</span>, <span class="at">df_error =</span> <span class="dv">29</span>)[[<span class="dv">1</span>]]</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t_to_d</span>(<span class="fl">4.89</span>, <span class="at">df_error =</span> <span class="dv">29</span>)[[<span class="dv">1</span>]]</span></code></pre></div>
 <pre><code>&gt; [1] 1.82</code></pre>
 <p>We can convert these semi-<em>d</em> values to <em>r</em> values, but in this case these represent the <em>partial</em> correlation:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t_to_r</span>(<span class="fl">4.89</span>, <span class="at">df_error =</span> <span class="dv">29</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t_to_r</span>(<span class="fl">4.89</span>, <span class="at">df_error =</span> <span class="dv">29</span>)</span></code></pre></div>
 <pre><code>&gt; r    |       95% CI
 &gt; -------------------
 &gt; 0.67 | [0.43, 0.80]</code></pre>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>correlation<span class="sc">::</span><span class="fu">correlation</span>(mtcars[, <span class="fu">c</span>(<span class="st">&quot;mpg&quot;</span>, <span class="st">&quot;am&quot;</span>, <span class="st">&quot;hp&quot;</span>)], <span class="at">partial =</span> <span class="cn">TRUE</span>)[<span class="dv">1</span>, ]</span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>correlation<span class="sc">::</span><span class="fu">correlation</span>(mtcars[, <span class="fu">c</span>(<span class="st">&quot;mpg&quot;</span>, <span class="st">&quot;am&quot;</span>, <span class="st">&quot;hp&quot;</span>)], <span class="at">partial =</span> <span class="cn">TRUE</span>)[<span class="dv">1</span>, ]</span></code></pre></div>
 <pre><code>&gt; # Correlation Matrix (pearson-method)
 &gt; 
 &gt; Parameter1 | Parameter2 |    r |       95% CI | t(30) |         p
@@ -253,8 +256,8 @@ r \approx \frac{d}{\sqrt{d^2 + 4}}
 &gt; 
 &gt; p-value adjustment method: Holm (1979)
 &gt; Observations: 32</code></pre>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># all close to:</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">d_to_r</span>(<span class="fl">1.81</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># all close to:</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">d_to_r</span>(<span class="fl">1.81</span>)</span></code></pre></div>
 <pre><code>&gt; [1] 0.671</code></pre>
 </div>
 </div>
@@ -268,27 +271,28 @@ d = log(OR) \times \frac{\sqrt{3}}{\pi}
 \]</span></p>
 <p>which is implemented in the <code>oddsratio_to_d()</code> function.</p>
 <p>Let’s give it a try:</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Set a threshold</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>thresh <span class="ot">&lt;-</span> <span class="dv">0</span></span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. dichotomize the outcome</span></span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>Outcome_binom <span class="ot">&lt;-</span> data<span class="sc">$</span>Outcome <span class="sc">&lt;</span> thresh</span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Fit a logistic regression:</span></span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">glm</span>(Outcome_binom <span class="sc">~</span> Group,</span>
-<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> data,</span>
-<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">family =</span> <span class="fu">binomial</span>()</span>
-<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>parameters<span class="sc">::</span><span class="fu">model_parameters</span>(fit)</span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Set a threshold</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>thresh <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. dichotomize the outcome</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>Outcome_binom <span class="ot">&lt;-</span> data<span class="sc">$</span>Outcome <span class="sc">&lt;</span> thresh</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Fit a logistic regression:</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">glm</span>(Outcome_binom <span class="sc">~</span> Group,</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> data,</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">family =</span> <span class="fu">binomial</span>()</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>parameters<span class="sc">::</span><span class="fu">model_parameters</span>(fit)</span></code></pre></div>
 <pre><code>&gt; Parameter   | Log-Odds |   SE |        95% CI |     z |     p
 &gt; -------------------------------------------------------------
 &gt; (Intercept) |     0.41 | 0.91 | [-1.39, 2.43] |  0.44 | 0.657
 &gt; Group [1]   |    -0.81 | 1.29 | [-3.54, 1.70] | -0.63 | 0.530</code></pre>
 <pre><code>&gt; 
-&gt; Showing profiled confidence intervals.</code></pre>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert log(OR) (the coefficient) to d</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">oddsratio_to_d</span>(<span class="sc">-</span><span class="fl">0.81</span>, <span class="at">log =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+&gt; Uncertainty intervals (profile-likelihood) and p values (two-tailed) computed
+&gt;   using a Wald z-distribution approximation.</code></pre>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert log(OR) (the coefficient) to d</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">oddsratio_to_d</span>(<span class="sc">-</span><span class="fl">0.81</span>, <span class="at">log =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <pre><code>&gt; [1] -0.447</code></pre>
 <div id="odds-ratios-to-risk-ratios" class="section level3">
 <h3>Odds ratios to Risk Ratios</h3>
@@ -299,17 +303,17 @@ d = log(OR) \times \frac{\sqrt{3}}{\pi}
 RR = \frac{OR}{(1 - p0 + (p0 \times OR))}  
 \]</span></p>
 <p>Where <span class="math inline">\(p0\)</span> is the base-rate risk - the probability of the event without the intervention (e.g., what is the probability of the migraine subsiding within an hour without eating any brussels sprouts). If it the base-rate risk is, say, 85%, we get a <em>RR</em> of:</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>OR <span class="ot">&lt;-</span> <span class="fl">3.5</span></span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>baserate <span class="ot">&lt;-</span> <span class="fl">0.85</span></span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="fu">oddsratio_to_riskratio</span>(OR, baserate)</span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>OR <span class="ot">&lt;-</span> <span class="fl">3.5</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>baserate <span class="ot">&lt;-</span> <span class="fl">0.85</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="fu">oddsratio_to_riskratio</span>(OR, baserate)</span></code></pre></div>
 <pre><code>&gt; [1] 1.12</code></pre>
 <p>That is - for every bowl of brussels sprouts, we increase the chances of reducing the migraine by a mere 12%! Is if worth it? Depends on you affinity to brussels sprouts…</p>
 <p>Note that the base-rate risk is crucial here. If instead of 85% it was only 4%, then the <em>RR</em> would be:</p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>OR <span class="ot">&lt;-</span> <span class="fl">3.5</span></span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>baserate <span class="ot">&lt;-</span> <span class="fl">0.04</span></span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="fu">oddsratio_to_riskratio</span>(OR, baserate)</span></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>OR <span class="ot">&lt;-</span> <span class="fl">3.5</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>baserate <span class="ot">&lt;-</span> <span class="fl">0.04</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="fu">oddsratio_to_riskratio</span>(OR, baserate)</span></code></pre></div>
 <pre><code>&gt; [1] 3.18</code></pre>
 <p>That is - for every bowl of brussels sprouts, we increase the chances of reducing the migraine by a whopping 318%! Is if worth it? I guess that still depends on your affinity to brussels sprouts…</p>
 </div>

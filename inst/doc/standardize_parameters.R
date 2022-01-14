@@ -21,9 +21,7 @@ m <- lm(rating ~ complaints, data = attitude)
 standardize_parameters(m)
 
 ## -----------------------------------------------------------------------------
-r <- cor.test(attitude$rating, attitude$complaints)
-
-effectsize(r)
+correlation::correlation(attitude, select = c("rating", "complaints"))
 
 ## ----include=FALSE------------------------------------------------------------
 mtcars <- datasets::mtcars
@@ -58,9 +56,12 @@ data("hardlyworking", package = "effectsize")
 
 head(hardlyworking)
 
-correlation::correlation(data = hardlyworking[,1], # the outcome of salary
-                         data2 = hardlyworking[,-1], # the predictors
-                         partial = TRUE) # get partial correlations
+correlation::correlation(
+  hardlyworking,
+  select = "salary",
+  select2 = c("xtra_hours", "n_comps", "age", "seniority"),
+  partial = TRUE # get partial correlations
+) 
 
 ## -----------------------------------------------------------------------------
 mod <- lm(salary ~ xtra_hours + n_comps + age + seniority,
@@ -107,12 +108,12 @@ standardize_parameters(mod, method = "smart")
 standardize_parameters(mod, method = "basic")
 
 ## ---- eval=knitr::opts_chunk$get("eval") && require(lme4) && require(lmerTest), warning=FALSE----
-m <- lme4::lmer(mpg ~ cyl + am + vs + (1|cyl), mtcars)
+m <- lme4::lmer(Reaction ~ Days + (Days|Subject), data = lme4::sleepstudy)
 
-standardize_parameters(m, method = "pseudo", df_method = "satterthwaite")
+standardize_parameters(m, method = "pseudo", ci_method = "satterthwaite")
 
 # compare to:
-standardize_parameters(m, method = "basic", df_method = "satterthwaite")
+standardize_parameters(m, method = "basic", ci_method = "satterthwaite")
 
 ## -----------------------------------------------------------------------------
 mod_b <- glm(am ~ mpg + factor(cyl),

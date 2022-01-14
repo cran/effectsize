@@ -38,6 +38,9 @@ t.test(mpg ~ am, data = mtcars, var.equal = TRUE, alternative = "less")
 cohens_d(mpg ~ am, data = mtcars, pooled_sd = TRUE, alternative = "less")
 
 ## -----------------------------------------------------------------------------
+cles(mpg ~ am, data = mtcars)
+
+## -----------------------------------------------------------------------------
 t.test(extra ~ group, data = sleep, paired = TRUE)
 
 cohens_d(extra ~ group, data = sleep, paired = TRUE)
@@ -142,6 +145,9 @@ B <- c(14, 34, 34, 77)
 wilcox.test(A, B) # aka Mann–Whitney U test
 
 rank_biserial(A, B)
+
+## -----------------------------------------------------------------------------
+cles(A, B, rank = TRUE)
 
 ## -----------------------------------------------------------------------------
 x <- c(1.15, 0.88, 0.90, 0.74, 1.21, 1.36, 0.89)
