@@ -1,3 +1,21 @@
+#' @importFrom bayestestR equivalence_test
+#' @export
+bayestestR::equivalence_test
+
+#' @export
+#' @importFrom datawizard standardize
+datawizard::standardize
+
+
+
+
+
+## TODO: removed the following from see / modelbased --------------------
+
+#' @export
+#' @importFrom datawizard ranktransform
+datawizard::ranktransform
+
 #' @export
 #' @importFrom datawizard adjust
 datawizard::adjust
@@ -9,14 +27,6 @@ datawizard::change_scale
 #' @export
 #' @importFrom datawizard normalize
 datawizard::normalize
-
-#' @export
-#' @importFrom datawizard ranktransform
-datawizard::ranktransform
-
-#' @export
-#' @importFrom datawizard standardize
-datawizard::standardize
 
 #' @export
 #' @importFrom datawizard unstandardize

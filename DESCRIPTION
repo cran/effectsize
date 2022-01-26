@@ -1,7 +1,7 @@
 Type: Package
 Package: effectsize
 Title: Indices of Effect Size and Standardized Parameters
-Version: 0.6.0
+Version: 0.6.0.1
 Authors@R: 
     c(person(given = "Mattan S.",
              family = "Ben-Shachar",
@@ -68,7 +68,7 @@ RoxygenNote: 7.1.2
 Config/testthat/edition: 3
 Config/testthat/parallel: true
 NeedsCompilation: no
-Packaged: 2022-01-14 12:13:30 UTC; matta
+Packaged: 2022-01-26 09:28:38 UTC; matta
 Author: Mattan S. Ben-Shachar [aut, cre]
     (<https://orcid.org/0000-0002-4287-4801>, @mattansb),
   Dominique Makowski [aut] (<https://orcid.org/0000-0001-5375-9967>,
@@ -84,4 +84,4 @@ Author: Mattan S. Ben-Shachar [aut, cre]
   Jessica Burnett [rev] (<https://orcid.org/0000-0002-0896-5099>),
   Johannes Karreth [rev] (<https://orcid.org/0000-0003-4586-7153>)
 Repository: CRAN
-Date/Publication: 2022-01-14 12:52:41 UTC
+Date/Publication: 2022-01-26 14:32:51 UTC
