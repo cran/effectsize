@@ -21,7 +21,7 @@ effectsize(model, ...)
 
 \item{type}{The effect size of interest. See details.}
 
-\item{verbose}{Toggle off warnings.}
+\item{verbose}{Toggle warnings and messages on or off.}
 
 \item{test}{The indices of effect existence to compute. Character (vector) or
 list with one or more of these options: \code{"p_direction"} (or \code{"pd"}),
@@ -46,7 +46,8 @@ input model. See details.
 \item For an object of class \code{htest}, data is extracted via \code{\link[insight:get_data]{insight::get_data()}}, and passed to the relevant function according to:
 \itemize{
 \item A \strong{t-test} depending on \code{type}: \code{"cohens_d"} (default), \code{"hedges_g"}, or \code{"cles"}.
-\item A \strong{Chi-squared tests of independence or goodness-of-fit}, depending on \code{type}: \code{"cramers_v"} (default), \code{"phi"}, \code{"cohens_w"}, \code{"pearsons_c"}, \code{"cohens_h"}, \code{"oddsratio"}, or \code{"riskratio"}.
+\item A \strong{Chi-squared tests of independence}, depending on \code{type}: \code{"cramers_v"} (default), \code{"phi"}, \code{"cohens_w"}, \code{"pearsons_c"}, \code{"cohens_h"}, \code{"oddsratio"}, or \code{"riskratio"}.
+\item A \strong{Chi-squared tests of goodness-of-fit}, depending on \code{type}: \code{"normalized_chi"} (default) \code{"cohens_w"}, \code{"pearsons_c"}
 \item A \strong{One-way ANOVA test}, depending on \code{type}: \code{"eta"} (default), \code{"omega"} or \code{"epsilon"} -squared, \code{"f"}, or \code{"f2"}.
 \item A \strong{McNemar test} returns \emph{Cohen's g}.
 \item A \strong{Wilcoxon test} depending on \code{type}: returns "\code{rank_biserial}" correlation (default) or \code{"cles"}.
@@ -62,7 +63,7 @@ input model. See details.
 \item A \strong{proportion test} returns \emph{p}.
 }
 \item Objects of class \code{anova}, \code{aov}, or \code{aovlist}, depending on \code{type}: \code{"eta"} (default), \code{"omega"} or \code{"epsilon"} -squared, \code{"f"}, or \code{"f2"}.
-\item Other objects are passed to \code{\link[=standardize_parameters]{standardize_parameters()}}.
+\item Other objects are passed to \code{\link[parameters:standardize_parameters]{parameters::standardize_parameters()}}.
 }
 
 \strong{For statistical models it is recommended to directly use the listed
@@ -75,7 +76,7 @@ functions, for the full range of options they provide.}
 contingency_table <- as.table(rbind(c(762, 327, 468), c(484, 239, 477), c(484, 239, 477)))
 Xsq <- chisq.test(contingency_table)
 effectsize(Xsq)
-effectsize(Xsq, type = "phi")
+effectsize(Xsq, type = "cohens_w")
 
 Tt <- t.test(1:10, y = c(7:20), alternative = "less")
 effectsize(Tt)
@@ -125,7 +126,6 @@ Other effect size indices:
 \code{\link{cohens_d}()},
 \code{\link{eta_squared}()},
 \code{\link{phi}()},
-\code{\link{rank_biserial}()},
-\code{\link{standardize_parameters}()}
+\code{\link{rank_biserial}()}
 }
 \concept{effect size indices}

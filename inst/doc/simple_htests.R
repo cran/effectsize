@@ -58,52 +58,21 @@ onew <- oneway.test(mpg ~ gear, data = mtcars, var.equal = TRUE)
 eta_squared(onew)
 
 ## -----------------------------------------------------------------------------
-(Music <- matrix(
-  c(
-    150, 130, 35, 55,
-    100, 50, 10, 40,
-    165, 65, 2, 25
-  ),
-  byrow = TRUE, nrow = 3,
-  dimnames = list(
-    Study = c("Psych", "Econ", "Law"),
-    Music = c("Pop", "Rock", "Jazz", "Classic")
-  )
-))
+MPG_Gear <- table(mtcars$mpg < 20, mtcars$vs)
 
-chisq.test(Music)
+phi(MPG_Gear)
 
-cramers_v(Music)
+# Same as:
+cor(mtcars$mpg < 20, mtcars$vs)
 
-phi(Music)
 
-pearsons_c(Music)
 
-## -----------------------------------------------------------------------------
-O <- c(89,  37,  130, 28,  2) # observed group sizes
-E <- c(.40, .20, .20, .15, .05) # expected group freq
-
-chisq.test(O, p = E, rescale.p = TRUE)
-
-pearsons_c(O, p = E, rescale.p = TRUE)
-
-phi(O, p = E, rescale.p = TRUE)
-
-## -----------------------------------------------------------------------------
-(BFX <- contingencyTableBF(Music, sampleType = "jointMulti"))
-
-effectsize(BFX, type = "cramers_v", test = NULL)
-
-effectsize(BFX, type = "phi", test = NULL)
-
-effectsize(BFX, type = "pearsons_c", test = NULL)
+pearsons_c(MPG_Gear)
 
 ## -----------------------------------------------------------------------------
 (RCT <- matrix(
-  c(
-    71, 30,
-    50, 100
-  ),
+  c(71, 30,
+    50, 100),
   nrow = 2, byrow = TRUE,
   dimnames = list(
     Diagnosis = c("Sick", "Recovered"),
@@ -122,11 +91,51 @@ riskratio(RCT)
 cohens_h(RCT)
 
 ## -----------------------------------------------------------------------------
+(Music <- matrix(
+  c(150, 130, 35, 55,
+    100, 50, 10, 40,
+    165, 65, 2, 25),
+  byrow = TRUE, nrow = 3,
+  dimnames = list(
+    Study = c("Psych", "Econ", "Law"),
+    Music = c("Pop", "Rock", "Jazz", "Classic")
+  )
+))
+
+chisq.test(Music)
+
+cramers_v(Music)
+
+cohens_w(Music)
+
+pearsons_c(Music)
+
+## -----------------------------------------------------------------------------
+(BFX <- contingencyTableBF(Music, sampleType = "jointMulti"))
+
+effectsize(BFX, type = "cramers_v", test = NULL)
+
+effectsize(BFX, type = "cohens_w", test = NULL)
+
+effectsize(BFX, type = "pearsons_c", test = NULL)
+
+## -----------------------------------------------------------------------------
+O <- c(89,  37,  130, 28,  2) # observed group sizes
+E <- c(.40, .20, .20, .15, .05) # expected group freq
+
+chisq.test(O, p = E)
+
+pearsons_c(O, p = E)
+
+cohens_w(O, p = E)
+
+## -----------------------------------------------------------------------------
+normalized_chi(O, p = E)
+
+## -----------------------------------------------------------------------------
 (Performance <- matrix(
-  c(
-    794, 86,
-    150, 570
-  ),
+  c(794, 86,
+    150, 570),
   nrow = 2, byrow = TRUE,
   dimnames = list(
     "1st Survey" = c("Approve", "Disapprove"),

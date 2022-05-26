@@ -60,8 +60,8 @@
 #'
 #' ## Ties
 #' When tied values occur, they are each given the average of the ranks that
-#' would have been given had no ties occurred. No other corrections have been
-#' implemented yet.
+#' would have been given had no ties occurred. This results in an effect size of
+#' reduced magnitude. A correction has been applied for Kendall's *W*.
 #'
 #' # Confidence Intervals
 #' Confidence intervals for the rank-biserial correlation (and Cliff's *delta*)
@@ -183,7 +183,7 @@ rank_biserial <- function(x,
   }
 
   ## Prep data
-  out <- .get_data_2_samples(x, y, data)
+  out <- .get_data_2_samples(x, y, data, verbose, ...)
   x <- out$x
   y <- out$y
 
@@ -326,7 +326,7 @@ rank_epsilon_squared <- function(x,
   }
 
   ## pep data
-  data <- .get_data_multi_group(x, groups, data)
+  data <- .get_data_multi_group(x, groups, data, ...)
   data <- stats::na.omit(data)
 
   ## compute
@@ -375,7 +375,7 @@ kendalls_w <- function(x,
   }
 
   ## prep data
-  data <- .get_data_nested_groups(x, groups, blocks, data)
+  data <- .get_data_nested_groups(x, groups, blocks, data, ...)
   data <- stats::na.omit(data)
 
   ## compute
@@ -480,13 +480,25 @@ kendalls_w <- function(x,
   rankings <- apply(data, 1, .safe_ranktransform, verbose = verbose)
   rankings <- t(rankings) # keep dims
 
-  # TODO add ties correction?
   n <- ncol(rankings) # items
   m <- nrow(rankings) # judges
-
   R <- colSums(rankings)
-  S <- var(R) * (n - 1)
-  W <- (12 * S) / (m^2 * (n^3 - n))
+
+  if (!all(has_tie <- apply(rankings, 1, function(x) length(x) == insight::n_unique(x)))) {
+    # there are ties
+    have_ties <- rankings[!has_tie, , drop = FALSE]
+    Ti <- apply(have_ties, 1, function(r) {
+      ti <- apply(outer(unique(r), r, FUN = "=="), 1, sum)
+      sum(ti^3 - ti)
+    })
+
+    W <- (12 * sum(R^2) - 3 * (m^2) * n * ((n + 1)^2)) /
+      ((m^2) * n * (n^2 - 1) - m * sum(Ti))
+  } else {
+    S <- var(R) * (n - 1)
+    W <- (12 * S) / (m^2 * (n^3 - n))
+  }
+  W
 }
 
 ## CI ----
@@ -535,6 +547,7 @@ kendalls_w <- function(x,
 #   out
 # }
 
+#' @importFrom utils tail
 #' @keywords internal
 .repsilon_ci <- function(data, ci, alternative, iterations) {
   stopifnot(length(ci) == 1, ci < 1, ci > 0)
@@ -565,6 +578,7 @@ kendalls_w <- function(x,
   )
 }
 
+#' @importFrom utils tail
 #' @keywords internal
 .kendalls_w_ci <- function(data, ci, alternative, iterations) {
   stopifnot(length(ci) == 1, ci < 1, ci > 0)
@@ -590,12 +604,13 @@ kendalls_w <- function(x,
   )
 }
 
+
 # Utils -------------------------------------------------------------------
 
 .safe_ranktransform <- function(x, verbose = TRUE, ...) {
-  if (length(unique(x)) == 1) {
+  if (insight::n_unique(x) == 1) {
     if (verbose) warning("Only one unique value - rank fixed at 1")
     return(rep(1, length(x)))
   }
-  datawizard::ranktransform(x, verbose = verbose, ...)
+  datawizard::ranktransform(x, method = "average", ..., verbose = FALSE)
 }

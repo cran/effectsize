@@ -88,3 +88,36 @@ eta_squared(fit_lmm)
 epsilon_squared(fit_lmm)
 omega_squared(fit_lmm)
 
+## ---- echo = FALSE, eval=TRUE-------------------------------------------------
+if (eval_bayes <- knitr::opts_chunk$get("eval")) {
+  bayes_pkgs <- c("rstanarm", "bayestestR", "car")
+  eval_bayes <- all(sapply(bayes_pkgs, require, quietly = TRUE, character.only = TRUE))  
+}
+
+## ---- eval = eval_bayes-------------------------------------------------------
+library(rstanarm)
+
+m_bayes <- stan_glm(value ~ gender + phase + treatment, 
+                    data = obk.long, family = gaussian(),
+                    refresh = 0)
+
+## ---- eval = eval_bayes-------------------------------------------------------
+pes_posterior <- eta_squared_posterior(m_bayes,
+  draws = 500, # how many samples from the PPD?
+  partial = TRUE, # partial eta squared
+  # type 3 SS
+  ss_function = car::Anova, type = 3, 
+  verbose = FALSE
+)
+
+head(pes_posterior)
+
+bayestestR::describe_posterior(pes_posterior, 
+  rope_range = c(0, 0.1), test = "rope"
+)
+
+## ---- eval = eval_bayes-------------------------------------------------------
+m_ML <- lm(value ~ gender + phase + treatment, data = obk.long)
+
+eta_squared(car::Anova(m_ML, type = 3))
+

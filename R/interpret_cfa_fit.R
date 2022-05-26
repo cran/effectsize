@@ -78,13 +78,14 @@
 #' interpret_ifi(c(.5, .99))
 #' interpret_pnfi(c(.5, .99))
 #'
+#' @examplesIf require("lavaan")
+#' \donttest{
 #' # Structural Equation Models (SEM)
-#' if (require("lavaan")) {
-#'   structure <- " ind60 =~ x1 + x2 + x3
-#'                  dem60 =~ y1 + y2 + y3
-#'                  dem60 ~ ind60 "
-#'   model <- lavaan::sem(structure, data = PoliticalDemocracy)
-#'   interpret(model)
+#' structure <- " ind60 =~ x1 + x2 + x3
+#'                dem60 =~ y1 + y2 + y3
+#'                dem60 ~ ind60 "
+#' model <- lavaan::sem(structure, data = lavaan::PoliticalDemocracy)
+#' interpret(model)
 #' }
 #'
 #' @references
@@ -254,10 +255,14 @@ interpret.performance_lavaan <- function(x, ...) {
 
   table <- lapply(mfits, function(ind_name) {
     .interpret_ind <- eval(parse(text = paste0("interpret_", tolower(ind_name))))
+    interp <- .interpret_ind(x[[ind_name]])
+    rules <- attr(interp, "rules")
     data.frame(
       Name = ind_name,
       Value = x[[ind_name]],
-      Interpretation = .interpret_ind(x[[ind_name]])
+      Threshold = rules$values,
+      Interpretation = interp,
+      stringsAsFactors = FALSE
     )
   })
 

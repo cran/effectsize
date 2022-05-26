@@ -14,7 +14,19 @@
 
 <title>Support functions for model extensions</title>
 
-<script src="data:application/javascript;base64,Ly8gUGFuZG9jIDIuOSBhZGRzIGF0dHJpYnV0ZXMgb24gYm90aCBoZWFkZXIgYW5kIGRpdi4gV2UgcmVtb3ZlIHRoZSBmb3JtZXIgKHRvCi8vIGJlIGNvbXBhdGlibGUgd2l0aCB0aGUgYmVoYXZpb3Igb2YgUGFuZG9jIDwgMi44KS4KZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsIGZ1bmN0aW9uKGUpIHsKICB2YXIgaHMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCJkaXYuc2VjdGlvbltjbGFzcyo9J2xldmVsJ10gPiA6Zmlyc3QtY2hpbGQiKTsKICB2YXIgaSwgaCwgYTsKICBmb3IgKGkgPSAwOyBpIDwgaHMubGVuZ3RoOyBpKyspIHsKICAgIGggPSBoc1tpXTsKICAgIGlmICghL15oWzEtNl0kL2kudGVzdChoLnRhZ05hbWUpKSBjb250aW51ZTsgIC8vIGl0IHNob3VsZCBiZSBhIGhlYWRlciBoMS1oNgogICAgYSA9IGguYXR0cmlidXRlczsKICAgIHdoaWxlIChhLmxlbmd0aCA+IDApIGgucmVtb3ZlQXR0cmlidXRlKGFbMF0ubmFtZSk7CiAgfQp9KTsK"></script>
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -24,6 +36,7 @@
   div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
   ul.task-list{list-style: none;}
     </style>
+
 
 
 <style type="text/css">
@@ -125,7 +138,187 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 
-<link rel="stylesheet" href="data:text/css,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" type="text/css" />
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
 
 
 
@@ -142,15 +335,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <div id="TOC">
 <ul>
-<li><a href="#supporting-anova-effect-sizes">Supporting ANOVA Effect Sizes</a>
+<li><a href="#supporting-anova-effect-sizes">Supporting ANOVA Effect
+Sizes</a>
 <ul>
 <li><a href="#simple-anova-tables">Simple ANOVA tables</a></li>
-<li><a href="#anova-tables-with-multiple-error-strata">ANOVA Tables with Multiple Error Strata</a></li>
-<li><a href="#approximate-effect-sizes">Approximate Effect sizes</a></li>
+<li><a href="#anova-tables-with-multiple-error-strata">ANOVA Tables with
+Multiple Error Strata</a></li>
+<li><a href="#approximate-effect-sizes">Approximate Effect
+sizes</a></li>
 <li><a href="#example"><em>Example</em></a></li>
 </ul></li>
-<li><a href="#supporting-model-re-fitting-with-standardized-data">Supporting Model Re-Fitting with Standardized Data</a></li>
-<li><a href="#supporting-standardized-parameters">Supporting Standardized Parameters</a></li>
 <li><a href="#references">References</a></li>
 </ul>
 </div>
@@ -158,7 +352,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(effectsize)</span></code></pre></div>
 <div id="supporting-anova-effect-sizes" class="section level2">
 <h2>Supporting ANOVA Effect Sizes</h2>
-<p>To add support for you model, create a new <code>.anova_es()</code> method function. This functions should generally do 3 things:</p>
+<p>To add support for you model, create a new <code>.anova_es()</code>
+method function. This functions should generally do 3 things:</p>
 <ol style="list-style-type: decimal">
 <li>Build a data frame with all the required information.</li>
 <li>Pass the data frame to one of the 3 functions.</li>
@@ -166,9 +361,17 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ol>
 <div id="simple-anova-tables" class="section level3">
 <h3>Simple ANOVA tables</h3>
-<p>The input data frame must have these columns: - <code>Parameter</code> (char) - The name of the parameter or, more often, the term. - <code>Sum_Squares</code> (num) - The sum of squares. - <code>df</code> (num) - The degrees of freedom associated with the <code>Sum_Squares</code>. - <code>Mean_Square_residuals</code> (num; <em>optional</em>) - if <em>not</em> present, is calculated as <code>Sum_Squares / df</code>. (Any other column is ignored.)</p>
-<p>And exactly <em>1</em> row Where <code>Parameter</code> is <code>Residual</code>.</p>
-<p>Optionally, one of the rows can have a <code>(Intercept)</code> value for <code>Parameter</code>.</p>
+<p>The input data frame must have these columns: -
+<code>Parameter</code> (char) - The name of the parameter or, more
+often, the term. - <code>Sum_Squares</code> (num) - The sum of squares.
+- <code>df</code> (num) - The degrees of freedom associated with the
+<code>Sum_Squares</code>. - <code>Mean_Square_residuals</code> (num;
+<em>optional</em>) - if <em>not</em> present, is calculated as
+<code>Sum_Squares / df</code>. (Any other column is ignored.)</p>
+<p>And exactly <em>1</em> row Where <code>Parameter</code> is
+<code>Residual</code>.</p>
+<p>Optionally, one of the rows can have a <code>(Intercept)</code> value
+for <code>Parameter</code>.</p>
 <p>An example of a minimally valid data frame:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>min_aov <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">Parameter =</span> <span class="fu">c</span>(<span class="st">&quot;(Intercept)&quot;</span>, <span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>, <span class="st">&quot;Residuals&quot;</span>),</span>
@@ -186,9 +389,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <pre><code>&gt;   Parameter Eta2_partial   CI CI_low CI_high
 &gt; 1         A        0.286 0.95   0.12       1
 &gt; 2         B        0.091 0.95   0.00       1</code></pre>
-<p>The output is a data frame with the columns: <code>Parameter</code>, the effect size, and (optionally) <code>CI</code> + <code>CI_low</code> + <code>CI_high</code>,</p>
-<p>And with the following attributes: <code>partial</code>, <code>generalized</code>, <code>ci</code>, <code>alternative</code>, <code>anova_type</code> (<code>NA</code> or <code>NULL</code>), <code>approximate</code>.</p>
-<p>You can then set the <code>anova_type</code> attribute to {1, 2, 3, or <code>NA</code>} and return the output.</p>
+<p>The output is a data frame with the columns: <code>Parameter</code>,
+the effect size, and (optionally) <code>CI</code> + <code>CI_low</code>
++ <code>CI_high</code>,</p>
+<p>And with the following attributes: <code>partial</code>,
+<code>generalized</code>, <code>ci</code>, <code>alternative</code>,
+<code>anova_type</code> (<code>NA</code> or <code>NULL</code>),
+<code>approximate</code>.</p>
+<p>You can then set the <code>anova_type</code> attribute to {1, 2, 3,
+or <code>NA</code>} and return the output.</p>
 </div>
 <div id="anova-tables-with-multiple-error-strata" class="section level3">
 <h3>ANOVA Tables with Multiple Error Strata</h3>
@@ -201,8 +410,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><code>df</code> (num)</li>
 <li><code>Mean_Square_residuals</code> (num; <em>optional</em>)</li>
 </ul>
-<p>And exactly <em>1</em> row <strong><em>per <code>Group</code></em></strong> Where <code>Parameter</code> is <code>Residual</code>.</p>
-<p>Optionally, one of the rows can have a <code>(Intercept)</code> value for <code>Parameter</code>.</p>
+<p>And exactly <em>1</em> row <strong><em>per
+<code>Group</code></em></strong> Where <code>Parameter</code> is
+<code>Residual</code>.</p>
+<p>Optionally, one of the rows can have a <code>(Intercept)</code> value
+for <code>Parameter</code>.</p>
 <p>An example of a minimally valid data frame:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>min_aovlist <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">Group =</span> <span class="fu">c</span>(<span class="st">&quot;S&quot;</span>, <span class="st">&quot;S&quot;</span>, <span class="st">&quot;S:A&quot;</span>, <span class="st">&quot;S:A&quot;</span>),</span>
@@ -210,7 +422,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">Sum_Squares =</span> <span class="fu">c</span>(<span class="dv">34</span>, <span class="dv">21</span>, <span class="dv">34</span>, <span class="dv">400</span>),</span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">df =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">12</span>, <span class="dv">4</span>, <span class="dv">30</span>)</span>
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
-<p>Pass the data frame to <code>.es_aov_strata()</code>, along with a list of predictors (including the stratifying variables) to the <code>DV_names</code> argument:</p>
+<p>Pass the data frame to <code>.es_aov_strata()</code>, along with a
+list of predictors (including the stratifying variables) to the
+<code>DV_names</code> argument:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">.es_aov_strata</span>(</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  min_aovlist, <span class="at">DV_names =</span> <span class="fu">c</span>(<span class="st">&quot;S&quot;</span>, <span class="st">&quot;A&quot;</span>),</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">&quot;omega&quot;</span>, <span class="at">partial =</span> <span class="cn">TRUE</span>, <span class="at">generalized =</span> <span class="cn">FALSE</span>,</span>
@@ -221,22 +435,32 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <pre><code>&gt;   Group   Parameter Omega2_partial   CI CI_low CI_high
 &gt; 1     S (Intercept)          0.568 0.95   0.21       1
 &gt; 2   S:A           A         -0.042 0.95   0.00       1</code></pre>
-<p>The output is a data frame with the columns: <code>Group</code>, <code>Parameter</code>, the effect size, and (optionally) <code>CI</code> + <code>CI_low</code> + <code>CI_high</code>,</p>
-<p>And with the following attributes: <code>partial</code>, <code>generalized</code>, <code>ci</code>, <code>alternative</code>, <code>approximate</code>.</p>
-<p>You can then set the <code>anova_type</code> attribute to {1, 2, 3, or <code>NA</code>} and return the output.</p>
+<p>The output is a data frame with the columns: <code>Group</code>,
+<code>Parameter</code>, the effect size, and (optionally)
+<code>CI</code> + <code>CI_low</code> + <code>CI_high</code>,</p>
+<p>And with the following attributes: <code>partial</code>,
+<code>generalized</code>, <code>ci</code>, <code>alternative</code>,
+<code>approximate</code>.</p>
+<p>You can then set the <code>anova_type</code> attribute to {1, 2, 3,
+or <code>NA</code>} and return the output.</p>
 </div>
 <div id="approximate-effect-sizes" class="section level3">
 <h3>Approximate Effect sizes</h3>
-<p>When <em>sums of squares</em> cannot be extracted, we can still get <em>approximate</em> effect sizes based on the <code>F_to_eta2()</code> family of functions.</p>
+<p>When <em>sums of squares</em> cannot be extracted, we can still get
+<em>approximate</em> effect sizes based on the <code>F_to_eta2()</code>
+family of functions.</p>
 <p>The input data frame must have these columns:</p>
 <ul>
 <li><code>Parameter</code> (char)</li>
 <li><code>F</code> (num) - The <em>F</em> test statistic.</li>
 <li><code>df</code> (num) - effect degrees of freedom.</li>
-<li>(Can also have a <code>t</code> col instead, in which case <code>df</code> is set to 1, and <code>F</code> is <code>t^2</code>).</li>
+<li>(Can also have a <code>t</code> col instead, in which case
+<code>df</code> is set to 1, and <code>F</code> is
+<code>t^2</code>).</li>
 <li><code>df_error</code> (num) - error degrees of freedom.</li>
 </ul>
-<p>Optionally, one of the rows can have <code>(Intercept)</code> as the <code>Parameter</code>.</p>
+<p>Optionally, one of the rows can have <code>(Intercept)</code> as the
+<code>Parameter</code>.</p>
 <p>An example of a minimally valid data frame:</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>min_anova <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">Parameter =</span> <span class="fu">c</span>(<span class="st">&quot;(Intercept)&quot;</span>, <span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>),</span>
@@ -255,9 +479,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <pre><code>&gt;   Parameter Eta2_partial   CI CI_low CI_high
 &gt; 1         A         0.17 0.95  0.023       1
 &gt; 2         B         0.04 0.95  0.000       1</code></pre>
-<p>The output is a data frame with the columns: <code>Parameter</code>, the effect size, and (optionally) <code>CI</code> + <code>CI_low</code> + <code>CI_high</code>,</p>
-<p>And with the following attributes: <code>partial</code>, <code>generalized</code>, <code>ci</code>, <code>alternative</code>, <code>approximate</code>.</p>
-<p>You can then set the <code>anova_type</code> attribute to {1, 2, 3, or <code>NA</code>} and return the output, and optionally the <code>approximate</code> attribute, and return the output.</p>
+<p>The output is a data frame with the columns: <code>Parameter</code>,
+the effect size, and (optionally) <code>CI</code> + <code>CI_low</code>
++ <code>CI_high</code>,</p>
+<p>And with the following attributes: <code>partial</code>,
+<code>generalized</code>, <code>ci</code>, <code>alternative</code>,
+<code>approximate</code>.</p>
+<p>You can then set the <code>anova_type</code> attribute to {1, 2, 3,
+or <code>NA</code>} and return the output, and optionally the
+<code>approximate</code> attribute, and return the output.</p>
 </div>
 <div id="example" class="section level3">
 <h3><em>Example</em></h3>
@@ -283,7 +513,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>  out</span>
 <span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<p>And… that’s it! Our new <code>superMODEL</code> class of models is fully supported!</p>
+<p>And… that’s it! Our new <code>superMODEL</code> class of models is
+fully supported!</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">eta_squared</span>(mod)</span></code></pre></div>
 <pre><code>&gt; # Effect Size for ANOVA (Type I)
 &gt; 
@@ -292,7 +523,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 &gt; factor(cyl) |           0.76 | [0.61, 1.00]
 &gt; am          |           0.12 | [0.00, 1.00]
 &gt; 
-&gt; - One-sided CIs: upper bound fixed at (1).</code></pre>
+&gt; - One-sided CIs: upper bound fixed at [1.00].</code></pre>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">eta_squared</span>(mod, <span class="at">partial =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <pre><code>&gt; # Effect Size for ANOVA (Type I)
 &gt; 
@@ -301,7 +532,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 &gt; factor(cyl) | 0.73 | [0.57, 1.00]
 &gt; am          | 0.03 | [0.00, 1.00]
 &gt; 
-&gt; - One-sided CIs: upper bound fixed at (1).</code></pre>
+&gt; - One-sided CIs: upper bound fixed at [1.00].</code></pre>
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">omega_squared</span>(mod)</span></code></pre></div>
 <pre><code>&gt; # Effect Size for ANOVA (Type I)
 &gt; 
@@ -310,27 +541,17 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 &gt; factor(cyl) |             0.73 | [0.56, 1.00]
 &gt; am          |             0.08 | [0.00, 1.00]
 &gt; 
-&gt; - One-sided CIs: upper bound fixed at (1).</code></pre>
+&gt; - One-sided CIs: upper bound fixed at [1.00].</code></pre>
 <div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Etc...</span></span></code></pre></div>
-</div>
-</div>
-<div id="supporting-model-re-fitting-with-standardized-data" class="section level2">
-<h2>Supporting Model Re-Fitting with Standardized Data</h2>
-<p><code>effectsize::standardize.default()</code> should support your model if you have methods for:</p>
-<ol style="list-style-type: decimal">
-<li><code>{insight}</code> functions.</li>
-<li>An <code>update()</code> method that can take the model and a data frame via the <code>data =</code> argument.</li>
-</ol>
-<p>Or you can make your own <code>standardize.my_class()</code> function, DIY-style (possibly using <code>datawizard::standardize.data.frame()</code> or <code>datawizard::standardize.numeric()</code>). This function should return a fiffed model of the same class as the input model.</p>
-</div>
-<div id="supporting-standardized-parameters" class="section level2">
-<h2>Supporting Standardized Parameters</h2>
-<p><code>standardize_parameters.default()</code> offers a few methods of parameter standardization:</p>
-<ul>
-<li>For <code>method = &quot;refit&quot;</code> all you need is to have <code>effectsize::standardize()</code> support (see above) as well as <code>parameters::model_parameters()</code>.<br />
-</li>
-<li><strong><em>API for post-hoc methods coming soon…</em></strong></li>
-</ul>
+<!-- ## Supporting Model Re-Fitting with Standardized Data -->
+<!-- `effectsize::standardize.default()` should support your model if you have methods for: -->
+<!-- 1. `{insight}` functions. -->
+<!-- 2. An `update()` method that can take the model and a data frame via the `data = ` argument. -->
+<!-- Or you can make your own `standardize.my_class()` function, DIY-style (possibly using `datawizard::standardize.data.frame()` or `datawizard::standardize.numeric()`). This function should return a fiffed model of the same class as the input model. -->
+<!-- ## Supporting Standardized Parameters -->
+<!-- `standardize_parameters.default()` offers a few methods of parameter standardization: -->
+<!-- - For `method = "refit"` all you need is to have `effectsize::standardize()` support (see above) as well as `parameters::model_parameters()`.   -->
+<!-- - ***API for post-hoc methods coming soon...***   -->
 <!-- `standardize_parameters.default()` should support your model if it is already supported by `{parameters}` and `{insight}`. -->
 <!-- - For `method = "refit"`, to have `effectsize::standardize()` support (see above). -->
 <!-- - For the post-hoc methods, you will need to have a method for `standardize_info()` (or use the default method). See next section. -->
@@ -350,6 +571,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <!--     - Note then when the response is not standardized (either due to `standardize_parameters(include_response = FALSE)` or because the model uses a non-continuous response), both methods are fixed at **1** (i.e., no standardization with respect to the outcome).   -->
 <!-- - `Deviation_Basic` and `Deviation_Smart` correspond to the $\text{Deviation}_{xi}$ scaler using two different methods of post-hoc standardization. -->
 <!-- This information is then used by the `standardize_parameters()` to standardize the parameters. -->
+</div>
 </div>
 <div id="references" class="section level1">
 <h1>References</h1>

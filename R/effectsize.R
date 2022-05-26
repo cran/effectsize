@@ -6,13 +6,14 @@
 #' @param model An object of class `htest`, or a statistical model. See details.
 #' @param type The effect size of interest. See details.
 #' @param ... Arguments passed to or from other methods. See details.
-#' @inheritParams standardize.default
+#' @inheritParams datawizard::standardize.default
 #'
 #' @details
 #'
 #' - For an object of class `htest`, data is extracted via [insight::get_data()], and passed to the relevant function according to:
 #'   - A **t-test** depending on `type`: `"cohens_d"` (default), `"hedges_g"`, or `"cles"`.
-#'   - A **Chi-squared tests of independence or goodness-of-fit**, depending on `type`: `"cramers_v"` (default), `"phi"`, `"cohens_w"`, `"pearsons_c"`, `"cohens_h"`, `"oddsratio"`, or `"riskratio"`.
+#'   - A **Chi-squared tests of independence**, depending on `type`: `"cramers_v"` (default), `"phi"`, `"cohens_w"`, `"pearsons_c"`, `"cohens_h"`, `"oddsratio"`, or `"riskratio"`.
+#'   - A **Chi-squared tests of goodness-of-fit**, depending on `type`: `"normalized_chi"` (default) `"cohens_w"`, `"pearsons_c"`
 #'   - A **One-way ANOVA test**, depending on `type`: `"eta"` (default), `"omega"` or `"epsilon"` -squared, `"f"`, or `"f2"`.
 #'   - A **McNemar test** returns *Cohen's g*.
 #'   - A **Wilcoxon test** depending on `type`: returns "`rank_biserial`" correlation (default) or `"cles"`.
@@ -25,7 +26,7 @@
 #'   - A **contingency table test**, depending on `type`: `"cramers_v"` (default), `"phi"`, `"cohens_w"`, `"pearsons_c"`, `"cohens_h"`, `"oddsratio"`, or `"riskratio"`.
 #'   - A **proportion test** returns *p*.
 #' - Objects of class `anova`, `aov`, or `aovlist`, depending on `type`: `"eta"` (default), `"omega"` or `"epsilon"` -squared, `"f"`, or `"f2"`.
-#' - Other objects are passed to [standardize_parameters()].
+#' - Other objects are passed to [parameters::standardize_parameters()].
 #'
 #' **For statistical models it is recommended to directly use the listed
 #' functions, for the full range of options they provide.**
@@ -42,7 +43,7 @@
 #' contingency_table <- as.table(rbind(c(762, 327, 468), c(484, 239, 477), c(484, 239, 477)))
 #' Xsq <- chisq.test(contingency_table)
 #' effectsize(Xsq)
-#' effectsize(Xsq, type = "phi")
+#' effectsize(Xsq, type = "cohens_w")
 #'
 #' Tt <- t.test(1:10, y = c(7:20), alternative = "less")
 #' effectsize(Tt)
@@ -149,5 +150,5 @@ effectsize.easycorrelation <- function(model, ...) {
 #' @export
 effectsize.default <- function(model, ...) {
   # message("Using standardize_parameters().")
-  standardize_parameters(model, ...)
+  parameters::standardize_parameters(model, ...)
 }

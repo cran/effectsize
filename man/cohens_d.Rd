@@ -29,8 +29,7 @@ hedges_g(
   ci = 0.95,
   alternative = "two.sided",
   verbose = TRUE,
-  ...,
-  correction
+  ...
 )
 
 glass_delta(
@@ -41,8 +40,7 @@ glass_delta(
   ci = 0.95,
   alternative = "two.sided",
   verbose = TRUE,
-  ...,
-  iterations
+  ...
 )
 }
 \arguments{
@@ -72,9 +70,8 @@ Controls the type of CI returned: \code{"two.sided"} (default, two-sided CI),
 
 \item{verbose}{Toggle warnings and messages on or off.}
 
-\item{...}{Arguments passed to or from other methods.}
-
-\item{iterations, correction}{deprecated.}
+\item{...}{Arguments passed to or from other methods. When \code{x} is a formula,
+these can be \code{subset} and \code{na.action}.}
 }
 \value{
 A data frame with the effect size ( \code{Cohens_d}, \code{Hedges_g},
@@ -226,7 +223,6 @@ Other effect size indices:
 \code{\link{effectsize.BFBayesFactor}()},
 \code{\link{eta_squared}()},
 \code{\link{phi}()},
-\code{\link{rank_biserial}()},
-\code{\link{standardize_parameters}()}
+\code{\link{rank_biserial}()}
 }
 \concept{effect size indices}

@@ -17,21 +17,6 @@ M <- rbind(c(150, 130, 35, 55),
 cramers_v(M)
 
 ## -----------------------------------------------------------------------------
-model <- lm(mpg ~ cyl * am, 
-            data = mtcars)
-
-standardize(model)
-
-standardize_parameters(model)
-
-## -----------------------------------------------------------------------------
-model <- glm(am ~ cyl + hp,
-             family = "binomial",
-             data = mtcars)
-
-standardize_parameters(model, exponentiate = TRUE)
-
-## -----------------------------------------------------------------------------
 options(contrasts = c('contr.sum', 'contr.poly'))
 
 data("ChickWeight")

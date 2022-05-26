@@ -6,28 +6,35 @@ bayestestR::equivalence_test
 #' @importFrom datawizard standardize
 datawizard::standardize
 
-
-
-
-
-## TODO: removed the following from see / modelbased --------------------
+#' @export
+#' @importFrom datawizard standardise
+datawizard::standardise
 
 #' @export
-#' @importFrom datawizard ranktransform
-datawizard::ranktransform
+#' @importFrom parameters standardize_parameters
+parameters::standardize_parameters
 
 #' @export
-#' @importFrom datawizard adjust
-datawizard::adjust
+#' @importFrom parameters standardize_posteriors
+parameters::standardize_posteriors
+
 
 #' @export
-#' @importFrom datawizard change_scale
-datawizard::change_scale
+#' @importFrom parameters standardize_info
+parameters::standardize_info
+
+
+
+# Printing ----------------------------------------------------------------
 
 #' @export
-#' @importFrom datawizard normalize
-datawizard::normalize
+#' @importFrom insight display
+insight::display
 
 #' @export
-#' @importFrom datawizard unstandardize
-datawizard::unstandardize
+#' @importFrom insight print_html
+insight::print_html
+
+#' @export
+#' @importFrom insight print_md
+insight::print_md

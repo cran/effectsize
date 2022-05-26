@@ -89,7 +89,8 @@ size on \code{x - y}.}
 
 \item{verbose}{Toggle warnings and messages on or off.}
 
-\item{...}{Arguments passed to or from other methods.}
+\item{...}{Arguments passed to or from other methods. When \code{x} is a formula,
+these can be \code{subset} and \code{na.action}.}
 
 \item{iterations}{The number of bootstrap replicates for computing confidence
 intervals. Only applies when \code{ci} is not \code{NULL}. (Deprecated for
@@ -138,8 +139,8 @@ from 0 to 1, with larger values indicating larger differences between groups
 \subsection{Ties}{
 
 When tied values occur, they are each given the average of the ranks that
-would have been given had no ties occurred. No other corrections have been
-implemented yet.
+would have been given had no ties occurred. This results in an effect size of
+reduced magnitude. A correction has been applied for Kendall's \emph{W}.
 }
 }
 \section{Confidence Intervals}{
@@ -231,7 +232,6 @@ Other effect size indices:
 \code{\link{cohens_d}()},
 \code{\link{effectsize.BFBayesFactor}()},
 \code{\link{eta_squared}()},
-\code{\link{phi}()},
-\code{\link{standardize_parameters}()}
+\code{\link{phi}()}
 }
 \concept{effect size indices}

@@ -21,7 +21,7 @@
 #' @param verbose Toggle warnings and messages on or off.
 #' @inheritParams chisq_to_phi
 #' @param ... Arguments passed to or from other methods.
-#'   - Can be `include_intercept = TRUE` to include the effect size for the intercept.
+#'   - Can be `include_intercept = TRUE` to include the effect size for the intercept (when it is included in the ANOVA table).
 #'   - For Bayesian models, arguments passed to `ss_function`.
 #'
 #' @return
@@ -96,7 +96,6 @@
 #' @family effect size indices
 #'
 #' @examples
-#' \donttest{
 #' data(mtcars)
 #' mtcars$am_f <- factor(mtcars$am)
 #' mtcars$cyl_f <- factor(mtcars$cyl)
@@ -118,7 +117,7 @@
 #' cohens_f_squared(model0, model2 = model)
 #'
 #' ## Interpretation of effect sizes
-#' ## -------------------------------------
+#' ## ------------------------------
 #'
 #' interpret_omega_squared(0.10, rules = "field2013")
 #' interpret_eta_squared(0.10, rules = "cohen1992")
@@ -126,69 +125,55 @@
 #'
 #' interpret(eta2, rules = "cohen1992")
 #'
-#' # Recommended: Type-3 effect sizes + effects coding
-#' # -------------------------------------------------
-#' if (require(car, quietly = TRUE)) {
-#'   contrasts(mtcars$am_f) <- contr.sum
-#'   contrasts(mtcars$cyl_f) <- contr.sum
 #'
-#'   model <- aov(mpg ~ am_f * cyl_f, data = mtcars)
-#'   model_anova <- car::Anova(model, type = 3)
+#' @examplesIf require("car") && require("afex")
+#' # Recommended: Type-2 or -3 effect sizes + effects coding
+#' # -------------------------------------------------------
+#' contrasts(mtcars$am_f) <- contr.sum
+#' contrasts(mtcars$cyl_f) <- contr.sum
 #'
-#'   eta_squared(model_anova)
-#' }
+#' model <- aov(mpg ~ am_f * cyl_f, data = mtcars)
+#' model_anova <- car::Anova(model, type = 3)
+#'
+#' eta_squared(model_anova)
 #'
 #' # afex takes care of both type-3 effects and effects coding:
-#' if (require(afex)) {
-#'   data(obk.long, package = "afex")
-#'   model <- aov_car(value ~ treatment * gender + Error(id / (phase)),
-#'     data = obk.long, observed = "gender"
-#'   )
-#'   eta_squared(model)
-#'   epsilon_squared(model)
-#'   omega_squared(model)
-#'   eta_squared(model, partial = FALSE)
-#'   epsilon_squared(model, partial = FALSE)
-#'   omega_squared(model, partial = FALSE)
-#'   eta_squared(model, generalized = TRUE) # observed vars are pulled from the afex model.
-#' }
+#' data(obk.long, package = "afex")
+#' model <- afex::aov_car(value ~ treatment * gender + Error(id / (phase)),
+#'                        data = obk.long, observed = "gender")
+#' eta_squared(model)
+#' epsilon_squared(model)
+#' omega_squared(model)
+#' eta_squared(model, generalized = TRUE) # observed vars are pulled from the afex model.
 #'
 #'
-#'
+#' @examplesIf require("lmerTest") && require("lme4")
 #' ## Approx. effect sizes for mixed models
 #' ## -------------------------------------
-#' if (require(lmerTest, quietly = TRUE)) {
-#'   model <- lmer(mpg ~ am_f * cyl_f + (1 | vs), data = mtcars)
-#'   omega_squared(model)
-#' }
+#' model <- lme4::lmer(mpg ~ am_f * cyl_f + (1 | vs), data = mtcars)
+#' omega_squared(model)
 #'
 #'
-#'
-#'
+#' @examplesIf require(rstanarm) && require(bayestestR) && require(car)
 #' ## Bayesian Models (PPD)
 #' ## ---------------------
 #' \dontrun{
-#' if (require(rstanarm) && require(bayestestR) && require(car)) {
-#'   fit_bayes <- stan_glm(mpg ~ factor(cyl) * wt + qsec,
-#'     data = mtcars,
-#'     family = gaussian(),
-#'     refresh = 0
-#'   )
+#' fit_bayes <- rstanarm::stan_glm(
+#'   mpg ~ factor(cyl) * wt + qsec,
+#'   data = mtcars, family = gaussian(),
+#'   refresh = 0
+#' )
 #'
-#'   es <- eta_squared_posterior(fit_bayes,
-#'     ss_function = car::Anova, type = 3
-#'   )
-#'   bayestestR::describe_posterior(es)
+#' es <- eta_squared_posterior(fit_bayes, verbose = FALSE,
+#'                             ss_function = car::Anova, type = 3)
+#' bayestestR::describe_posterior(es, test = NULL)
 #'
 #'
-#'   # compare to:
-#'   fit_freq <- lm(mpg ~ factor(cyl) * wt + qsec,
-#'     data = mtcars
-#'   )
-#'   aov_table <- car::Anova(fit_freq, type = 3)
-#'   eta_squared(aov_table)
-#' }
-#' }
+#' # compare to:
+#' fit_freq <- lm(mpg ~ factor(cyl) * wt + qsec,
+#'                data = mtcars)
+#' aov_table <- car::Anova(fit_freq, type = 3)
+#' eta_squared(aov_table)
 #' }
 #'
 #' @return A data frame containing the effect size values and their confidence
@@ -390,6 +375,9 @@ cohens_f_squared <- function(model, partial = TRUE, ci = 0.95, alternative = "gr
 
   # Include intercept? ---
   if (include_intercept) {
+    if (verbose && !"(Intercept)" %in% aov_table$Parameter) {
+      message(insight::format_message("Could not find Sum-of-Squares for the (Intercept) in the ANOVA table."))
+    }
     values <- .values_aov(aov_table[aov_table$Parameter != "(Intercept)", ])
   } else {
     aov_table <- aov_table[aov_table$Parameter != "(Intercept)", ]
@@ -535,6 +523,9 @@ cohens_f_squared <- function(model, partial = TRUE, ci = 0.95, alternative = "gr
 
   # Include intercept? ---
   if (include_intercept) {
+    if (verbose && !"(Intercept)" %in% aov_table$Parameter) {
+      message(insight::format_message("Could not find Sum-of-Squares for the (Intercept) in the ANOVA table."))
+    }
     values <- .values_aov(aov_table[aov_table$Parameter != "(Intercept)", ], group = TRUE)
   } else {
     aov_table <- aov_table[aov_table$Parameter != "(Intercept)", ]
@@ -698,8 +689,14 @@ cohens_f_squared <- function(model, partial = TRUE, ci = 0.95, alternative = "gr
 
 
   # include_intercept? ---
-  if (!include_intercept)
+  if (include_intercept) {
+    if (verbose && !"(Intercept)" %in% aov_table$Parameter) {
+      message(insight::format_message("Could not find F statistic for the (Intercept) in the ANOVA table."))
+    }
+  } else {
     aov_table <- aov_table[aov_table$Parameter != "(Intercept)", , drop = FALSE]
+  }
+
 
   ES_tab <- es_fun(aov_table[["F"]],
                    aov_table[["df"]],
@@ -874,9 +871,9 @@ cohens_f_squared <- function(model, partial = TRUE, ci = 0.95, alternative = "gr
                             verbose = TRUE,
                             include_intercept = FALSE,
                             ...) {
-  F.nm <- c("F value", "approx F", "F-value")
-  df.nm <- c("NumDF", "num Df", "numDF", "npar")
-  df_error.nm <- c("DenDF", "den Df", "denDF", "df_error")
+  F.nm <- c("F value", "approx F", "F-value", "F")
+  df.nm <- c("NumDF", "num Df", "numDF", "npar", "Df")
+  df_error.nm <- c("DenDF", "den Df", "denDF", "df_error", "Df.res")
 
   # If there is no df_error *or* is there IS a residuals row...
   if (!any(df_error.nm %in% colnames(model))) {
@@ -893,12 +890,24 @@ cohens_f_squared <- function(model, partial = TRUE, ci = 0.95, alternative = "gr
     return(res)
   }
 
+  if (!any(F.nm %in% colnames(model)) || !any(df.nm %in% colnames(model))) {
+    stop(insight::format_message("ANOVA table does not have F values or degrees of freedom - cannot compute effect size."))
+  }
+
+  Fi <- F.nm[F.nm %in% colnames(model)]
+  dfi <- df.nm[df.nm %in% colnames(model)]
+  df_errori <- df_error.nm[df_error.nm %in% colnames(model)]
+
+  if (length(dfi) > 1L) {
+    dfi <- dfi[1] # For MANOVA this should not use the MV-df
+  }
+
   # Clean up table ---
   par_table <- data.frame(
     Parameter = rownames(model),
-    F = model[,F.nm[F.nm %in% colnames(model)]],
-    df = model[,df.nm[df.nm %in% colnames(model)]],
-    df_error = model[,df_error.nm[df_error.nm %in% colnames(model)]]
+    F = model[,Fi],
+    df = model[,dfi],
+    df_error = model[,df_errori]
   )
   par_table <- par_table[!par_table[["Parameter"]] %in% "Residuals",]
 
@@ -1027,6 +1036,19 @@ cohens_f_squared <- function(model, partial = TRUE, ci = 0.95, alternative = "gr
            ...) {
     # Faking the model_parameters.aovlist output:
     suppressWarnings(aov_tab <- summary(model)$univariate.tests)
+    if (is.null(aov_tab)) {
+      aov_tab <- parameters::model_parameters(model)
+      aov_tab$df <- aov_tab$df_num
+      aov_tab$df_num <- NULL
+      out <- .anova_es(aov_tab, type = type,
+                       partial = partial, generalized = generalized,
+                       ci = ci, alternative = alternative,
+                       include_intercept = include_intercept,
+                       verbose = verbose)
+      attr(out, "anova_type") <- as.numeric(as.roman(model$type))
+      attr(out, "approximate") <- FALSE
+      return(out)
+    }
     aov_tab <- as.data.frame(unclass(aov_tab))
     aov_tab$Parameter <- rownames(aov_tab)
     colnames(aov_tab)[colnames(aov_tab)== "Sum Sq"] <- "Sum_Squares"
