@@ -336,31 +336,34 @@ Tests</h1>
 
 <div id="TOC">
 <ul>
-<li><a href="#standardized-differences">Standardized Differences</a>
+<li><a href="#standardized-differences" id="toc-standardized-differences">Standardized Differences</a>
 <ul>
-<li><a href="#two-independent-samples">Two Independent Samples</a></li>
-<li><a href="#one-sample-and-paired-samples">One Sample and Paired
+<li><a href="#two-independent-samples" id="toc-two-independent-samples">Two Independent Samples</a></li>
+<li><a href="#one-sample-and-paired-samples" id="toc-one-sample-and-paired-samples">One Sample and Paired
 Samples</a></li>
-<li><a href="#for-a-bayesian-t-test">For a Bayesian
-<em>t</em>-test</a></li>
+<li><a href="#for-a-bayesian-t-test" id="toc-for-a-bayesian-t-test">For
+a Bayesian <em>t</em>-test</a></li>
 </ul></li>
-<li><a href="#one-way-anova">One way ANOVA</a></li>
-<li><a href="#contingency-tables">Contingency Tables</a>
+<li><a href="#one-way-anova" id="toc-one-way-anova">One way
+ANOVA</a></li>
+<li><a href="#contingency-tables" id="toc-contingency-tables">Contingency Tables</a>
 <ul>
-<li><a href="#by-2-tables">2-by-2 Tables</a></li>
-<li><a href="#larger-tables">Larger Tables</a></li>
-<li><a href="#goodness-of-fit">Goodness-of-Fit</a></li>
-<li><a href="#paired-contingency-tables">Paired Contingency
+<li><a href="#by-2-tables" id="toc-by-2-tables">2-by-2 Tables</a></li>
+<li><a href="#larger-tables" id="toc-larger-tables">Larger
 Tables</a></li>
+<li><a href="#goodness-of-fit" id="toc-goodness-of-fit">Goodness-of-Fit</a></li>
+<li><a href="#paired-contingency-tables" id="toc-paired-contingency-tables">Paired Contingency Tables</a></li>
 </ul></li>
-<li><a href="#rank-based-tests">Rank Based tests</a>
+<li><a href="#rank-based-tests" id="toc-rank-based-tests">Rank Based
+tests</a>
 <ul>
-<li><a href="#difference-in-ranks">Difference in Ranks</a></li>
-<li><a href="#rank-one-way-anova">Rank One way ANOVA</a></li>
-<li><a href="#rank-one-way-repeated-measures-anova">Rank One way
+<li><a href="#difference-in-ranks" id="toc-difference-in-ranks">Difference in Ranks</a></li>
+<li><a href="#rank-one-way-anova" id="toc-rank-one-way-anova">Rank One
+way ANOVA</a></li>
+<li><a href="#rank-one-way-repeated-measures-anova" id="toc-rank-one-way-repeated-measures-anova">Rank One way
 Repeated-Measures ANOVA</a></li>
 </ul></li>
-<li><a href="#references">References</a></li>
+<li><a href="#references" id="toc-references">References</a></li>
 </ul>
 </div>
 
@@ -489,20 +492,20 @@ paired-samples, the difference between the paired samples is used:</p>
 &gt; 
 &gt; data:  extra by group
 &gt; t = -4, df = 9, p-value = 0.003
-&gt; alternative hypothesis: true difference in means is not equal to 0
+&gt; alternative hypothesis: true mean difference is not equal to 0
 &gt; 95 percent confidence interval:
 &gt;  -2.46 -0.70
 &gt; sample estimates:
-&gt; mean of the differences 
-&gt;                   -1.58</code></pre>
+&gt; mean difference 
+&gt;           -1.58</code></pre>
 <div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cohens_d</span>(extra <span class="sc">~</span> group, <span class="at">data =</span> sleep, <span class="at">paired =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <pre><code>&gt; Cohen&#39;s d |         95% CI
 &gt; --------------------------
-&gt; -1.28     | [-2.23, -0.44]</code></pre>
+&gt; -1.28     | [-2.12, -0.41]</code></pre>
 <div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hedges_g</span>(extra <span class="sc">~</span> group, <span class="at">data =</span> sleep, <span class="at">paired =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <pre><code>&gt; Hedges&#39; g |         95% CI
 &gt; --------------------------
-&gt; -1.17     | [-2.04, -0.40]</code></pre>
+&gt; -1.17     | [-1.94, -0.38]</code></pre>
 </div>
 <div id="for-a-bayesian-t-test" class="section level3">
 <h3>For a Bayesian <em>t</em>-test</h3>
@@ -570,14 +573,16 @@ each column represents a different <em>group</em>. Values larger than 1
 indicate that the odds are higher in the first group (and vice
 versa).</p>
 <div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>(RCT <span class="ot">&lt;-</span> <span class="fu">matrix</span>(</span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="dv">71</span>, <span class="dv">30</span>,</span>
-<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>    <span class="dv">50</span>, <span class="dv">100</span>),</span>
-<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">nrow =</span> <span class="dv">2</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">dimnames =</span> <span class="fu">list</span>(</span>
-<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">Diagnosis =</span> <span class="fu">c</span>(<span class="st">&quot;Sick&quot;</span>, <span class="st">&quot;Recovered&quot;</span>),</span>
-<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">Group =</span> <span class="fu">c</span>(<span class="st">&quot;Treatment&quot;</span>, <span class="st">&quot;Control&quot;</span>)</span>
-<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>))</span></code></pre></div>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>    <span class="dv">71</span>, <span class="dv">30</span>,</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>    <span class="dv">50</span>, <span class="dv">100</span></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">nrow =</span> <span class="dv">2</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">dimnames =</span> <span class="fu">list</span>(</span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">Diagnosis =</span> <span class="fu">c</span>(<span class="st">&quot;Sick&quot;</span>, <span class="st">&quot;Recovered&quot;</span>),</span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">Group =</span> <span class="fu">c</span>(<span class="st">&quot;Treatment&quot;</span>, <span class="st">&quot;Control&quot;</span>)</span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>))</span></code></pre></div>
 <pre><code>&gt;            Group
 &gt; Diagnosis   Treatment Control
 &gt;   Sick             71      30
@@ -615,15 +620,17 @@ Pearson’s <em>C</em> are capped at 1 (perfect association), Cohen’s
 <em>w</em> can be larger than 1 (for all three, 0 indicates no
 association between the variables).</p>
 <div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>(Music <span class="ot">&lt;-</span> <span class="fu">matrix</span>(</span>
-<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="dv">150</span>, <span class="dv">130</span>, <span class="dv">35</span>, <span class="dv">55</span>,</span>
-<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>    <span class="dv">100</span>, <span class="dv">50</span>, <span class="dv">10</span>, <span class="dv">40</span>,</span>
-<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>    <span class="dv">165</span>, <span class="dv">65</span>, <span class="dv">2</span>, <span class="dv">25</span>),</span>
-<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">byrow =</span> <span class="cn">TRUE</span>, <span class="at">nrow =</span> <span class="dv">3</span>,</span>
-<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">dimnames =</span> <span class="fu">list</span>(</span>
-<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">Study =</span> <span class="fu">c</span>(<span class="st">&quot;Psych&quot;</span>, <span class="st">&quot;Econ&quot;</span>, <span class="st">&quot;Law&quot;</span>),</span>
-<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">Music =</span> <span class="fu">c</span>(<span class="st">&quot;Pop&quot;</span>, <span class="st">&quot;Rock&quot;</span>, <span class="st">&quot;Jazz&quot;</span>, <span class="st">&quot;Classic&quot;</span>)</span>
-<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a>))</span></code></pre></div>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>    <span class="dv">150</span>, <span class="dv">130</span>, <span class="dv">35</span>, <span class="dv">55</span>,</span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>    <span class="dv">100</span>, <span class="dv">50</span>, <span class="dv">10</span>, <span class="dv">40</span>,</span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>    <span class="dv">165</span>, <span class="dv">65</span>, <span class="dv">2</span>, <span class="dv">25</span></span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">byrow =</span> <span class="cn">TRUE</span>, <span class="at">nrow =</span> <span class="dv">3</span>,</span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">dimnames =</span> <span class="fu">list</span>(</span>
+<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">Study =</span> <span class="fu">c</span>(<span class="st">&quot;Psych&quot;</span>, <span class="st">&quot;Econ&quot;</span>, <span class="st">&quot;Law&quot;</span>),</span>
+<span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">Music =</span> <span class="fu">c</span>(<span class="st">&quot;Pop&quot;</span>, <span class="st">&quot;Rock&quot;</span>, <span class="st">&quot;Jazz&quot;</span>, <span class="st">&quot;Classic&quot;</span>)</span>
+<span id="cb50-11"><a href="#cb50-11" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb50-12"><a href="#cb50-12" aria-hidden="true" tabindex="-1"></a>))</span></code></pre></div>
 <pre><code>&gt;        Music
 &gt; Study   Pop Rock Jazz Classic
 &gt;   Psych 150  130   35      55
@@ -682,7 +689,7 @@ association between the variables).</p>
 tests of goodness-of-fit, where small values indicate no deviation from
 the hypothetical probabilities and large values indicate… large
 deviation from the hypothetical probabilities.</p>
-<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>O <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">89</span>,  <span class="dv">37</span>,  <span class="dv">130</span>, <span class="dv">28</span>,  <span class="dv">2</span>) <span class="co"># observed group sizes</span></span>
+<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>O <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">89</span>, <span class="dv">37</span>, <span class="dv">130</span>, <span class="dv">28</span>, <span class="dv">2</span>) <span class="co"># observed group sizes</span></span>
 <span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>E <span class="ot">&lt;-</span> <span class="fu">c</span>(.<span class="dv">40</span>, .<span class="dv">20</span>, .<span class="dv">20</span>, .<span class="dv">15</span>, .<span class="dv">05</span>) <span class="co"># expected group freq</span></span>
 <span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a><span class="fu">chisq.test</span>(O, <span class="at">p =</span> E)</span></code></pre></div>
@@ -725,14 +732,16 @@ different than the expected one).</p>
 represents the symmetry of the table, ranging between 0 (perfect
 symmetry) and 0.5 (perfect asymmetry).</p>
 <div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a>(Performance <span class="ot">&lt;-</span> <span class="fu">matrix</span>(</span>
-<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="dv">794</span>, <span class="dv">86</span>,</span>
-<span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a>    <span class="dv">150</span>, <span class="dv">570</span>),</span>
-<span id="cb76-4"><a href="#cb76-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">nrow =</span> <span class="dv">2</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb76-5"><a href="#cb76-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">dimnames =</span> <span class="fu">list</span>(</span>
-<span id="cb76-6"><a href="#cb76-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;1st Survey&quot;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;Approve&quot;</span>, <span class="st">&quot;Disapprove&quot;</span>),</span>
-<span id="cb76-7"><a href="#cb76-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;2nd Survey&quot;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;Approve&quot;</span>, <span class="st">&quot;Disapprove&quot;</span>)</span>
-<span id="cb76-8"><a href="#cb76-8" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb76-9"><a href="#cb76-9" aria-hidden="true" tabindex="-1"></a>))</span></code></pre></div>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(</span>
+<span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a>    <span class="dv">794</span>, <span class="dv">86</span>,</span>
+<span id="cb76-4"><a href="#cb76-4" aria-hidden="true" tabindex="-1"></a>    <span class="dv">150</span>, <span class="dv">570</span></span>
+<span id="cb76-5"><a href="#cb76-5" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb76-6"><a href="#cb76-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">nrow =</span> <span class="dv">2</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb76-7"><a href="#cb76-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">dimnames =</span> <span class="fu">list</span>(</span>
+<span id="cb76-8"><a href="#cb76-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;1st Survey&quot;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;Approve&quot;</span>, <span class="st">&quot;Disapprove&quot;</span>),</span>
+<span id="cb76-9"><a href="#cb76-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;2nd Survey&quot;</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">&quot;Approve&quot;</span>, <span class="st">&quot;Disapprove&quot;</span>)</span>
+<span id="cb76-10"><a href="#cb76-10" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb76-11"><a href="#cb76-11" aria-hidden="true" tabindex="-1"></a>))</span></code></pre></div>
 <pre><code>&gt;             2nd Survey
 &gt; 1st Survey   Approve Disapprove
 &gt;   Approve        794         86
@@ -851,19 +860,21 @@ measure of reliability of the rating / scores of observations (or
 “groups”) between “raters” (“blocks”).</p>
 <div class="sourceCode" id="cb100"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb100-1"><a href="#cb100-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Subjects are COLUMNS</span></span>
 <span id="cb100-2"><a href="#cb100-2" aria-hidden="true" tabindex="-1"></a>(ReactionTimes <span class="ot">&lt;-</span> <span class="fu">matrix</span>(</span>
-<span id="cb100-3"><a href="#cb100-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="dv">398</span>, <span class="dv">338</span>, <span class="dv">520</span>,</span>
-<span id="cb100-4"><a href="#cb100-4" aria-hidden="true" tabindex="-1"></a>    <span class="dv">325</span>, <span class="dv">388</span>, <span class="dv">555</span>,</span>
-<span id="cb100-5"><a href="#cb100-5" aria-hidden="true" tabindex="-1"></a>    <span class="dv">393</span>, <span class="dv">363</span>, <span class="dv">561</span>,</span>
-<span id="cb100-6"><a href="#cb100-6" aria-hidden="true" tabindex="-1"></a>    <span class="dv">367</span>, <span class="dv">433</span>, <span class="dv">470</span>,</span>
-<span id="cb100-7"><a href="#cb100-7" aria-hidden="true" tabindex="-1"></a>    <span class="dv">286</span>, <span class="dv">492</span>, <span class="dv">536</span>,</span>
-<span id="cb100-8"><a href="#cb100-8" aria-hidden="true" tabindex="-1"></a>    <span class="dv">362</span>, <span class="dv">475</span>, <span class="dv">496</span>,</span>
-<span id="cb100-9"><a href="#cb100-9" aria-hidden="true" tabindex="-1"></a>    <span class="dv">253</span>, <span class="dv">334</span>, <span class="dv">610</span>),</span>
-<span id="cb100-10"><a href="#cb100-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">nrow =</span> <span class="dv">7</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb100-11"><a href="#cb100-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">dimnames =</span> <span class="fu">list</span>(</span>
-<span id="cb100-12"><a href="#cb100-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">paste0</span>(<span class="st">&quot;Subject&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">7</span>),</span>
-<span id="cb100-13"><a href="#cb100-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="st">&quot;Congruent&quot;</span>, <span class="st">&quot;Neutral&quot;</span>, <span class="st">&quot;Incongruent&quot;</span>)</span>
-<span id="cb100-14"><a href="#cb100-14" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb100-15"><a href="#cb100-15" aria-hidden="true" tabindex="-1"></a>))</span></code></pre></div>
+<span id="cb100-3"><a href="#cb100-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(</span>
+<span id="cb100-4"><a href="#cb100-4" aria-hidden="true" tabindex="-1"></a>    <span class="dv">398</span>, <span class="dv">338</span>, <span class="dv">520</span>,</span>
+<span id="cb100-5"><a href="#cb100-5" aria-hidden="true" tabindex="-1"></a>    <span class="dv">325</span>, <span class="dv">388</span>, <span class="dv">555</span>,</span>
+<span id="cb100-6"><a href="#cb100-6" aria-hidden="true" tabindex="-1"></a>    <span class="dv">393</span>, <span class="dv">363</span>, <span class="dv">561</span>,</span>
+<span id="cb100-7"><a href="#cb100-7" aria-hidden="true" tabindex="-1"></a>    <span class="dv">367</span>, <span class="dv">433</span>, <span class="dv">470</span>,</span>
+<span id="cb100-8"><a href="#cb100-8" aria-hidden="true" tabindex="-1"></a>    <span class="dv">286</span>, <span class="dv">492</span>, <span class="dv">536</span>,</span>
+<span id="cb100-9"><a href="#cb100-9" aria-hidden="true" tabindex="-1"></a>    <span class="dv">362</span>, <span class="dv">475</span>, <span class="dv">496</span>,</span>
+<span id="cb100-10"><a href="#cb100-10" aria-hidden="true" tabindex="-1"></a>    <span class="dv">253</span>, <span class="dv">334</span>, <span class="dv">610</span></span>
+<span id="cb100-11"><a href="#cb100-11" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb100-12"><a href="#cb100-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">nrow =</span> <span class="dv">7</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb100-13"><a href="#cb100-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">dimnames =</span> <span class="fu">list</span>(</span>
+<span id="cb100-14"><a href="#cb100-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">paste0</span>(<span class="st">&quot;Subject&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">7</span>),</span>
+<span id="cb100-15"><a href="#cb100-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="st">&quot;Congruent&quot;</span>, <span class="st">&quot;Neutral&quot;</span>, <span class="st">&quot;Incongruent&quot;</span>)</span>
+<span id="cb100-16"><a href="#cb100-16" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb100-17"><a href="#cb100-17" aria-hidden="true" tabindex="-1"></a>))</span></code></pre></div>
 <pre><code>&gt;          Congruent Neutral Incongruent
 &gt; Subject1       398     338         520
 &gt; Subject2       325     388         555

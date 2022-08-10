@@ -1,3 +1,14 @@
+# effectsize 0.7.0.5
+
+## Breaking Changes
+
+`effectsize` now requires minimal *`R`* version of `3.5`.
+
+## Bug fixes
+
+- `cohens_d()` for paired / one sample now gives more accurate CIs (was off by a factor of `(N - 1) / N`; #457)
+- `kendalls_w()` now deals correctly with singular ties (#448).  
+
 # effectsize 0.7.0
 
 ## Breaking Changes
@@ -61,7 +72,7 @@ See [*Support functions for model extensions* vignette](https://easystats.github
 
 ## Breaking Changes
 
-- `cramers_v()` correctly does not work with 1-dimentional tables (for goodness-of-fit tests).
+- `cramers_v()` correctly does not work with 1-dimensional tables (for goodness-of-fit tests).
 - `interpret_d()`, `interpret_g()`, and `interpret_delta()` are now `interpret_cohens_d()`, `interpret_hedges_g()`, and `interpret_glass_delta()`.
 - `interpret_parameters()` was removed. Use `interpret_r()` instead (with caution!).
 - Phi, Cohen's *w*, Cramer's *V*, ANOVA effect sizes, rank Epsilon squared, Kendall's *W* - CIs default to 95% one-sided CIs (`alternative = "greater"`). (To restore previous behavior, set `ci = .9, alternative = "two.sided"`.)

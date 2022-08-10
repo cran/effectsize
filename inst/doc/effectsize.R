@@ -10,14 +10,16 @@ library(effectsize)
 cohens_d(mpg ~ am, data = mtcars)
 
 ## -----------------------------------------------------------------------------
-M <- rbind(c(150, 130, 35, 55),
-           c(100, 50,  10, 40),
-           c(165, 65,  2,  25))
+M <- rbind(
+  c(150, 130, 35, 55),
+  c(100, 50, 10, 40),
+  c(165, 65, 2, 25)
+)
 
 cramers_v(M)
 
 ## -----------------------------------------------------------------------------
-options(contrasts = c('contr.sum', 'contr.poly'))
+options(contrasts = c("contr.sum", "contr.poly"))
 
 data("ChickWeight")
 # keep only complete cases and convert `Time` to a factor
@@ -25,15 +27,18 @@ ChickWeight <- subset(ChickWeight, ave(weight, Chick, FUN = length) == 12)
 ChickWeight$Time <- factor(ChickWeight$Time)
 
 model <- aov(weight ~ Diet * Time + Error(Chick / Time),
-             data = ChickWeight) 
+  data = ChickWeight
+)
 
 eta_squared(model, partial = TRUE)
 
 eta_squared(model, generalized = "Time")
 
 ## -----------------------------------------------------------------------------
-F_to_eta2(f = c(40.72, 33.77),
-          df = c(2, 1), df_error = c(18, 9))
+F_to_eta2(
+  f = c(40.72, 33.77),
+  df = c(2, 1), df_error = c(18, 9)
+)
 
 t_to_d(t = -5.14, df_error = 22)
 
@@ -42,8 +47,9 @@ t_to_r(t = -5.14, df_error = 22)
 ## -----------------------------------------------------------------------------
 data(hardlyworking, package = "effectsize")
 
-aov1 <- oneway.test(salary ~ n_comps, 
-                    data = hardlyworking, var.equal = TRUE)
+aov1 <- oneway.test(salary ~ n_comps,
+  data = hardlyworking, var.equal = TRUE
+)
 effectsize(aov1)
 
 xtab <- rbind(c(762, 327, 468), c(484, 239, 477), c(484, 239, 477))

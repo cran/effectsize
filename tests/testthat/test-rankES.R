@@ -58,9 +58,11 @@ if (require("testthat") && require("effectsize")) {
   test_that("kendalls_w", {
     skip_if_not_installed("boot")
     skip_if_not_installed("base", minimum_version = "3.6.0")
-    M1 <- cbind("Round Out" = c(5.4, 5.85, 5.2),
-                "Narrow Angle" = c(5.5, 5.7, 5.6),
-                "Wide Angle" = c(5.55, 5.75, 5.5))
+    M1 <- cbind(
+      "Round Out" = c(5.4, 5.85, 5.2),
+      "Narrow Angle" = c(5.5, 5.7, 5.6),
+      "Wide Angle" = c(5.55, 5.75, 5.5)
+    )
 
     M2 <- data.frame(
       id = c(1L, 1L, 1L, 2L, 2L, 2L, 3L, 3L, 3L),
@@ -87,26 +89,48 @@ if (require("testthat") && require("effectsize")) {
 
     # Ties
     dat <- data.frame(
-      pno = c(1L, 1L, 1L, 1L, 2L, 2L, 2L, 2L, 3L, 3L,
-              3L, 3L, 4L, 4L, 4L, 4L, 5L, 5L, 5L, 5L, 6L, 6L, 6L, 6L, 7L, 7L,
-              7L, 7L, 8L, 8L, 8L, 8L, 9L, 9L, 9L, 9L, 10L, 10L, 10L, 10L),
-      condition = c(1L, 1L, 2L, 2L, 1L, 1L, 2L, 2L, 1L,
-                    1L, 2L, 2L, 1L, 1L, 2L, 2L, 1L, 1L, 2L, 2L, 1L, 1L, 2L, 2L,
-                    1L, 1L, 2L, 2L, 1L, 1L, 2L, 2L, 1L, 1L, 2L, 2L, 1L, 1L, 2L,
-                    2L),
-      congruency = c(1L, 2L, 1L, 2L, 1L, 2L, 1L, 2L,
-                     1L, 2L, 1L, 2L, 1L, 2L, 1L, 2L, 1L, 2L, 1L, 2L, 1L, 2L, 1L,
-                     2L, 1L, 2L, 1L, 2L, 1L, 2L, 1L, 2L, 1L, 2L, 1L, 2L, 1L, 2L,
-                     1L, 2L),
-      mrt = c(0.86, 0.86, 0.86, 0.78, 0.56, 0.56, 0.59, 0.66, 0.48,
-              0.5, 0.47, 0.51, 0.48, 0.52, 0.45, 0.47, 0.65, 0.79, 0.7,
-              0.81, 0.58, 0.6, 0.57, 0.6, 0.53, 0.61, 0.47, 0.49, 0.56,
-              0.64, 0.56, 0.6, 0.56, 0.66, 0.59, 0.63, 0.7, 0.92, 0.8,
-              0.96)
+      pno = c(
+        1L, 1L, 1L, 1L, 2L, 2L, 2L, 2L, 3L, 3L,
+        3L, 3L, 4L, 4L, 4L, 4L, 5L, 5L, 5L, 5L, 6L, 6L, 6L, 6L, 7L, 7L,
+        7L, 7L, 8L, 8L, 8L, 8L, 9L, 9L, 9L, 9L, 10L, 10L, 10L, 10L
+      ),
+      condition = c(
+        1L, 1L, 2L, 2L, 1L, 1L, 2L, 2L, 1L,
+        1L, 2L, 2L, 1L, 1L, 2L, 2L, 1L, 1L, 2L, 2L, 1L, 1L, 2L, 2L,
+        1L, 1L, 2L, 2L, 1L, 1L, 2L, 2L, 1L, 1L, 2L, 2L, 1L, 1L, 2L,
+        2L
+      ),
+      congruency = c(
+        1L, 2L, 1L, 2L, 1L, 2L, 1L, 2L,
+        1L, 2L, 1L, 2L, 1L, 2L, 1L, 2L, 1L, 2L, 1L, 2L, 1L, 2L, 1L,
+        2L, 1L, 2L, 1L, 2L, 1L, 2L, 1L, 2L, 1L, 2L, 1L, 2L, 1L, 2L,
+        1L, 2L
+      ),
+      mrt = c(
+        0.86, 0.86, 0.86, 0.78, 0.56, 0.56, 0.59, 0.66, 0.48,
+        0.5, 0.47, 0.51, 0.48, 0.52, 0.45, 0.47, 0.65, 0.79, 0.7,
+        0.81, 0.58, 0.6, 0.57, 0.6, 0.53, 0.61, 0.47, 0.49, 0.56,
+        0.64, 0.56, 0.6, 0.56, 0.66, 0.59, 0.63, 0.7, 0.92, 0.8,
+        0.96
+      )
     )
     dat
 
-    W <- kendalls_w(mrt ~ interaction(condition, congruency) | pno, data = dat)
+    W <- kendalls_w(mrt ~ interaction(condition, congruency) | pno, data = dat, verbose = FALSE)
     expect_equal(W[[1]], 0.4011, tolerance = 0.01)
+
+
+
+    # singular ties
+    m <- rbind(
+      c(1, 2, 3, 4),
+      c(7, 7, 7, 7), # THIS
+      c(2, 3, 1, 4)
+    )
+
+    expect_warning(kendalls_w(m, ci = NULL), "contain ties")
+    expect_warning(W <- kendalls_w(m, ci = NULL), "unique ranking")
+    expect_equal(W[[1]], 0.4666667, tolerance = 0.001)
+    expect_equal(kendalls_w(t(m), blocks_on_rows = FALSE, ci = NULL, verbose = FALSE)[[1]], W[[1]])
   })
 }

@@ -71,8 +71,10 @@ pearsons_c(MPG_Gear)
 
 ## -----------------------------------------------------------------------------
 (RCT <- matrix(
-  c(71, 30,
-    50, 100),
+  c(
+    71, 30,
+    50, 100
+  ),
   nrow = 2, byrow = TRUE,
   dimnames = list(
     Diagnosis = c("Sick", "Recovered"),
@@ -92,9 +94,11 @@ cohens_h(RCT)
 
 ## -----------------------------------------------------------------------------
 (Music <- matrix(
-  c(150, 130, 35, 55,
+  c(
+    150, 130, 35, 55,
     100, 50, 10, 40,
-    165, 65, 2, 25),
+    165, 65, 2, 25
+  ),
   byrow = TRUE, nrow = 3,
   dimnames = list(
     Study = c("Psych", "Econ", "Law"),
@@ -120,7 +124,7 @@ effectsize(BFX, type = "cohens_w", test = NULL)
 effectsize(BFX, type = "pearsons_c", test = NULL)
 
 ## -----------------------------------------------------------------------------
-O <- c(89,  37,  130, 28,  2) # observed group sizes
+O <- c(89, 37, 130, 28, 2) # observed group sizes
 E <- c(.40, .20, .20, .15, .05) # expected group freq
 
 chisq.test(O, p = E)
@@ -134,8 +138,10 @@ normalized_chi(O, p = E)
 
 ## -----------------------------------------------------------------------------
 (Performance <- matrix(
-  c(794, 86,
-    150, 570),
+  c(
+    794, 86,
+    150, 570
+  ),
   nrow = 2, byrow = TRUE,
   dimnames = list(
     "1st Survey" = c("Approve", "Disapprove"),
@@ -187,13 +193,15 @@ rank_epsilon_squared(group_data)
 ## -----------------------------------------------------------------------------
 # Subjects are COLUMNS
 (ReactionTimes <- matrix(
-  c(398, 338, 520,
+  c(
+    398, 338, 520,
     325, 388, 555,
     393, 363, 561,
     367, 433, 470,
     286, 492, 536,
     362, 475, 496,
-    253, 334, 610),
+    253, 334, 610
+  ),
   nrow = 7, byrow = TRUE,
   dimnames = list(
     paste0("Subject", 1:7),

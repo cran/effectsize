@@ -11,13 +11,15 @@
 #'   `rank_epsilon_squared()`) or `DV ~ groups | blocks` (for `kendalls_w()`;
 #'   See details for the `blocks` and `groups` terminology used here).
 #'   - A list of vectors (for `rank_epsilon_squared()`).
-#'   - A matrix of `blocks x groups` (for `kendalls_w()`). See details for the
-#'   `blocks` and `groups` terminology used here.
+#'   - A matrix of `blocks x groups` (for `kendalls_w()`) (or `groups x blocks`
+#'   if `blocks_on_rows = FALSE`). See details for the `blocks` and `groups`
+#'   terminology used here.
 #' @param y An optional numeric vector of data values to compare to `x`, or a
 #'   character name of one in `data`. Ignored if `x` is not a vector.
 #' @param groups,blocks A factor vector giving the group / block for the
 #'   corresponding elements of `x`, or a character name of one in `data`.
 #'   Ignored if `x` is not a vector.
+#' @param blocks_on_rows Are blocks on rows (`TRUE`) or columns (`FALSE`).
 #' @param mu a number indicating the value around which (a-)symmetry (for
 #'   one-sample or paired samples) or shift (for independent samples) is to be
 #'   estimated. See [stats::wilcox.test].
@@ -103,8 +105,10 @@
 #'
 #'
 #' # Paired Samples ----------
-#' dat <- data.frame(Cond1 = c(1.83, 0.5, 1.62, 2.48, 1.68, 1.88, 1.55, 3.06, 1.3),
-#'                   Cond2 = c(0.878, 0.647, 0.598, 2.05, 1.06, 1.29, 1.06, 3.14, 1.29))
+#' dat <- data.frame(
+#'   Cond1 = c(1.83, 0.5, 1.62, 2.48, 1.68, 1.88, 1.55, 3.06, 1.3),
+#'   Cond2 = c(0.878, 0.647, 0.598, 2.05, 1.06, 1.29, 1.06, 3.14, 1.29)
+#' )
 #' (rb <- rank_biserial(Pair(Cond1, Cond2) ~ 1, data = dat, paired = TRUE))
 #'
 #' # same as:
@@ -123,9 +127,11 @@
 #'
 #' # Kendall's W
 #' # ===========
-#' dat <- data.frame(cond = c("A", "B", "A", "B", "A", "B"),
-#'                   ID = c("L", "L", "M", "M", "H", "H"),
-#'                   y = c(44.56, 28.22, 24, 28.78, 24.56, 18.78))
+#' dat <- data.frame(
+#'   cond = c("A", "B", "A", "B", "A", "B"),
+#'   ID = c("L", "L", "M", "M", "H", "H"),
+#'   y = c(44.56, 28.22, 24, 28.78, 24.56, 18.78)
+#' )
 #' (W <- kendalls_w(y ~ cond | ID, data = dat, verbose = FALSE))
 #'
 #' interpret_kendalls_w(0.11)
@@ -360,6 +366,7 @@ kendalls_w <- function(x,
                        groups,
                        blocks,
                        data = NULL,
+                       blocks_on_rows = TRUE,
                        ci = 0.95,
                        alternative = "greater",
                        iterations = 200,
@@ -375,6 +382,7 @@ kendalls_w <- function(x,
   }
 
   ## prep data
+  if (is.matrix(x) && !blocks_on_rows) x <- t(x)
   data <- .get_data_nested_groups(x, groups, blocks, data, ...)
   data <- stats::na.omit(data)
 
@@ -484,19 +492,35 @@ kendalls_w <- function(x,
   m <- nrow(rankings) # judges
   R <- colSums(rankings)
 
-  if (!all(has_tie <- apply(rankings, 1, function(x) length(x) == insight::n_unique(x)))) {
-    # there are ties
-    have_ties <- rankings[!has_tie, , drop = FALSE]
-    Ti <- apply(have_ties, 1, function(r) {
-      ti <- apply(outer(unique(r), r, FUN = "=="), 1, sum)
-      sum(ti^3 - ti)
-    })
+  no_ties <- apply(rankings, 1, function(x) length(x) == insight::n_unique(x))
+  if (!all(no_ties)) {
+    if (verbose) {
+      warning(
+        sprintf(
+          "%d block(s) contain ties%s.",
+          sum(!no_ties),
+          ifelse(any(apply(as.data.frame(rankings)[!no_ties, ], 1, insight::n_unique) == 1),
+            ", some containing only 1 unique ranking", ""
+          )
+        ),
+        call. = FALSE
+      )
+    }
+
+    Tj <- 0
+    for (i in seq_len(m)) {
+      rater <- table(rankings[i, ])
+      ties <- rater[rater > 1]
+      l <- as.numeric(ties)
+      Tj <- Tj + sum(l^3 - l)
+    }
 
     W <- (12 * sum(R^2) - 3 * (m^2) * n * ((n + 1)^2)) /
-      ((m^2) * n * (n^2 - 1) - m * sum(Ti))
+      (m^2 * (n^3 - n) - m * Tj)
   } else {
     S <- var(R) * (n - 1)
-    W <- (12 * S) / (m^2 * (n^3 - n))
+    W <- (12 * S) /
+      (m^2 * (n^3 - n))
   }
   W
 }
@@ -609,8 +633,7 @@ kendalls_w <- function(x,
 
 .safe_ranktransform <- function(x, verbose = TRUE, ...) {
   if (insight::n_unique(x) == 1) {
-    if (verbose) warning("Only one unique value - rank fixed at 1")
-    return(rep(1, length(x)))
+    return(rep(mean(seq_along(x)), length(x)))
   }
   datawizard::ranktransform(x, method = "average", ..., verbose = FALSE)
 }

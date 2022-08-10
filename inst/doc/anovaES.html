@@ -357,22 +357,25 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <div id="TOC">
 <ul>
-<li><a href="#eta2">Eta<sup>2</sup></a>
+<li><a href="#eta2" id="toc-eta2">Eta<sup>2</sup></a>
 <ul>
-<li><a href="#adding-more-terms">Adding More Terms</a></li>
-<li><a href="#adding-interactions">Adding Interactions</a></li>
+<li><a href="#adding-more-terms" id="toc-adding-more-terms">Adding More
+Terms</a></li>
+<li><a href="#adding-interactions" id="toc-adding-interactions">Adding
+Interactions</a></li>
 </ul></li>
-<li><a href="#other-measures-of-effect-size">Other Measures of Effect
-Size</a>
+<li><a href="#other-measures-of-effect-size" id="toc-other-measures-of-effect-size">Other Measures of Effect Size</a>
 <ul>
-<li><a href="#unbiased-effect-sizes">Unbiased Effect Sizes</a></li>
-<li><a href="#generalized-eta2">Generalized Eta<sup>2</sup></a></li>
-<li><a href="#cohens-f">Cohen’s <em>f</em></a></li>
+<li><a href="#unbiased-effect-sizes" id="toc-unbiased-effect-sizes">Unbiased Effect Sizes</a></li>
+<li><a href="#generalized-eta2" id="toc-generalized-eta2">Generalized
+Eta<sup>2</sup></a></li>
+<li><a href="#cohens-f" id="toc-cohens-f">Cohen’s <em>f</em></a></li>
 </ul></li>
-<li><a href="#when-sum-of-squares-are-hard-to-come-by">When
-Sum-of-Squares are Hard to Come By</a></li>
-<li><a href="#for-bayesian-models">For Bayesian Models</a></li>
-<li><a href="#references">References</a></li>
+<li><a href="#when-sum-of-squares-are-hard-to-come-by" id="toc-when-sum-of-squares-are-hard-to-come-by">When Sum-of-Squares are
+Hard to Come By</a></li>
+<li><a href="#for-bayesian-models" id="toc-for-bayesian-models">For
+Bayesian Models</a></li>
+<li><a href="#references" id="toc-references">References</a></li>
 </ul>
 </div>
 
@@ -752,7 +755,7 @@ distribution of explained variance estimates. But note that
 location-parameters of the model, but also on the scale-parameters of
 the model!</strong> So it is vital to <a href="https://mc-stan.org/docs/2_23/stan-users-guide/meta-models-part.html#meta-models.part/">validate
 the PPD</a> before using it to estimate explained variance measures.</p>
-<pre><code>&gt; This is rstanarm version 2.21.1</code></pre>
+<pre><code>&gt; This is rstanarm version 2.21.3</code></pre>
 <pre><code>&gt; - See https://mc-stan.org/rstanarm/articles/priors for changes to default priors!</code></pre>
 <pre><code>&gt; - Default priors may change, so it&#39;s safest to specify priors, even if equivalent to the defaults.</code></pre>
 <pre><code>&gt; - For execution on a local, multicore CPU with excess RAM we recommend calling</code></pre>
@@ -768,9 +771,10 @@ the PPD</a> before using it to estimate explained variance measures.</p>
 <p>Let’s fit our model:</p>
 <div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rstanarm)</span>
 <span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>m_bayes <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(value <span class="sc">~</span> gender <span class="sc">+</span> phase <span class="sc">+</span> treatment, </span>
-<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">data =</span> obk.long, <span class="at">family =</span> <span class="fu">gaussian</span>(),</span>
-<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">refresh =</span> <span class="dv">0</span>)</span></code></pre></div>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>m_bayes <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(value <span class="sc">~</span> gender <span class="sc">+</span> phase <span class="sc">+</span> treatment,</span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> obk.long, <span class="at">family =</span> <span class="fu">gaussian</span>(),</span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">refresh =</span> <span class="dv">0</span></span>
+<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 <p>We can use <code>eta_squared_posterior()</code> to get the posterior
 distribution of <span class="math inline">\(eta^2\)</span> or <span class="math inline">\(eta^2_p\)</span> for each effect. Like an ANOVA
 table, we must make sure to use the right effects-coding and
@@ -779,7 +783,7 @@ table, we must make sure to use the right effects-coding and
 <span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">draws =</span> <span class="dv">500</span>, <span class="co"># how many samples from the PPD?</span></span>
 <span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">partial =</span> <span class="cn">TRUE</span>, <span class="co"># partial eta squared</span></span>
 <span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># type 3 SS</span></span>
-<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">ss_function =</span> car<span class="sc">::</span>Anova, <span class="at">type =</span> <span class="dv">3</span>, </span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">ss_function =</span> car<span class="sc">::</span>Anova, <span class="at">type =</span> <span class="dv">3</span>,</span>
 <span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">verbose =</span> <span class="cn">FALSE</span></span>
 <span id="cb53-7"><a href="#cb53-7" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb53-8"><a href="#cb53-8" aria-hidden="true" tabindex="-1"></a></span>
@@ -791,7 +795,7 @@ table, we must make sure to use the right effects-coding and
 &gt; 4  0.149 0.1023     0.392
 &gt; 5  0.014 0.1156     0.406
 &gt; 6  0.025 0.0097     0.364</code></pre>
-<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>bayestestR<span class="sc">::</span><span class="fu">describe_posterior</span>(pes_posterior, </span>
+<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>bayestestR<span class="sc">::</span><span class="fu">describe_posterior</span>(pes_posterior,</span>
 <span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">rope_range =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.1</span>), <span class="at">test =</span> <span class="st">&quot;rope&quot;</span></span>
 <span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>&gt; Summary of Posterior Distribution

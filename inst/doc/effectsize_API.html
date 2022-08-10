@@ -335,17 +335,16 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <div id="TOC">
 <ul>
-<li><a href="#supporting-anova-effect-sizes">Supporting ANOVA Effect
-Sizes</a>
+<li><a href="#supporting-anova-effect-sizes" id="toc-supporting-anova-effect-sizes">Supporting ANOVA Effect Sizes</a>
 <ul>
-<li><a href="#simple-anova-tables">Simple ANOVA tables</a></li>
-<li><a href="#anova-tables-with-multiple-error-strata">ANOVA Tables with
+<li><a href="#simple-anova-tables" id="toc-simple-anova-tables">Simple
+ANOVA tables</a></li>
+<li><a href="#anova-tables-with-multiple-error-strata" id="toc-anova-tables-with-multiple-error-strata">ANOVA Tables with
 Multiple Error Strata</a></li>
-<li><a href="#approximate-effect-sizes">Approximate Effect
-sizes</a></li>
-<li><a href="#example"><em>Example</em></a></li>
+<li><a href="#approximate-effect-sizes" id="toc-approximate-effect-sizes">Approximate Effect sizes</a></li>
+<li><a href="#example" id="toc-example"><em>Example</em></a></li>
 </ul></li>
-<li><a href="#references">References</a></li>
+<li><a href="#references" id="toc-references">References</a></li>
 </ul>
 </div>
 
@@ -426,12 +425,13 @@ for <code>Parameter</code>.</p>
 list of predictors (including the stratifying variables) to the
 <code>DV_names</code> argument:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">.es_aov_strata</span>(</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  min_aovlist, <span class="at">DV_names =</span> <span class="fu">c</span>(<span class="st">&quot;S&quot;</span>, <span class="st">&quot;A&quot;</span>),</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">&quot;omega&quot;</span>, <span class="at">partial =</span> <span class="cn">TRUE</span>, <span class="at">generalized =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">ci =</span> <span class="fl">0.95</span>, <span class="at">alternative =</span> <span class="st">&quot;greater&quot;</span>,</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">verbose =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">include_intercept =</span> <span class="cn">TRUE</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  min_aovlist,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">DV_names =</span> <span class="fu">c</span>(<span class="st">&quot;S&quot;</span>, <span class="st">&quot;A&quot;</span>),</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">&quot;omega&quot;</span>, <span class="at">partial =</span> <span class="cn">TRUE</span>, <span class="at">generalized =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">ci =</span> <span class="fl">0.95</span>, <span class="at">alternative =</span> <span class="st">&quot;greater&quot;</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">verbose =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">include_intercept =</span> <span class="cn">TRUE</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>&gt;   Group   Parameter Omega2_partial   CI CI_low CI_high
 &gt; 1     S (Intercept)          0.568 0.95   0.21       1
 &gt; 2   S:A           A         -0.042 0.95   0.00       1</code></pre>
@@ -500,17 +500,17 @@ or <code>NA</code>} and return the output, and optionally the
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Get ANOVA table</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  anov <span class="ot">&lt;-</span> <span class="fu">suppressWarnings</span>(stats<span class="sc">:::</span><span class="fu">anova.lm</span>(model))</span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  anov <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(anov)</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Clean up</span></span>
 <span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  anov[[<span class="st">&quot;Parameter&quot;</span>]] <span class="ot">&lt;-</span> <span class="fu">rownames</span>(anov)</span>
 <span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">colnames</span>(anov)[<span class="dv">2</span><span class="sc">:</span><span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Sum_Squares&quot;</span>, <span class="st">&quot;df&quot;</span>)</span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Pass</span></span>
 <span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">.es_aov_simple</span>(anov, ...)</span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Set attribute</span></span>
 <span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">attr</span>(out, <span class="st">&quot;anova_type&quot;</span>) <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>  out</span>
 <span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>And… that’s it! Our new <code>superMODEL</code> class of models is
