@@ -1,4 +1,4 @@
-#' Interpret Cohen's g
+#' Interpret Cohen's *g*
 #'
 #'
 #' @param g Value or vector of effect size values.
@@ -30,6 +30,7 @@
 #' - Cohen, J. (1988). Statistical power analysis for the behavioral sciences
 #' (2nd Ed.). New York: Routledge.
 #'
+#' @keywords interpreters
 #' @export
 interpret_cohens_g <- function(g, rules = "cohen1988", ...) {
   rules <- .match.rules(

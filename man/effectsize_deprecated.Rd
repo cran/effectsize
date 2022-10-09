@@ -6,7 +6,14 @@
 \alias{interpret_g}
 \alias{interpret_delta}
 \alias{interpret_parameters}
-\title{Deprecated functions}
+\alias{normalized_chi}
+\alias{chisq_to_normalized}
+\alias{convert_d_to_common_language}
+\alias{d_to_common_language}
+\alias{convert_rb_to_common_language}
+\alias{rb_to_common_language}
+\alias{common_language}
+\title{Deprecated / Defunct Functions}
 \usage{
 interpret_d(...)
 
@@ -15,12 +22,26 @@ interpret_g(...)
 interpret_delta(...)
 
 interpret_parameters(...)
+
+normalized_chi(...)
+
+chisq_to_normalized(...)
+
+convert_d_to_common_language(...)
+
+d_to_common_language(...)
+
+convert_rb_to_common_language(...)
+
+rb_to_common_language(...)
+
+common_language(...)
 }
 \arguments{
 \item{...}{Arguments to the deprecated function.}
 }
 \description{
-Deprecated functions
+Deprecated / Defunct Functions
 }
 \details{
 \itemize{
@@ -28,5 +49,8 @@ Deprecated functions
 \item \code{interpret_g} is now \code{\link{interpret_hedges_g}}.
 \item \code{interpret_delta} is now \code{\link{interpret_glass_delta}}.
 \item \code{interpret_parameters} for \emph{standardized parameters} was incorrect. Use \code{\link{interpret_r}} instead.
+\item \code{normalized_chi} is now \code{\link{fei}}.
+\item \code{chisq_to_normalized} is now \code{\link{chisq_to_fei}}.
+\item \code{d_to_cles} and \code{rb_to_cles} are now one of the available functions for CLES conversion, e.g. \code{\link{d_to_u1}}.
 }
 }

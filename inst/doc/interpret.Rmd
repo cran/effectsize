@@ -20,11 +20,6 @@ library(knitr)
 options(knitr.kable.NA = "")
 knitr::opts_chunk$set(comment = ">")
 options(digits = 2)
-
-pkgs <- c("effectsize")
-if (!all(sapply(pkgs, requireNamespace, quietly = TRUE))) {
-  knitr::opts_chunk$set(eval = FALSE)
-}
 ```
 
 ## Why?
@@ -71,6 +66,8 @@ worth taking seriously (as they can be potentially consequential), as well as
 more believable.
 
 ## Correlation *r*
+
+There can be used to interpret not only Pearson's correlation coefficient, but also Spearman's, $\phi$ (phi), Cramer's *V* and Tschuprow's *T*. Although Cohen's *w* and Pearson's *C* are _not_ a correlation coefficients, they are often also interpreted as such.
 
 #### @funder2019evaluating
 

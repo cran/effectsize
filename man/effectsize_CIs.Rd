@@ -8,7 +8,6 @@ More information regarding Confidence (Compatibiity) Intervals and how
 they are computed in \emph{effectsize}.
 }
 \section{Confidence (Compatibility) Intervals (CIs)}{
-
 Unless stated otherwise, confidence (compatibility) intervals (CIs) are
 estimated using the noncentrality parameter method (also called the "pivot
 method"). This method finds the noncentrality parameter ("\emph{ncp}") of a
@@ -25,7 +24,6 @@ For additional details on estimation and troubleshooting, see \link{effectsize_C
 }
 
 \section{CIs and Significance Tests}{
-
 "Confidence intervals on measures of effect size convey all the information
 in a hypothesis test, and more." (Steiger, 2004). Confidence (compatibility)
 intervals and p values are complementary summaries of parameter uncertainty
@@ -46,8 +44,21 @@ to 0 to be negligible are needed ("equivalence testing"; Bauer & Kiesser,
 1996).
 }
 
-\section{One-Sided CIs}{
+\section{Bootstrapped CIs}{
+Some effect sizes are directionless--they do have a minimum value that would
+be interpreted as "no effect", but they cannot cross it. For example, a null
+value of \link[=kendalls_w]{Kendall's W} is 0, indicating no difference between
+groups, but it can never have a negative value. Same goes for
+\link[=cohens_u2]{U2} and \link[=p_overlap]{Overlap}: the null value of \eqn{U_2} is
+0.5, but it can never be smaller than 0.5; am \emph{Overlap} of 1 means "full
+overlap" (no difference), but it cannot be larger than 1.
+\cr\cr
+When bootstrapping CIs for such effect sizes, the bounds of the CIs will
+never cross (and often will never cover) the null. Therefore, these CIs
+should not be used for statistical inference.
+}
 
+\section{One-Sided CIs}{
 Typically, CIs are constructed as two-tailed intervals, with an equal
 proportion of the cumulative probability distribution above and below the
 interval. CIs can also be constructed as \emph{one-sided} intervals,
@@ -99,44 +110,47 @@ that this interval does not give 95\% coverage for the underlying effect size
 parameter value. For that, construct a 95\% 2-sided CI.
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{data("hardlyworking")
-fit <- lm(salary ~ n_comps + age, data = hardlyworking)
+fit <- lm(salary ~ n_comps, data = hardlyworking)
 eta_squared(fit) # default, ci = 0.95, alternative = "greater"
-#> # Effect Size for ANOVA (Type I)
+#> For one-way between subjects designs, partial eta squared is equivalent to eta squared.
+#> Returning eta squared.
+#> # Effect Size for ANOVA
 #> 
-#> Parameter | Eta2 (partial) |       95\% CI
-#> -----------------------------------------
-#> n_comps   |           0.21 | [0.16, 1.00]
-#> age       |           0.10 | [0.06, 1.00]
+#> Parameter | Eta2 |       95\% CI
+#> -------------------------------
+#> n_comps   | 0.19 | [0.14, 1.00]
 #> 
 #> - One-sided CIs: upper bound fixed at [1.00].
 eta_squared(fit, alternative = "less") # Test is eta is smaller than some value
-#> # Effect Size for ANOVA (Type I)
+#> For one-way between subjects designs, partial eta squared is equivalent to eta squared.
+#> Returning eta squared.
+#> # Effect Size for ANOVA
 #> 
-#> Parameter | Eta2 (partial) |       95\% CI
-#> -----------------------------------------
-#> n_comps   |           0.21 | [0.00, 0.26]
-#> age       |           0.10 | [0.00, 0.14]
+#> Parameter | Eta2 |       95\% CI
+#> -------------------------------
+#> n_comps   | 0.19 | [0.00, 0.24]
 #> 
 #> - One-sided CIs: lower bound fixed at [0.00].
 eta_squared(fit, alternative = "two.sided") # 2-sided bounds for alpha = .05
-#> # Effect Size for ANOVA (Type I)
+#> For one-way between subjects designs, partial eta squared is equivalent to eta squared.
+#> Returning eta squared.
+#> # Effect Size for ANOVA
 #> 
-#> Parameter | Eta2 (partial) |       95\% CI
-#> -----------------------------------------
-#> n_comps   |           0.21 | [0.15, 0.27]
-#> age       |           0.10 | [0.06, 0.15]
+#> Parameter | Eta2 |       95\% CI
+#> -------------------------------
+#> n_comps   | 0.19 | [0.14, 0.25]
 eta_squared(fit, ci = 0.9, alternative = "two.sided") # both 1-sided bounds for alpha = .05
-#> # Effect Size for ANOVA (Type I)
+#> For one-way between subjects designs, partial eta squared is equivalent to eta squared.
+#> Returning eta squared.
+#> # Effect Size for ANOVA
 #> 
-#> Parameter | Eta2 (partial) |       90\% CI
-#> -----------------------------------------
-#> n_comps   |           0.21 | [0.16, 0.26]
-#> age       |           0.10 | [0.06, 0.14]
+#> Parameter | Eta2 |       90\% CI
+#> -------------------------------
+#> n_comps   | 0.19 | [0.14, 0.24]
 }\if{html}{\out{</div>}}
 }
 
 \section{CI Does Not Contain the Estimate}{
-
 For very large sample sizes or effect sizes, the width of the CI can be
 smaller than the tolerance of the optimizer, resulting in CIs of width 0.
 This can also result in the estimated CIs excluding the point estimate.

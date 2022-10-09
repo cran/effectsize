@@ -31,30 +31,33 @@ eta_squared_posterior.stanreg <- function(model,
 
   mi <- .get_model_info(model, ...)
   if (!mi$is_linear || mi$is_multivariate) {
-    stop("Computation of Eta Squared is only applicable to univariate linear models.")
+    stop("Computation of Eta Squared is only applicable to univariate linear models.", call. = FALSE)
   }
 
-  if (partial && mi$is_mixed) {
-    if (verbose) {
-      warning(
-        "Bayesian Partial Eta Squared not supported for mixed models.\n",
-        "Returning Eta Squared instead."
-      )
+  if (mi$is_mixed) {
+    if (partial) {
+      if (verbose) {
+        warning(
+          "Bayesian Partial Eta Squared not supported for mixed models.\n",
+          "Returning Eta Squared instead."
+        )
+      }
+      partial <- FALSE
+      # would need to account for random effects if present.
+      # Too hard right now.
     }
-    partial <- FALSE
-    # would need to account for random effects if present.
-    # Too hard right now.
+
+    if (isTRUE(generalized) || is.character(generalized)) {
+      if (verbose) {
+        warning(
+          "Bayesian Generalized Eta Squared not supported for mixed models.\n",
+          "Returning Eta Squared instead."
+        )
+      }
+      generalized <- FALSE
+    }
   }
 
-  if ((isTRUE(generalized) || is.character(generalized)) && mi$is_mixed) {
-    if (verbose) {
-      warning(
-        "Bayesian Generalized Eta Squared not supported for mixed models.\n",
-        "Returning Eta Squared instead."
-      )
-    }
-    generalized <- FALSE
-  }
 
   ## 1. get model data
   f <- insight::find_formula(model)$conditional
@@ -99,7 +102,6 @@ eta_squared_posterior.stanreg <- function(model,
   })
 
   res <- do.call("rbind", res)
-  attr(res, "partial") <- partial
   attr(res, "generalized") <- generalized
   return(res)
 }

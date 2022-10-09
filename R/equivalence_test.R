@@ -1,4 +1,4 @@
-#' @title Test for Practical Equivalence
+#' @title Test Effect Size for Practical Equivalence to the Null
 #'
 #' @description Perform a **Test for Practical Equivalence** for indices of
 #'   effect size.
@@ -57,15 +57,13 @@
 #' @examples
 #' \donttest{
 #'
-#' model <- aov(mpg ~ hp + am * factor(cyl), data = mtcars)
+#' data("hardlyworking")
+#' model <- aov(salary ~ age + factor(n_comps) * cut(seniority, 3), data = hardlyworking)
 #' es <- eta_squared(model, ci = 0.9, alternative = "two.sided")
-#' equivalence_test(es, range = 0.30) # TOST
+#' equivalence_test(es, range = 0.15) # TOST
 #'
-#' RCT <- matrix(c(
-#'   71, 101,
-#'   50, 100
-#' ), nrow = 2)
-#' OR <- oddsratio(RCT, alternative = "greater")
+#' data("RCT_table")
+#' OR <- oddsratio(RCT_table, alternative = "greater")
 #' equivalence_test(OR, range = 1)
 #'
 #' ds <- t_to_d(
@@ -111,11 +109,11 @@ equivalence_test.effectsize_table <- function(x,
 
   if (range[1] < x_es_info$lb) {
     range[1] <- x_es_info$lb
-    warning("Lower bound set to ", range[1], ".", immediate. = FALSE)
+    warning("Lower bound set to ", range[1], ".", immediate. = FALSE, call. = FALSE)
   }
   if (range[2] > x_es_info$ub) {
     range[2] <- x_es_info$ub
-    warning("Upper bound set to ", range[2], ".", immediate. = FALSE)
+    warning("Upper bound set to ", range[2], ".", immediate. = FALSE, call. = FALSE)
   }
 
   # Test ---

@@ -1,4 +1,4 @@
-#' Convert between Odds ratios and Risk ratios
+#' Convert Between Odds Ratios and Risk Ratios
 #'
 #' @param OR,RR Risk ratio of `p1/p0` or Odds ratio of `odds(p1)/odds(p0)`,
 #'   possibly log-ed. `OR` can also be a logistic regression model.
@@ -10,6 +10,7 @@
 #'   parameter table with the converted indices.
 #'
 #' @family convert between effect sizes
+#' @seealso [oddsratio()] and [riskratio()]
 #'
 #' @examples
 #' p0 <- 0.4
@@ -50,7 +51,7 @@ oddsratio_to_riskratio.numeric <- function(OR, p0, log = FALSE, ...) {
 #' @export
 oddsratio_to_riskratio.default <- function(OR, p0, log = FALSE, ...) {
   mi <- .get_model_info(OR, ...)
-  if (!mi$is_binomial || !mi$is_logit) stop("Model must a binomial model with logit-link (logistic regression)")
+  if (!mi$is_binomial || !mi$is_logit) stop("Model must a binomial model with logit-link (logistic regression)", call. = FALSE)
 
   RR <- parameters::model_parameters(OR, exponentiate = !log, effects = "fixed", ...)
   RR$SE <- NULL
@@ -78,7 +79,7 @@ oddsratio_to_riskratio.default <- function(OR, p0, log = FALSE, ...) {
     )
 
   if (any(c("CI_low", "CI_high") %in% colnames(RR))) {
-    warning("CIs are back-transformed from the logit scale.")
+    warning("CIs are back-transformed from the logit scale.", call. = FALSE)
   }
 
   RR[RR$Parameter == "(Intercept)", "Coefficient"] <- p0

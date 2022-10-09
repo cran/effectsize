@@ -5,10 +5,8 @@ options(digits = 2)
 knitr::opts_chunk$set(comment = ">", warning = FALSE)
 
 set.seed(1)
-pkgs <- c("effectsize", "parameters", "car", "afex")
-if (!all(sapply(pkgs, require, quietly = TRUE, character.only = TRUE))) {
-  knitr::opts_chunk$set(eval = FALSE)
-}
+pkgs <- c("effectsize", "afex")
+knitr::opts_chunk$set(eval = all(sapply(pkgs, requireNamespace, quietly = TRUE)))
 
 ## -----------------------------------------------------------------------------
 data(obk.long, package = "afex")
@@ -25,6 +23,8 @@ parameters::model_parameters(anova(m))
 
 ## -----------------------------------------------------------------------------
 library(effectsize)
+options(es.use_symbols = TRUE) # get nice symbols when printing! (On Windows, requires R >= 4.2.0)
+ 
 
 eta_squared(m, partial = FALSE)
 
@@ -35,12 +35,12 @@ eta_squared(m, partial = FALSE)
 
 eta_squared(m) # partial = TRUE by default
 
-## -----------------------------------------------------------------------------
+## ---- eval=requireNamespace("car", quietly = TRUE)----------------------------
 eta_squared(car::Anova(m, type = 2), partial = FALSE)
 
 eta_squared(car::Anova(m, type = 3)) # partial = TRUE by default
 
-## -----------------------------------------------------------------------------
+## ---- eval=requireNamespace("car", quietly = TRUE)----------------------------
 # compare
 m_interaction1 <- lm(value ~ treatment * gender, data = obk.long)
 
@@ -89,10 +89,8 @@ epsilon_squared(fit_lmm)
 omega_squared(fit_lmm)
 
 ## ---- echo = FALSE, eval=TRUE-------------------------------------------------
-if (eval_bayes <- knitr::opts_chunk$get("eval")) {
-  bayes_pkgs <- c("rstanarm", "bayestestR", "car")
-  eval_bayes <- all(sapply(bayes_pkgs, require, quietly = TRUE, character.only = TRUE))
-}
+bayes_pkgs <- c("rstanarm", "bayestestR", "car")
+eval_bayes <- all(sapply(bayes_pkgs, requireNamespace, quietly = TRUE))
 
 ## ---- eval = eval_bayes-------------------------------------------------------
 library(rstanarm)
@@ -121,4 +119,36 @@ bayestestR::describe_posterior(pes_posterior,
 m_ML <- lm(value ~ gender + phase + treatment, data = obk.long)
 
 eta_squared(car::Anova(m_ML, type = 3))
+
+## -----------------------------------------------------------------------------
+group_data <- list(
+  g1 = c(2.9, 3.0, 2.5, 2.6, 3.2), # normal subjects
+  g2 = c(3.8, 2.7, 4.0, 2.4), # with obstructive airway disease
+  g3 = c(2.8, 3.4, 3.7, 2.2, 2.0) # with asbestosis
+)
+
+kruskal.test(group_data)
+
+rank_epsilon_squared(group_data)
+
+rank_eta_squared(group_data)
+
+## -----------------------------------------------------------------------------
+# Subjects are COLUMNS
+(ReactionTimes <- matrix(
+  c(398, 338, 520,
+    325, 388, 555,
+    393, 363, 561,
+    367, 433, 470,
+    286, 492, 536,
+    362, 475, 496,
+    253, 334, 610),
+  nrow = 7, byrow = TRUE,
+  dimnames = list(paste0("Subject", 1:7),
+                  c("Congruent", "Neutral", "Incongruent"))
+))
+
+friedman.test(ReactionTimes)
+
+kendalls_w(ReactionTimes)
 

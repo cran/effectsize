@@ -3,7 +3,7 @@
 #' @inheritParams bayestestR::describe_posterior
 #' @importFrom insight get_data get_parameters check_if_installed
 #' @importFrom bayestestR describe_posterior
-effectsize.BFBayesFactor <- function(model, type = NULL, verbose = TRUE, test = NULL, ...) {
+effectsize.BFBayesFactor <- function(model, type = NULL, ci = 0.95, test = NULL, verbose = TRUE, ...) {
   insight::check_if_installed("BayesFactor")
 
   if (length(model) > 1) {
@@ -14,7 +14,7 @@ effectsize.BFBayesFactor <- function(model, type = NULL, verbose = TRUE, test = 
   }
 
   if (inherits(model@numerator[[1]], "BFcontingencyTable")) {
-    pars <- .effectsize_contingencyTableBF(model, type = type, verbose = verbose)
+    pars <- .effectsize_contingencyTableBF(model, type = type, verbose = verbose, ...)
   } else if (inherits(model@numerator[[1]], c("BFoneSample", "BFindepSample"))) {
     pars <- .effectsize_ttestBF(model, type = type, verbose = verbose)
   } else if (inherits(model@numerator[[1]], "BFcorrelation")) {
@@ -22,11 +22,11 @@ effectsize.BFBayesFactor <- function(model, type = NULL, verbose = TRUE, test = 
   } else if (inherits(model@numerator[[1]], "BFproportion")) {
     pars <- .effectsize_proportionBF(model, type = type, verbose = verbose)
   } else {
-    stop("No effect size for this type of 'BayesFactor' object.")
+    stop("No effect size for this type of 'BayesFactor' object.", call. = FALSE)
   }
 
   # Clean up
-  out <- bayestestR::describe_posterior(pars$res, test = test, ...)
+  out <- bayestestR::describe_posterior(pars$res, ci = ci, test = test, ...)
   if (isTRUE(type == "cles")) {
     colnames(out)[2] <- "Coefficient"
   } else {
@@ -38,9 +38,6 @@ effectsize.BFBayesFactor <- function(model, type = NULL, verbose = TRUE, test = 
   .someattributes(out) <- pars$attr
   .someattributes(out) <- list(
     ci = out$CI,
-    # ci_method - inherited from bayestestR
-    correction = NULL,
-    pooled_sd = NULL,
     approximate = FALSE,
     alternative = "two.sided"
   )
@@ -48,12 +45,14 @@ effectsize.BFBayesFactor <- function(model, type = NULL, verbose = TRUE, test = 
 }
 
 #' @keywords internal
-.effectsize_contingencyTableBF <- function(model, type = NULL, verbose = TRUE) {
+.effectsize_contingencyTableBF <- function(model, type = NULL, verbose = TRUE, adjust = TRUE, ...) {
   if (is.null(type)) type <- "cramers_v"
 
   f <- switch(tolower(type),
     v = ,
     cramers_v = cramers_v,
+    t = ,
+    tschuprows_t = tschuprows_t,
     w = ,
     cohens_w = cohens_w,
     phi = phi,
@@ -70,11 +69,12 @@ effectsize.BFBayesFactor <- function(model, type = NULL, verbose = TRUE, test = 
   posts <- insight::get_parameters(model)
 
   ES <- apply(posts, 1, function(a) {
-    f(matrix(a, nrow = nrow(data)), ci = NULL)[[1]]
+    M <- matrix(a, nrow = nrow(data))
+    f(M, ci = NULL, adjust = adjust)[[1]]
   })
 
   res <- data.frame(ES)
-  colnames(res) <- colnames(f(data, ci = NULL))
+  colnames(res) <- colnames(f(data, ci = NULL, adjust = adjust))
 
   list(
     res = res,
@@ -86,8 +86,9 @@ effectsize.BFBayesFactor <- function(model, type = NULL, verbose = TRUE, test = 
 
 #' @keywords internal
 .effectsize_ttestBF <- function(model, type = NULL, verbose = TRUE) {
-  if (is.null(type)) type <- "d"
-  type <- c("cohens_d" = "d", d = "d", "cles" = "cles")[type]
+  if (is.null(type) || tolower(type) == "cohens_d") {
+    type <- "d"
+  }
 
   samps <- as.data.frame(BayesFactor::posterior(model, iterations = 4000, progress = FALSE))
 
@@ -101,20 +102,30 @@ effectsize.BFBayesFactor <- function(model, type = NULL, verbose = TRUE, test = 
   }
 
   res <- data.frame(Cohens_d = D)
+
   if (type == "d") {
     xtra_class <- "effectsize_difference"
-  } else if (type == "cles") {
-    res <- data.frame(d_to_cles(res$Cohens_d), check.names = FALSE)
+  } else if (tolower(type) %in% c("p_superiority", "u1", "u2", "u3", "overlap")) {
+    if (paired && type != "p_superiority") stop("CLES only applicable to two independent samples.", call. = FALSE)
+
+    converter <- match.fun(paste0("d_to_", tolower(type)))
+    if (grepl("^(u|U)", type)) type <- paste0("Cohens_", toupper(type))
+
+    res <- data.frame(converter(res$Cohens_d), check.names = FALSE)
+    colnames(res) <- type
     xtra_class <- NULL
   }
 
   list(
     res = res,
-    attr = list(mu = mu, paired = paired),
+    attr = list(mu = mu, paired = paired, pooled_sd = TRUE),
     xtra_class = xtra_class
   )
 }
 
+
+# Others ------------------------------------------------------------------
+# Wrappers
 
 #' @keywords internal
 .effectsize_correlationBF <- function(model, type = NULL, verbose = TRUE) {

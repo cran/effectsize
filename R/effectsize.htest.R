@@ -3,9 +3,12 @@
 effectsize.htest <- function(model, type = NULL, verbose = TRUE, ...) {
   if (grepl("t-test", model$method)) {
     .effectsize_t.test(model, type = type, verbose = verbose, ...)
-  } else if (grepl("Pearson's Chi-squared", model$method) ||
-    grepl("Chi-squared test for given probabilities", model$method)) {
-    .effectsize_chisq.test(model, type = type, verbose = verbose, ...)
+  } else if (grepl("Pearson's Chi-squared", model$method)) {
+    .effectsize_chisq.test_dep(model, type = type, verbose = verbose, ...)
+  } else if (grepl("Chi-squared test for given probabilities", model$method)) {
+    .effectsize_chisq.test_gof(model, type = type, verbose = verbose, ...)
+  } else if (grepl("Fisher's Exact", model$method)) {
+    .effectsize_fisher.test(model, type = type, verbose = verbose, ...)
   } else if (grepl("One-way", model$method)) {
     .effectsize_oneway.test(model, type = type, verbose = verbose, ...)
   } else if (grepl("McNemar", model$method)) {
@@ -18,7 +21,7 @@ effectsize.htest <- function(model, type = NULL, verbose = TRUE, ...) {
     .effectsize_friedman.test(model, type = type, verbose = verbose, ...)
   } else {
     if (verbose) {
-      warning("This 'htest' method is not (yet?) supported.\n",
+      warning("This 'htest' method is not (yet?, call. = FALSE) supported.\n",
         "Returning 'parameters::model_parameters(model)'.",
         call. = FALSE
       )
@@ -35,63 +38,68 @@ effectsize.htest <- function(model, type = NULL, verbose = TRUE, ...) {
 
   dots <- list(...)
 
-  if (is.null(type)) type <- "d"
+  if (is.null(type) || tolower(type) == "cohens_d") type <- "d"
+  if (tolower(type) == "hedges_g") type <- "g"
 
   dots$alternative <- model$alternative
   dots$ci <- attr(model$conf.int, "conf.level")
   dots$mu <- model$null.value
+  dots$paired <- !grepl("Two", model$method)
+  dots$verbose <- verbose
 
-  if (type == "cles") {
+  if (!type %in% c("d", "g")) {
     .fail_if_approx(approx, "cles")
   }
 
   if (approx) {
     if (verbose) {
-      warning("Unable to retrieve data from htest object. Using t_to_d() approximation.")
+      warning("Unable to retrieve data from htest object. Using t_to_d() approximation.", call. = FALSE)
     }
 
     f <- t_to_d
     args <- list(
       t = unname(model$statistic),
-      df_error = unname(model$parameter),
-      paired = !grepl("Two", model$method),
-      verbose = verbose
+      df_error = unname(model$parameter)
     )
   } else {
     if (grepl(" by ", model$data.name, fixed = TRUE)) {
       data[[2]] <- factor(data[[2]])
     }
 
-    f <- switch(tolower(type),
-      d = ,
-      cohens_d = cohens_d,
-      g = ,
-      hedges_g = hedges_g,
-      cles = cles
-    )
-
     args <- list(
       x = data[[1]],
       y = if (ncol(data) == 2) data[[2]],
-      paired = !grepl("Two", model$method),
-      pooled_sd = !grepl("Welch", model$method),
-      verbose = verbose
+      pooled_sd = !grepl("Welch", model$method)
     )
 
-    if (type == "cles") {
-      if (args$paired || !args$pooled_sd) {
-        stop("Common language effect size only applicable to 2-sample Cohen's d with pooled SD.")
+    if (type %in% c("d", "g")) {
+      f <- switch(tolower(type),
+        d = cohens_d,
+        g = hedges_g
+      )
+    } else {
+      if (!dots$paired && !args$pooled_sd) {
+        stop("Common language effect size only applicable to Cohen's d with pooled SD.", call. = FALSE)
       }
-      args$pooled_sd <- args$paired <- NULL
+
+      f <- switch(tolower(type),
+        u1 = cohens_u1,
+        u2 = cohens_u2,
+        u3 = cohens_u3,
+        vda = ,
+        p_superiority = p_superiority,
+        overlap = p_overlap
+      )
     }
   }
+
   out <- do.call(f, c(args, dots))
   attr(out, "approximate") <- approx
   out
 }
 
 #' @keywords internal
-.effectsize_chisq.test <- function(model, type = NULL, verbose = TRUE, ...) {
+.effectsize_chisq.test_dep <- function(model, type = NULL, verbose = TRUE, ...) {
   # Get data?
   data <- insight::get_data(model)
   approx <- is.null(data)
@@ -101,42 +109,25 @@ effectsize.htest <- function(model, type = NULL, verbose = TRUE, ...) {
   Obs <- model$observed
   Exp <- model$expected
 
-  if (!is.null(dim(Exp))) {
-    if (any(c(colSums(Obs), rowSums(Obs)) == 0L)) {
-      stop("Cannot have empty rows/columns in the contingency tables.", call. = FALSE)
-    }
-    nr <- nrow(Obs)
-    nc <- ncol(Obs)
-  } else {
-    nr <- length(Obs)
-    nc <- 1
+  if (any(c(colSums(Obs), rowSums(Obs)) == 0L)) {
+    stop("Cannot have empty rows/columns in the contingency tables.", call. = FALSE)
   }
+  nr <- nrow(Obs)
+  nc <- ncol(Obs)
 
-  if (is.null(type)) {
-    if (nr == 1 || nc == 1) {
-      type <- "normalized_chi"
-    } else {
-      type <- "cramers_v"
-    }
-  }
+  if (is.null(type)) type <- "cramers_v"
 
-  if (grepl("(c|v|w|phi)$", tolower(type)) || tolower(type) %in% c("normalized_chi", "chi")) {
-    if (tolower(type) %in% c("normalized_chi", "chi")) {
-      p <- Exp
-    } else {
-      p <- NULL
-    }
-
+  if (grepl("(c|v|t|w|phi)$", tolower(type))) {
     f <- switch(tolower(type),
       v = ,
       cramers_v = chisq_to_cramers_v,
+      t = ,
+      tschuprows_t = chisq_to_tschuprows_t,
       w = ,
       cohens_w = chisq_to_cohens_w,
       phi = chisq_to_phi,
       c = ,
-      pearsons_c = chisq_to_pearsons_c,
-      chi = ,
-      normalized_chi = chisq_to_normalized
+      pearsons_c = chisq_to_pearsons_c
     )
 
     out <- f(
@@ -144,7 +135,6 @@ effectsize.htest <- function(model, type = NULL, verbose = TRUE, ...) {
       n = sum(Obs),
       nrow = nr,
       ncol = nc,
-      p = p,
       verbose = verbose,
       ...
     )
@@ -160,6 +150,104 @@ effectsize.htest <- function(model, type = NULL, verbose = TRUE, ...) {
 
     out <- f(x = model$observed, ...)
   }
+
+  attr(out, "approximate") <- FALSE
+  out
+}
+
+#' @keywords internal
+.effectsize_fisher.test <- function(model, type = NULL, verbose = TRUE, ...) {
+  if (is.null(type)) type <- "cramers_v"
+
+  # If OR - return OR
+  if (tolower(type) %in% c("or", "oddsratio")) {
+    out <- data.frame(Odds_ratio = unname(model[["estimate"]]))
+    ci_method <- NULL
+
+    if (!is.null(ci <- model[["conf.int"]])) {
+      out$CI <- attr(ci, "conf.level")
+      out$CI_low <- ci[1]
+      out$CI_high <- ci[2]
+      ci_method <- list("normal")
+    }
+
+    class(out) <- c("effectsize_table", "see_effectsize_table", "data.frame")
+    .someattributes(out) <-
+      .nlist(
+        ci = out$CI, ci_method,
+        approximate = FALSE,
+        alternative = model[["alternative"]]
+      )
+    return(out)
+  }
+
+  dots <- list(...)
+  if (!is.null(model[["conf.int"]])) dots$ci <- attr(model[["conf.int"]], "conf.level")
+  if (!is.null(model[["alternative"]])) dots$alternative <- model[["alternative"]]
+
+  data <- insight::get_data(model)
+  .fail_if_approx(is.null(data), type)
+
+  f <- switch(tolower(type),
+    v = ,
+    cramers_v = cramers_v,
+    t = ,
+    tschuprows_t = tschuprows_t,
+    w = ,
+    cohens_w = cohens_w,
+    phi = phi,
+    c = ,
+    pearsons_c = pearsons_c,
+    or = ,
+    oddsratio = oddsratio,
+    rr = ,
+    riskratio = riskratio,
+    h = ,
+    cohens_h = cohens_h
+  )
+
+  if (is.table(data)) {
+    args <- list(x = data)
+  } else {
+    args <- list(x = data[[1]], y = data[[2]])
+  }
+
+  do.call(f, c(args, dots))
+}
+
+#' @keywords internal
+.effectsize_chisq.test_gof <- function(model, type = NULL, verbose = TRUE, ...) {
+  # Get data?
+  data <- insight::get_data(model)
+  approx <- is.null(data)
+
+  dots <- list(...)
+
+  Obs <- model$observed
+  Exp <- model$expected
+  nr <- length(Obs)
+  p <- Exp
+
+  if (is.null(type)) type <- "fei"
+
+  f <- switch(tolower(type),
+    w = ,
+    cohens_w = chisq_to_cohens_w,
+    c = ,
+    pearsons_c = chisq_to_pearsons_c,
+    fei = chisq_to_fei,
+    stop("The selected effect size is not supported for goodness-of-fit tests.", call. = FALSE)
+  )
+
+  out <- f(
+    chisq = .chisq(Obs, Exp),
+    n = sum(Obs),
+    nrow = nr,
+    ncol = 1,
+    p = p,
+    verbose = verbose,
+    ...
+  )
 
   attr(out, "approximate") <- FALSE
   out
@@ -234,35 +322,36 @@ effectsize.htest <- function(model, type = NULL, verbose = TRUE, ...) {
 
   dots <- list(...)
 
-  if (is.null(type)) type <- "rb"
+  if (is.null(type) || tolower(type) == "rank_biserial") type <- "rb"
 
   dots$alternative <- model$alternative
   dots$ci <- attr(model$conf.int, "conf.level")
   dots$mu <- model$null.value
+  dots$paired <- grepl("signed rank", model$method, fixed = TRUE)
 
-  .fail_if_approx(approx, ifelse(type == "cles", "cles", "rank_biserial"))
+  .fail_if_approx(approx, type)
 
   f <- switch(tolower(type),
-    r = ,
-    rb = ,
-    rbs = ,
-    r_rank_biserial = ,
-    rank_biserial = rank_biserial,
-    cles = cles
+    rb = rank_biserial,
+    u1 = cohens_u1,
+    u2 = cohens_u2,
+    u3 = cohens_u3,
+    overlap = p_overlap,
+    vda = ,
+    p_superiority = p_superiority,
+    wmw_odds = wmw_odds
   )
 
   args <- list(
     x = data[[1]],
     y = if (ncol(data) == 2) data[[2]],
-    paired = grepl("signed rank", model$method, fixed = TRUE),
     verbose = verbose
   )
 
-  if (type == "cles") {
-    if (args$paired) {
-      stop("Common language effect size only applicable to 2-sample rank-biserial correlation.")
+  if (tolower(type) != "rb") {
+    if (dots$paired) {
+      stop("Common language effect size only applicable to 2-sample rank-biserial correlation.", call. = FALSE)
     }
-    args$paired <- NULL
     args$parametric <- FALSE
   }
 
@@ -278,14 +367,20 @@ effectsize.htest <- function(model, type = NULL, verbose = TRUE, ...) {
 
   dots <- list(...)
 
+  if (is.null(type)) type <- "epsilon"
+
   .fail_if_approx(approx, "rank_epsilon_squared")
 
+  f <- switch(type,
+    epsilon = rank_epsilon_squared,
+    eta = rank_eta_squared
+  )
 
   if (inherits(data, "data.frame")) {
-    out <- rank_epsilon_squared(data[[1]], data[[2]], verbose = verbose, ...)
+    out <- f(data[[1]], data[[2]], verbose = verbose, ...)
   } else {
     # data frame
-    out <- rank_epsilon_squared(data, verbose = verbose, ...)
+    out <- f(data, verbose = verbose, ...)
   }
   out
 }
@@ -307,7 +402,6 @@ effectsize.htest <- function(model, type = NULL, verbose = TRUE, ...) {
   out <- kendalls_w(data[[1]], data[[2]], data[[3]], verbose = verbose, ...)
   out
 }
-
 
 # Utils -------------------------------------------------------------------
 

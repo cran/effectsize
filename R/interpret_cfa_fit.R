@@ -1,4 +1,4 @@
-#' Interpret of indices of CFA / SEM goodness of fit
+#' Interpret of CFA / SEM Indices of Goodness of Fit
 #'
 #' Interpretation of indices of fit found in confirmatory analysis or structural
 #' equation modelling, such as RMSEA, CFI, NFI, IFI, etc.
@@ -107,6 +107,8 @@
 #' - Kline, R. B. (2015). Principles and practice of structural equation
 #' modeling. Guilford publications.
 #'
+#'
+#' @keywords interpreters
 #' @export
 interpret_gfi <- function(x, rules = "default") {
   rules <- .match.rules(

@@ -13,8 +13,7 @@
 \alias{t_to_f}
 \alias{F_to_f2}
 \alias{t_to_f2}
-\title{Convert test statistics (F, t) to indices of \strong{partial} variance explained
-(\strong{partial} Eta / Omega / Epsilon squared and Cohen's f)}
+\title{Convert \emph{F} and \emph{t} Statistics to \strong{partial}-\eqn{\eta^2} and Other ANOVA Effect Sizes}
 \usage{
 F_to_eta2(f, df, df_error, ci = 0.95, alternative = "greater", ...)
 
@@ -36,25 +35,25 @@ F_to_f(
   f,
   df,
   df_error,
+  squared = FALSE,
   ci = 0.95,
   alternative = "greater",
-  squared = FALSE,
   ...
 )
 
-t_to_f(t, df_error, ci = 0.95, alternative = "greater", squared = FALSE, ...)
+t_to_f(t, df_error, squared = FALSE, ci = 0.95, alternative = "greater", ...)
 
 F_to_f2(
   f,
   df,
   df_error,
+  squared = TRUE,
   ci = 0.95,
   alternative = "greater",
-  squared = TRUE,
   ...
 )
 
-t_to_f2(t, df_error, ci = 0.95, alternative = "greater", squared = TRUE, ...)
+t_to_f2(t, df_error, squared = TRUE, ci = 0.95, alternative = "greater", ...)
 }
 \arguments{
 \item{df, df_error}{Degrees of freedom of numerator or of the error estimate
@@ -122,7 +121,6 @@ designs.
 Adjusted (partial) Eta-squared is an alias for (partial) Epsilon-squared.
 }
 \section{Confidence (Compatibility) Intervals (CIs)}{
-
 Unless stated otherwise, confidence (compatibility) intervals (CIs) are
 estimated using the noncentrality parameter method (also called the "pivot
 method"). This method finds the noncentrality parameter ("\emph{ncp}") of a
@@ -139,7 +137,6 @@ For additional details on estimation and troubleshooting, see \link{effectsize_C
 }
 
 \section{CIs and Significance Tests}{
-
 "Confidence intervals on measures of effect size convey all the information
 in a hypothesis test, and more." (Steiger, 2004). Confidence (compatibility)
 intervals and p values are complementary summaries of parameter uncertainty
@@ -190,14 +187,14 @@ F_to_epsilon2(16.501, 1, 9)
 F_to_f(16.501, 1, 9)
 }
 
-#' @examplesIf require(lmerTest)
-\donttest{
-## Use with emmeans based contrasts
-## --------------------------------
-warp.lm <- lm(breaks ~ wool * tension, data = warpbreaks)
+#' @examplesIf require(emmeans)
+if (require(emmeans)) {
+  ## Use with emmeans based contrasts
+  ## --------------------------------
+  warp.lm <- lm(breaks ~ wool * tension, data = warpbreaks)
 
-jt <- emmeans::joint_tests(warp.lm, by = "wool")
-F_to_eta2(jt$F.ratio, jt$df1, jt$df2)
+  jt <- emmeans::joint_tests(warp.lm, by = "wool")
+  F_to_eta2(jt$F.ratio, jt$df1, jt$df2)
 }
 \dontshow{\}) # examplesIf}
 }

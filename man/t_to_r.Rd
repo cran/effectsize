@@ -7,20 +7,11 @@
 \alias{t_to_r}
 \alias{z_to_r}
 \alias{F_to_r}
-\title{Convert test statistics (t, z, F) to effect sizes of differences (Cohen's d)
-or association (\strong{partial} r)}
+\title{Convert \emph{t}, \emph{z}, and \emph{F} to Cohen's \emph{d} or \strong{partial}-\emph{r}}
 \usage{
-t_to_d(
-  t,
-  df_error,
-  paired = FALSE,
-  ci = 0.95,
-  alternative = "two.sided",
-  pooled,
-  ...
-)
+t_to_d(t, df_error, paired = FALSE, ci = 0.95, alternative = "two.sided", ...)
 
-z_to_d(z, n, paired = FALSE, ci = 0.95, alternative = "two.sided", pooled, ...)
+z_to_d(z, n, paired = FALSE, ci = 0.95, alternative = "two.sided", ...)
 
 F_to_d(
   f,
@@ -50,8 +41,6 @@ difference between dependent means?}
 Controls the type of CI returned: \code{"two.sided"} (default, two-sided CI),
 \code{"greater"} or \code{"less"} (one-sided CI). Partial matching is allowed (e.g.,
 \code{"g"}, \code{"l"}, \code{"two"}...). See \emph{One-Sided CIs} in \link{effectsize_CIs}.}
-
-\item{pooled}{Deprecated. Use \code{paired}.}
 
 \item{...}{Arguments passed to or from other methods.}
 
@@ -92,7 +81,6 @@ estimate Cohen's \emph{d}, with \code{\link[=cohens_d]{cohens_d()}}, \code{emmea
 functions.
 }
 \section{Confidence (Compatibility) Intervals (CIs)}{
-
 Unless stated otherwise, confidence (compatibility) intervals (CIs) are
 estimated using the noncentrality parameter method (also called the "pivot
 method"). This method finds the noncentrality parameter ("\emph{ncp}") of a
@@ -109,7 +97,6 @@ For additional details on estimation and troubleshooting, see \link{effectsize_C
 }
 
 \section{CIs and Significance Tests}{
-
 "Confidence intervals on measures of effect size convey all the information
 in a hypothesis test, and more." (Steiger, 2004). Confidence (compatibility)
 intervals and p values are complementary summaries of parameter uncertainty
@@ -177,6 +164,8 @@ distributions. Educational and Psychological Measurement, 61(4), 532-574.
 }
 }
 \seealso{
+\code{\link[=cohens_d]{cohens_d()}}
+
 Other effect size from test statistic: 
 \code{\link{F_to_eta2}()},
 \code{\link{chisq_to_phi}()}

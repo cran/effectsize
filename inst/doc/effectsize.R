@@ -6,6 +6,7 @@ knitr::opts_chunk$set(
 
 ## -----------------------------------------------------------------------------
 library(effectsize)
+options(es.use_symbols = TRUE) # get nice symbols when printing! (On Windows, requires R >= 4.2.0)
 
 cohens_d(mpg ~ am, data = mtcars)
 
@@ -17,6 +18,21 @@ M <- rbind(
 )
 
 cramers_v(M)
+
+## -----------------------------------------------------------------------------
+model <- lm(mpg ~ cyl * am,
+            data = mtcars)
+
+datawizard::standardize(model)
+
+parameters::standardize_parameters(model)
+
+## -----------------------------------------------------------------------------
+model <- glm(am ~ cyl + hp,
+             family = "binomial",
+             data = mtcars)
+
+parameters::standardize_parameters(model, exponentiate = TRUE)
 
 ## -----------------------------------------------------------------------------
 options(contrasts = c("contr.sum", "contr.poly"))

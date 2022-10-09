@@ -12,7 +12,7 @@
 
 
 
-<title>Support functions for model extensions</title>
+<title>Support Functions for Model Extensions</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -330,7 +330,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 
-<h1 class="title toc-ignore">Support functions for model extensions</h1>
+<h1 class="title toc-ignore">Support Functions for Model Extensions</h1>
 
 
 <div id="TOC">
@@ -391,10 +391,9 @@ for <code>Parameter</code>.</p>
 <p>The output is a data frame with the columns: <code>Parameter</code>,
 the effect size, and (optionally) <code>CI</code> + <code>CI_low</code>
 + <code>CI_high</code>,</p>
-<p>And with the following attributes: <code>partial</code>,
-<code>generalized</code>, <code>ci</code>, <code>alternative</code>,
-<code>anova_type</code> (<code>NA</code> or <code>NULL</code>),
-<code>approximate</code>.</p>
+<p>And with the following attributes: <code>generalized</code>,
+<code>ci</code>, <code>alternative</code>, <code>anova_type</code>
+(<code>NA</code> or <code>NULL</code>), <code>approximate</code>.</p>
 <p>You can then set the <code>anova_type</code> attribute to {1, 2, 3,
 or <code>NA</code>} and return the output.</p>
 </div>
@@ -438,9 +437,8 @@ list of predictors (including the stratifying variables) to the
 <p>The output is a data frame with the columns: <code>Group</code>,
 <code>Parameter</code>, the effect size, and (optionally)
 <code>CI</code> + <code>CI_low</code> + <code>CI_high</code>,</p>
-<p>And with the following attributes: <code>partial</code>,
-<code>generalized</code>, <code>ci</code>, <code>alternative</code>,
-<code>approximate</code>.</p>
+<p>And with the following attributes: <code>generalized</code>,
+<code>ci</code>, <code>alternative</code>, <code>approximate</code>.</p>
 <p>You can then set the <code>anova_type</code> attribute to {1, 2, 3,
 or <code>NA</code>} and return the output.</p>
 </div>
@@ -482,9 +480,8 @@ family of functions.</p>
 <p>The output is a data frame with the columns: <code>Parameter</code>,
 the effect size, and (optionally) <code>CI</code> + <code>CI_low</code>
 + <code>CI_high</code>,</p>
-<p>And with the following attributes: <code>partial</code>,
-<code>generalized</code>, <code>ci</code>, <code>alternative</code>,
-<code>approximate</code>.</p>
+<p>And with the following attributes: <code>generalized</code>,
+<code>ci</code>, <code>alternative</code>, <code>approximate</code>.</p>
 <p>You can then set the <code>anova_type</code> attribute to {1, 2, 3,
 or <code>NA</code>} and return the output, and optionally the
 <code>approximate</code> attribute, and return the output.</p>
@@ -518,16 +515,16 @@ fully supported!</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">eta_squared</span>(mod)</span></code></pre></div>
 <pre><code>&gt; # Effect Size for ANOVA (Type I)
 &gt; 
-&gt; Parameter   | Eta2 (partial) |       95% CI
-&gt; -------------------------------------------
-&gt; factor(cyl) |           0.76 | [0.61, 1.00]
-&gt; am          |           0.12 | [0.00, 1.00]
+&gt; Parameter   | η² (partial) |       95% CI
+&gt; -----------------------------------------
+&gt; factor(cyl) |         0.76 | [0.61, 1.00]
+&gt; am          |         0.12 | [0.00, 1.00]
 &gt; 
 &gt; - One-sided CIs: upper bound fixed at [1.00].</code></pre>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">eta_squared</span>(mod, <span class="at">partial =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <pre><code>&gt; # Effect Size for ANOVA (Type I)
 &gt; 
-&gt; Parameter   | Eta2 |       95% CI
+&gt; Parameter   |   η² |       95% CI
 &gt; ---------------------------------
 &gt; factor(cyl) | 0.73 | [0.57, 1.00]
 &gt; am          | 0.03 | [0.00, 1.00]
@@ -536,10 +533,10 @@ fully supported!</p>
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">omega_squared</span>(mod)</span></code></pre></div>
 <pre><code>&gt; # Effect Size for ANOVA (Type I)
 &gt; 
-&gt; Parameter   | Omega2 (partial) |       95% CI
-&gt; ---------------------------------------------
-&gt; factor(cyl) |             0.73 | [0.56, 1.00]
-&gt; am          |             0.08 | [0.00, 1.00]
+&gt; Parameter   | ω² (partial) |       95% CI
+&gt; -----------------------------------------
+&gt; factor(cyl) |         0.73 | [0.56, 1.00]
+&gt; am          |         0.08 | [0.00, 1.00]
 &gt; 
 &gt; - One-sided CIs: upper bound fixed at [1.00].</code></pre>
 <div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Etc...</span></span></code></pre></div>

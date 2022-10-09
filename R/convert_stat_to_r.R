@@ -1,7 +1,6 @@
 # t -----------------------------------------------------------------------
 
-#' Convert test statistics (t, z, F) to effect sizes of differences (Cohen's d)
-#' or association (**partial** r)
+#' Convert *t*, *z*, and *F* to Cohen's *d* or **partial**-*r*
 #'
 #' These functions are convenience functions to convert t, z and F test
 #' statistics to Cohen's d and **partial** r. These are useful in cases where
@@ -17,12 +16,7 @@
 #' @param n The number of observations (the sample size).
 #' @param paired Should the estimate account for the t-value being testing the
 #'   difference between dependent means?
-#' @param alternative a character string specifying the alternative hypothesis;
-#'   Controls the type of CI returned: `"two.sided"` (default, two-sided CI),
-#'   `"greater"` or `"less"` (one-sided CI). Partial matching is allowed (e.g.,
-#'   `"g"`, `"l"`, `"two"`...). See *One-Sided CIs* in [effectsize_CIs].
-#' @param pooled Deprecated. Use `paired`.
-#' @inheritParams chisq_to_phi
+#' @inheritParams cohens_d
 #' @param ... Arguments passed to or from other methods.
 #'
 #'
@@ -51,6 +45,7 @@
 #' @inheritSection effectsize_CIs CIs and Significance Tests
 #'
 #' @family effect size from test statistic
+#' @seealso [cohens_d()]
 #'
 #' @examples
 #' ## t Tests
@@ -100,7 +95,9 @@
 #' distributions. Educational and Psychological Measurement, 61(4), 532-574.
 #'
 #' @export
-t_to_r <- function(t, df_error, ci = 0.95, alternative = "two.sided", ...) {
+t_to_r <- function(t, df_error,
+                   ci = 0.95, alternative = "two.sided",
+                   ...) {
   alternative <- match.arg(alternative, c("two.sided", "less", "greater"))
 
   res <- data.frame(r = t / sqrt(t^2 + df_error))
@@ -143,7 +140,9 @@ t_to_r <- function(t, df_error, ci = 0.95, alternative = "two.sided", ...) {
 #' @rdname t_to_r
 #' @importFrom stats qnorm
 #' @export
-z_to_r <- function(z, n, ci = 0.95, alternative = "two.sided", ...) {
+z_to_r <- function(z, n,
+                   ci = 0.95, alternative = "two.sided",
+                   ...) {
   alternative <- match.arg(alternative, c("two.sided", "less", "greater"))
 
   res <- data.frame(r = z / sqrt(z^2 + n))
@@ -184,9 +183,14 @@ z_to_r <- function(z, n, ci = 0.95, alternative = "two.sided", ...) {
 
 #' @rdname t_to_r
 #' @export
-F_to_r <- function(f, df, df_error, ci = 0.95, alternative = "two.sided", ...) {
+F_to_r <- function(f, df, df_error,
+                   ci = 0.95, alternative = "two.sided",
+                   ...) {
   if (df > 1) {
-    stop("Cannot convert F with more than 1 df to r.")
+    stop("Cannot convert F with more than 1 df to r.", call. = FALSE)
   }
-  t_to_r(sqrt(f), df_error, ci = ci, alternative = alternative, ...)
+  t_to_r(sqrt(f), df_error,
+    ci = ci, alternative = alternative,
+    ...
+  )
 }

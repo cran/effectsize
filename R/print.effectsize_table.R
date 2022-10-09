@@ -1,30 +1,31 @@
-#' Methods for `effectsize` tables
+#' Methods for `{effectsize}` Tables
 #'
 #' Printing, formatting and plotting methods for `effectsize` tables.
 #'
 #' @param x Object to print.
 #' @inheritParams insight::format_value
+#' @inheritParams is_effectsize_name
 #' @param ... Arguments passed to or from other functions.
 #'
 #' @seealso [insight::display()]
 #'
 #' @export
-print.effectsize_table <- function(x, digits = 2, ...) {
-  x_fmt <- format(x, digits = digits, output = "text", ...)
+print.effectsize_table <- function(x, digits = 2, use_symbols = getOption("es.use_symbols", FALSE), ...) {
+  x_fmt <- format(x, digits = digits, output = "text", use_symbols = use_symbols, ...)
   cat(insight::export_table(x_fmt, format = NULL, ...))
   invisible(x)
 }
 
 #' @export
 #' @rdname print.effectsize_table
-print_md.effectsize_table <- function(x, digits = 2, ...) {
+print_md.effectsize_table <- function(x, digits = 2, use_symbols = getOption("es.use_symbols", FALSE), ...) {
   x_fmt <- format(x, digits = digits, output = "markdown", ...)
   insight::export_table(x_fmt, format = "markdown", ...)
 }
 
 #' @export
 #' @rdname print.effectsize_table
-print_html.effectsize_table <- function(x, digits = 2, ...) {
+print_html.effectsize_table <- function(x, digits = 2, use_symbols = getOption("es.use_symbols", FALSE), ...) {
   x_fmt <- format(x, digits = digits, output = "html", ...)
   insight::export_table(x_fmt, format = "html", ...)
 }
@@ -33,7 +34,7 @@ print_html.effectsize_table <- function(x, digits = 2, ...) {
 #' @param output Which output is the formatting intended for? Affects how title
 #'   and footers are formatted.
 #' @export
-format.effectsize_table <- function(x, digits = 2, output = c("text", "markdown", "html"), ...) {
+format.effectsize_table <- function(x, digits = 2, output = c("text", "markdown", "html"), use_symbols = getOption("es.use_symbols", FALSE), ...) {
   output <- match.arg(output)
 
   ## Clean footer
@@ -92,7 +93,7 @@ format.effectsize_table <- function(x, digits = 2, output = c("text", "markdown"
 
   ## Clean column names
   i <- is_effectsize_name(colnames(x))
-  labs <- get_effectsize_label(colnames(x))
+  labs <- get_effectsize_label(colnames(x), use_symbols = use_symbols)
   colnames(x)[i] <- labs[i]
 
   attr(x, "ci") <- NULL
@@ -109,30 +110,41 @@ format.effectsize_table <- function(x, digits = 2, output = c("text", "markdown"
 
 #' @export
 #' @rdname print.effectsize_table
-#' @param append_CLES Should the Common Language Effect Sizes be printed as well?
-#'   Only applicable to Cohen's *d*, Hedges' *g* for independent samples of
-#'   equal variance (pooled sd) or for the rank-biserial correlation for
-#'   independent samples (See [d_to_cles()])
-print.effectsize_difference <- function(x, digits = 2, append_CLES = FALSE, ...) {
+#' @param append_CLES Which Common Language Effect Sizes should be printed as
+#'   well? Only applicable to Cohen's *d*, Hedges' *g* for independent samples
+#'   of equal variance (pooled sd) or for the rank-biserial correlation for
+#'   independent samples (See [d_to_cles]).
+print.effectsize_difference <- function(x, digits = 2, append_CLES = NULL, ...) {
   x_orig <- x
 
   print.effectsize_table(x, digits = digits, ...)
 
-  if (append_CLES) {
-    if ("r_rank_biserial" %in% colnames(x_orig)) {
-      to_cl_coverter <- rb_to_cles
+  if (is.logical(append_CLES) || is.character(append_CLES)) {
+    if (colnames(x_orig)[1] == "r_rank_biserial") {
+      cles_tab <- rb_to_p_superiority(x_orig)
+    } else if (colnames(x_orig)[1] %in% c("Cohens_d", "Hedges_g")) {
+      if (isTRUE(append_CLES)) {
+        append_CLES <- c("p_superiority", "u1", "u2", "u3", "overlap")
+      }
+
+      foos <- lapply(paste0("d_to_", append_CLES), match.fun)
+      cles <- lapply(foos, function(f) f(x_orig))
+      names(cles) <- sapply(cles, function(x) colnames(x)[1])
+      cles <- lapply(cles, function(x) {
+        colnames(x)[1] <- "CLES"
+        x
+      })
+
+      cles_tab <- do.call(rbind, cles)
+      cles_tab$Name <- get_effectsize_label(names(cles))
+
+      cles_tab <- cles_tab[c(ncol(cles_tab), seq_len(ncol(cles_tab) - 1))]
     } else {
-      to_cl_coverter <- d_to_cles
+      stop("CLES not applicable for this effect size.", call. = FALSE)
     }
 
-    tryCatch(
-      {
-        insight::print_color("\n\n## Common Language Effect Sizes:\n", .pcl["subtitle"])
-        CL <- to_cl_coverter(x_orig)
-        print(CL, digits = digits)
-      },
-      error = function(...) invisible(NULL)
-    )
+    insight::print_color("\n\n## Common Language Effect Sizes:\n", .pcl["subtitle"])
+    print(cles_tab, digits = digits, ...)
   }
 
   invisible(x_orig)
@@ -147,7 +159,7 @@ format.effectsize_difference <- function(x, digits = 2, ...) {
   ## Add footer
   mu <- attr(x, "mu")
   if (mu != 0) {
-    mu_footer <- sprintf("Deviation from a difference of %s.", mu)
+    mu_footer <- sprintf("Deviation from a difference of %g.", mu)
     footer <- c(footer, mu_footer)
   }
 

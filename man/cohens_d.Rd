@@ -4,7 +4,7 @@
 \alias{cohens_d}
 \alias{hedges_g}
 \alias{glass_delta}
-\title{Effect size for differences}
+\title{Cohen's \emph{d} and Other Standardized Differences}
 \usage{
 cohens_d(
   x,
@@ -44,10 +44,10 @@ glass_delta(
 )
 }
 \arguments{
-\item{x}{A formula, a numeric vector, or a character name of one in \code{data}.}
-
-\item{y}{A numeric vector, a grouping (character / factor) vector, a or a
-character  name of one in \code{data}. Ignored if \code{x} is a formula.}
+\item{x, y}{A numeric vector, or a character name of one in \code{data}.
+Any missing values (\code{NA}s) are dropped from the resulting vector.
+\code{x} can also be a formula (see \code{\link[stats:t.test]{stats::t.test()}}), in which case \code{y} is
+ignored.}
 
 \item{data}{An optional data frame containing the variables.}
 
@@ -80,7 +80,7 @@ A data frame with the effect size ( \code{Cohens_d}, \code{Hedges_g},
 \description{
 Compute effect size indices for standardized differences: Cohen's \emph{d},
 Hedges' \emph{g} and Glass’s \emph{delta} (\eqn{\Delta}). (This function returns the
-\strong{population} estimate.)
+\strong{population} estimate.) Pair with any reported \code{\link[stats:t.test]{stats::t.test()}}.
 \cr\cr
 Both Cohen's \emph{d} and Hedges' \emph{g} are the estimated the standardized
 difference between the means of two populations. Hedges' \emph{g} provides a bias
@@ -100,7 +100,6 @@ Some statistical packages give the sample estimate instead (without
 applying Bessel's correction).
 }
 \section{Confidence (Compatibility) Intervals (CIs)}{
-
 Unless stated otherwise, confidence (compatibility) intervals (CIs) are
 estimated using the noncentrality parameter method (also called the "pivot
 method"). This method finds the noncentrality parameter ("\emph{ncp}") of a
@@ -117,7 +116,6 @@ For additional details on estimation and troubleshooting, see \link{effectsize_C
 }
 
 \section{CIs and Significance Tests}{
-
 "Confidence intervals on measures of effect size convey all the information
 in a hypothesis test, and more." (Steiger, 2004). Confidence (compatibility)
 intervals and p values are complementary summaries of parameter uncertainty
@@ -193,7 +191,7 @@ interpret_glass_delta(-1.48, rules = "gignac2016")
 interpret(d, rules = "sawilowsky2009")
 
 # Common Language Effect Sizes
-d_to_cles(1.48)
+d_to_u3(1.48)
 # Or:
 print(d, append_CLES = TRUE)
 }
@@ -216,13 +214,11 @@ Correcting error and bias in research findings. Sage.
 }
 }
 \seealso{
-\code{\link[=d_to_cles]{d_to_cles()}} \code{\link[=sd_pooled]{sd_pooled()}}
+\code{\link[=sd_pooled]{sd_pooled()}}, \code{\link[=t_to_d]{t_to_d()}}, \code{\link[=r_to_d]{r_to_d()}}
 
-Other effect size indices: 
-\code{\link{cles}()},
-\code{\link{effectsize.BFBayesFactor}()},
-\code{\link{eta_squared}()},
-\code{\link{phi}()},
+Other standardized differences: 
+\code{\link{mahalanobis_d}()},
+\code{\link{p_superiority}()},
 \code{\link{rank_biserial}()}
 }
-\concept{effect size indices}
+\concept{standardized differences}

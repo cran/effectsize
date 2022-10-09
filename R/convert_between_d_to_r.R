@@ -1,4 +1,4 @@
-#' Convert between *d*, *r* and *Odds ratio*
+#' Convert Between *d*, *r*, and Odds Ratio
 #'
 #' Enables a conversion between different indices of effect size, such as
 #' standardized difference (Cohen's d), correlation r or (log) odds ratios.
@@ -10,6 +10,7 @@
 #' @param ... Arguments passed to or from other methods.
 #'
 #' @family convert between effect sizes
+#' @seealso [cohens_d()]
 #'
 #' @examples
 #' r_to_d(0.5)
@@ -23,11 +24,13 @@
 #' @return Converted index.
 #'
 #' @details
-#' Conversions between *d* and *OR* or *r* is done through these formulae.
-#' - \eqn{d = \frac{2 * r}{\sqrt{1 - r^2}}}{d = 2 * r / sqrt(1 - r^2)}
-#' - \eqn{r = \frac{d}{\sqrt{d^2 + 4}}}{r = d / sqrt(d^2 + 4)}
+#' Conversions between *d* and *OR* is done through these formulae:
 #' - \eqn{d = \frac{\log(OR)\times\sqrt{3}}{\pi}}{d = log(OR) * sqrt(3) / pi}
 #' - \eqn{log(OR) = d * \frac{\pi}{\sqrt(3)}}{log(OR) = d * pi / sqrt(3)}
+#'
+#' Converting between *d* and *r* is done through these formulae:
+#' - \eqn{d = \frac{2 * r}{\sqrt{1 - r^2}}}{d = 2 * r / sqrt(1 - r^2)}
+#' - \eqn{r = \frac{d}{\sqrt{d^2 + 4}}}{r = d / sqrt(d^2 + 4)}
 #'
 #' The conversion from *d* to *r* assumes equally sized groups. The resulting
 #' *r* is also called the binomial effect size display (BESD; Rosenthal et al.,

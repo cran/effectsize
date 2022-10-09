@@ -1,4 +1,4 @@
-#' Effect Size
+#' Effect Sizes
 #'
 #' This function tries to return the best effect-size measure for the provided
 #' input model. See details.
@@ -11,21 +11,21 @@
 #' @details
 #'
 #' - For an object of class `htest`, data is extracted via [insight::get_data()], and passed to the relevant function according to:
-#'   - A **t-test** depending on `type`: `"cohens_d"` (default), `"hedges_g"`, or `"cles"`.
-#'   - A **Chi-squared tests of independence**, depending on `type`: `"cramers_v"` (default), `"phi"`, `"cohens_w"`, `"pearsons_c"`, `"cohens_h"`, `"oddsratio"`, or `"riskratio"`.
-#'   - A **Chi-squared tests of goodness-of-fit**, depending on `type`: `"normalized_chi"` (default) `"cohens_w"`, `"pearsons_c"`
+#'   - A **t-test** depending on `type`: `"cohens_d"` (default), `"hedges_g"`, or one of `"p_superiority"`, `"u1"`, `"u2"`, `"u3"`, `"overlap"`.
+#'   - A **Chi-squared tests of independence** or **Fisher's Exact Test**, depending on `type`: `"cramers_v"` (default), `"tschuprows_t"`, `"phi"`, `"cohens_w"`, `"pearsons_c"`, `"cohens_h"`, `"oddsratio"`, or `"riskratio"`.
+#'   - A **Chi-squared tests of goodness-of-fit**, depending on `type`: `"fei"` (default) `"cohens_w"`, `"pearsons_c"`
 #'   - A **One-way ANOVA test**, depending on `type`: `"eta"` (default), `"omega"` or `"epsilon"` -squared, `"f"`, or `"f2"`.
 #'   - A **McNemar test** returns *Cohen's g*.
-#'   - A **Wilcoxon test** depending on `type`: returns "`rank_biserial`" correlation (default) or `"cles"`.
-#'   - A **Kruskal-Wallis test** returns *rank Epsilon squared*.
+#'   - A **Wilcoxon test** depending on `type`: returns "`rank_biserial`" correlation (default) or one of `"p_superiority"`, `"vda"`, `"u2"`, `"u3"`, `"overlap"`.
+#'   - A **Kruskal-Wallis test** depending on `type`: `"epsilon"` (default) or `"eta"`.
 #'   - A **Friedman test** returns *Kendall's W*.
 #'   (Where applicable, `ci` and `alternative` are taken from the `htest` if not otherwise provided.)
 #' - For an object of class `BFBayesFactor`, using [bayestestR::describe_posterior()],
-#'   - A **t-test** depending on `type`: "cohens_d"` (default) or `"cles"`.
+#'   - A **t-test** depending on `type`: `"cohens_d"` (default) or one of `"p_superiority"`, `"u1"`, `"u2"`, `"u3"`, `"overlap"`.
 #'   - A **correlation test** returns *r*.
-#'   - A **contingency table test**, depending on `type`: `"cramers_v"` (default), `"phi"`, `"cohens_w"`, `"pearsons_c"`, `"cohens_h"`, `"oddsratio"`, or `"riskratio"`.
+#'   - A **contingency table test**, depending on `type`: `"cramers_v"` (default), `"phi"`, `"tschuprows_t"`, `"cohens_w"`, `"pearsons_c"`, `"cohens_h"`, `"oddsratio"`, or `"riskratio"`.
 #'   - A **proportion test** returns *p*.
-#' - Objects of class `anova`, `aov`, or `aovlist`, depending on `type`: `"eta"` (default), `"omega"` or `"epsilon"` -squared, `"f"`, or `"f2"`.
+#' - Objects of class `anova`, `aov`, `aovlist` or `afex_aov`, depending on `type`: `"eta"` (default), `"omega"` or `"epsilon"` -squared, `"f"`, or `"f2"`.
 #' - Other objects are passed to [parameters::standardize_parameters()].
 #'
 #' **For statistical models it is recommended to directly use the listed
@@ -34,14 +34,14 @@
 #' @return A data frame with the effect size (depending on input) and and its
 #'   CIs (`CI_low` and `CI_high`).
 #'
-#' @family effect size indices
+#' @seealso `vignette(package = "effectsize")`
 #'
 #' @examples
 #'
 #' ## Hypothesis Testing
 #' ## ------------------
-#' contingency_table <- as.table(rbind(c(762, 327, 468), c(484, 239, 477), c(484, 239, 477)))
-#' Xsq <- chisq.test(contingency_table)
+#' data("Music_preferences")
+#' Xsq <- chisq.test(Music_preferences)
 #' effectsize(Xsq)
 #' effectsize(Xsq, type = "cohens_w")
 #'
@@ -54,7 +54,7 @@
 #'
 #' Wt <- wilcox.test(1:10, 7:20, mu = -3, alternative = "less")
 #' effectsize(Wt)
-#' effectsize(Wt, type = "cles")
+#' effectsize(Wt, type = "u2")
 #'
 #' ## Bayesian Hypothesis Testing
 #' ## ---------------------------

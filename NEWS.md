@@ -1,3 +1,40 @@
+# effectsize 0.8.0
+
+## Breaking Changes
+
+- `{effectsize}` now requires *`R >= 3.6`*
+- `fei()`, `cohens_w()` and `pearsons_c()` always rescale the `p` input to sum-to-1.
+- The order of some function arguments have been rearranged to be more consistent across functions:
+(`phi()`, `cramers_v()`, `p_superiority()`, `cohens_u3()`, `p_overlap()`, `rank_biserial()`, `cohens_f/_squared()`, `chisq_to_phi()`, `chisq_to_cramers_v()`, `F/t_to_f/2()`, `.es_aov_*()`).
+- `normalized_chi()` has been renamed `fei()`.
+- `cles`, `d_to_cles` and `rb_to_cles` are deprecated in favor of their respective effect size functions.
+
+## Changes
+
+- `phi()` and `cramers_v()` (and `chisq_to_phi/cramers_v()`) now apply the small sample bias correction by default. To restore previous behavior, set `adjust = FALSE`.
+
+## New features
+
+- Set `options(es.use_symbols = TRUE)` to print proper symbols instead of transliterated effect size names. (On Windows, requires `R >= 4.2.0`)
+- `effectsize()` supports `fisher.test()`.
+- New datasets used in examples and vignettes - see `data(package = "effectsize")`.
+- `tschuprows_t()` and `chisq_to_tschuprows_t()` for computing Tschuprow's *T* - a relative of Cramer's *V*.
+- `mahalanobis_d()` for multivariate standardized differences.
+- Rank based effect sizes now accept ordered (`ordered()`) outcomes.
+- `rank_eta_squared()` for one-way rank ANOVA.
+- For Common Language Effect Sizes:
+    - `wmw_odds()` and `rb_to_wmw_odds` for the Wilcoxon-Mann-Whitney odds (thanks @arcaldwell49! #479).
+    - `p_superiority()` now supports paired and one-sample cases.
+    - `vd_a()` and `rb_to_vda()` for Vargha and Delaney's *A* dominance effect size (aliases for `p_superiority(parametric = FALSE)` and `rb_to_p_superiority()`).
+    - `cohens_u1()`, `cohens_u2()`, `d_to_u1()`, and `d_to_u2()` added for Cohen's U1 and U2.
+
+## Bug fixes
+
+- Common-language effect sizes now respects `mu` argument for all effect sizes.
+- `mad_pooled()` not returns correct value (previously was inflated by a factor of 1.4826).
+- `pearsons_c()` and `chisq_to_pearsons_c()` lose the `adjust` argument which applied an irrelevant adjustment to the effect size.
+- Effect sizes for goodness-of-fit now work when passing a `p` that is a table.
+
 # effectsize 0.7.0.5
 
 ## Breaking Changes

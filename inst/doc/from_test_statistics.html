@@ -435,17 +435,18 @@ fixed or random effects). The most popular of these indices is <span class="math
 <code>pes</code> column) obtained here with ones recovered from
 <code>F_to_eta2()</code>:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(effectsize)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">F_to_eta2</span>(</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">f =</span> <span class="fu">c</span>(<span class="fl">40.72</span>, <span class="fl">33.77</span>, <span class="fl">45.31</span>),</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">df =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">2</span>),</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">df_error =</span> <span class="fu">c</span>(<span class="dv">18</span>, <span class="dv">9</span>, <span class="dv">18</span>)</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
-<pre><code>&gt; Eta2 (partial) |       95% CI
-&gt; -----------------------------
-&gt; 0.82           | [0.66, 1.00]
-&gt; 0.79           | [0.49, 1.00]
-&gt; 0.83           | [0.69, 1.00]
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">es.use_symbols =</span> <span class="cn">TRUE</span>) <span class="co"># get nice symbols when printing! (On Windows, requires R &gt;= 4.2.0)</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">F_to_eta2</span>(</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">f =</span> <span class="fu">c</span>(<span class="fl">40.72</span>, <span class="fl">33.77</span>, <span class="fl">45.31</span>),</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">df =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">2</span>),</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">df_error =</span> <span class="fu">c</span>(<span class="dv">18</span>, <span class="dv">9</span>, <span class="dv">18</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<pre><code>&gt; η² (partial) |       95% CI
+&gt; ---------------------------
+&gt; 0.82         | [0.66, 1.00]
+&gt; 0.79         | [0.49, 1.00]
+&gt; 0.83         | [0.69, 1.00]
 &gt; 
 &gt; - One-sided CIs: upper bound fixed at [1.00].</code></pre>
 <p><strong>They are identical!</strong><a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> (except for the fact
@@ -471,10 +472,10 @@ using estimates based on test statistic offers a good approximation.</p>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">df =</span> <span class="dv">2</span>,</span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">df_error =</span> <span class="dv">29</span></span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
-<pre><code>&gt; Eta2 (partial) |       95% CI
-&gt; -----------------------------
-&gt; 0.26           | [0.04, 1.00]
-&gt; 0.84           | [0.75, 1.00]
+<pre><code>&gt; η² (partial) |       95% CI
+&gt; ---------------------------
+&gt; 0.26         | [0.04, 1.00]
+&gt; 0.84         | [0.75, 1.00]
 &gt; 
 &gt; - One-sided CIs: upper bound fixed at [1.00].</code></pre>
 <p>We can also use <code>t_to_eta2()</code> for contrast analysis:</p>
@@ -490,11 +491,11 @@ using estimates based on test statistic offers a good approximation.</p>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">t =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">5.7</span>, <span class="sc">-</span><span class="fl">8.9</span>, <span class="sc">-</span><span class="fl">3.2</span>),</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">df_error =</span> <span class="dv">18</span></span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
-<pre><code>&gt; Eta2 (partial) |       95% CI
-&gt; -----------------------------
-&gt; 0.64           | [0.39, 1.00]
-&gt; 0.81           | [0.66, 1.00]
-&gt; 0.36           | [0.09, 1.00]
+<pre><code>&gt; η² (partial) |       95% CI
+&gt; ---------------------------
+&gt; 0.64         | [0.39, 1.00]
+&gt; 0.81         | [0.66, 1.00]
+&gt; 0.36         | [0.09, 1.00]
 &gt; 
 &gt; - One-sided CIs: upper bound fixed at [1.00].</code></pre>
 </div>
@@ -511,9 +512,9 @@ using estimates based on test statistic offers a good approximation.</p>
 &gt; ---
 &gt; Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">F_to_eta2</span>(<span class="fl">45.8</span>, <span class="dv">1</span>, <span class="dv">17</span>)</span></code></pre></div>
-<pre><code>&gt; Eta2 (partial) |       95% CI
-&gt; -----------------------------
-&gt; 0.73           | [0.51, 1.00]
+<pre><code>&gt; η² (partial) |       95% CI
+&gt; ---------------------------
+&gt; 0.73         | [0.51, 1.00]
 &gt; 
 &gt; - One-sided CIs: upper bound fixed at [1.00].</code></pre>
 <p>We can also use <code>t_to_eta2()</code> for the slope of
@@ -529,9 +530,9 @@ using estimates based on test statistic offers a good approximation.</p>
 &gt; Uncertainty intervals (equal-tailed) and p-values (two-tailed) computed
 &gt;   using a Wald t-distribution with Satterthwaite approximation.</code></pre>
 <div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t_to_eta2</span>(<span class="fl">6.77</span>, <span class="at">df_error =</span> <span class="dv">17</span>)</span></code></pre></div>
-<pre><code>&gt; Eta2 (partial) |       95% CI
-&gt; -----------------------------
-&gt; 0.73           | [0.51, 1.00]
+<pre><code>&gt; η² (partial) |       95% CI
+&gt; ---------------------------
+&gt; 0.73         | [0.51, 1.00]
 &gt; 
 &gt; - One-sided CIs: upper bound fixed at [1.00].</code></pre>
 </div>
@@ -545,21 +546,21 @@ sometimes called <span class="math inline">\(\text{Adj.
 and Lakens (2018)</span>, <span class="citation">Mordkoff
 (2019)</span>).</p>
 <div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">F_to_eta2</span>(<span class="fl">45.8</span>, <span class="dv">1</span>, <span class="dv">17</span>)</span></code></pre></div>
-<pre><code>&gt; Eta2 (partial) |       95% CI
-&gt; -----------------------------
-&gt; 0.73           | [0.51, 1.00]
+<pre><code>&gt; η² (partial) |       95% CI
+&gt; ---------------------------
+&gt; 0.73         | [0.51, 1.00]
 &gt; 
 &gt; - One-sided CIs: upper bound fixed at [1.00].</code></pre>
 <div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">F_to_epsilon2</span>(<span class="fl">45.8</span>, <span class="dv">1</span>, <span class="dv">17</span>)</span></code></pre></div>
-<pre><code>&gt; Epsilon2 (partial) |       95% CI
-&gt; ---------------------------------
-&gt; 0.71               | [0.48, 1.00]
+<pre><code>&gt; ε² (partial) |       95% CI
+&gt; ---------------------------
+&gt; 0.71         | [0.48, 1.00]
 &gt; 
 &gt; - One-sided CIs: upper bound fixed at [1.00].</code></pre>
 <div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">F_to_omega2</span>(<span class="fl">45.8</span>, <span class="dv">1</span>, <span class="dv">17</span>)</span></code></pre></div>
-<pre><code>&gt; Omega2 (partial) |       95% CI
-&gt; -------------------------------
-&gt; 0.70             | [0.47, 1.00]
+<pre><code>&gt; ω² (partial) |       95% CI
+&gt; ---------------------------
+&gt; 0.70         | [0.47, 1.00]
 &gt; 
 &gt; - One-sided CIs: upper bound fixed at [1.00].</code></pre>
 </div>

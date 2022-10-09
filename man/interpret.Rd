@@ -4,7 +4,7 @@
 \alias{interpret}
 \alias{interpret.numeric}
 \alias{interpret.effectsize_table}
-\title{Generic function for interpretation}
+\title{Generic Function for Interpretation}
 \usage{
 interpret(x, ...)
 
@@ -60,5 +60,5 @@ interpret(oddsratio(X), rules = "chen2010")
 interpret(cramers_v(X), "lovakov2021")
 }
 \seealso{
-rules
+\code{\link[=rules]{rules()}}
 }

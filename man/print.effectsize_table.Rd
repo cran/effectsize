@@ -7,19 +7,30 @@
 \alias{print_html.effectsize_table}
 \alias{format.effectsize_table}
 \alias{print.effectsize_difference}
-\title{Methods for \code{effectsize} tables}
+\title{Methods for \code{{effectsize}} Tables}
 \usage{
 \method{plot}{effectsize_table}(x, ...)
 
-\method{print}{effectsize_table}(x, digits = 2, ...)
+\method{print}{effectsize_table}(x, digits = 2, use_symbols = getOption("es.use_symbols", FALSE), ...)
 
-\method{print_md}{effectsize_table}(x, digits = 2, ...)
+\method{print_md}{effectsize_table}(x, digits = 2, use_symbols = getOption("es.use_symbols", FALSE), ...)
 
-\method{print_html}{effectsize_table}(x, digits = 2, ...)
+\method{print_html}{effectsize_table}(
+  x,
+  digits = 2,
+  use_symbols = getOption("es.use_symbols", FALSE),
+  ...
+)
 
-\method{format}{effectsize_table}(x, digits = 2, output = c("text", "markdown", "html"), ...)
+\method{format}{effectsize_table}(
+  x,
+  digits = 2,
+  output = c("text", "markdown", "html"),
+  use_symbols = getOption("es.use_symbols", FALSE),
+  ...
+)
 
-\method{print}{effectsize_difference}(x, digits = 2, append_CLES = FALSE, ...)
+\method{print}{effectsize_difference}(x, digits = 2, append_CLES = NULL, ...)
 }
 \arguments{
 \item{x}{Object to print.}
@@ -33,13 +44,16 @@ value as suffix, e.g. \code{digits = "scientific4"} to have scientific
 notation with 4 decimal places, or \code{digits = "signif5"} for 5
 significant figures (see also \code{\link[=signif]{signif()}}).}
 
+\item{use_symbols}{Should proper symbols be printed (\code{TRUE}) instead of
+transliterated effect size names (\code{FALSE}). See \link{effectsize_options}.}
+
 \item{output}{Which output is the formatting intended for? Affects how title
 and footers are formatted.}
 
-\item{append_CLES}{Should the Common Language Effect Sizes be printed as well?
-Only applicable to Cohen's \emph{d}, Hedges' \emph{g} for independent samples of
-equal variance (pooled sd) or for the rank-biserial correlation for
-independent samples (See \code{\link[=d_to_cles]{d_to_cles()}})}
+\item{append_CLES}{Which Common Language Effect Sizes should be printed as
+well? Only applicable to Cohen's \emph{d}, Hedges' \emph{g} for independent samples
+of equal variance (pooled sd) or for the rank-biserial correlation for
+independent samples (See \link{d_to_cles}).}
 }
 \description{
 Printing, formatting and plotting methods for \code{effectsize} tables.

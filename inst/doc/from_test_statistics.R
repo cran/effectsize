@@ -6,19 +6,9 @@ knitr::opts_chunk$set(comment = ">")
 options(digits = 2)
 options(knitr.kable.NA = "")
 
-pkgs <- c("effectsize", "afex", "lmerTest", "emmeans", "parameters")
-if (!all(sapply(pkgs, requireNamespace, quietly = TRUE))) {
-  knitr::opts_chunk$set(eval = FALSE)
-} else {
-  library(afex)
-  library(lmerTest)
-  library(emmeans)
-  library(parameters)
-}
-
 set.seed(747)
 
-## -----------------------------------------------------------------------------
+## ---- eval = requireNamespace("afex", quietly = TRUE), message=FALSE----------
 library(afex)
 
 data(md_12.1)
@@ -31,6 +21,7 @@ aov_fit
 
 ## -----------------------------------------------------------------------------
 library(effectsize)
+options(es.use_symbols = TRUE) # get nice symbols when printing! (On Windows, requires R >= 4.2.0)
 
 F_to_eta2(
   f = c(40.72, 33.77, 45.31),
@@ -38,7 +29,7 @@ F_to_eta2(
   df_error = c(18, 9, 18)
 )
 
-## -----------------------------------------------------------------------------
+## ---- eval = requireNamespace("afex", quietly = TRUE) && requireNamespace("emmeans", quietly = TRUE)----
 library(emmeans)
 
 joint_tests(aov_fit, by = "noise")
@@ -49,7 +40,7 @@ F_to_eta2(
   df_error = 29
 )
 
-## -----------------------------------------------------------------------------
+## ---- eval = requireNamespace("afex", quietly = TRUE) && requireNamespace("emmeans", quietly = TRUE)----
 pairs(emmeans(aov_fit, ~angle))
 
 t_to_eta2(
@@ -57,7 +48,7 @@ t_to_eta2(
   df_error = 18
 )
 
-## -----------------------------------------------------------------------------
+## ---- eval = requireNamespace("lmerTest", quietly = TRUE), message=FALSE------
 library(lmerTest)
 
 fit_lmm <- lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
@@ -66,7 +57,7 @@ anova(fit_lmm)
 
 F_to_eta2(45.8, 1, 17)
 
-## -----------------------------------------------------------------------------
+## ---- eval = requireNamespace("lmerTest", quietly = TRUE)---------------------
 parameters::model_parameters(fit_lmm, effects = "fixed", ci_method = "satterthwaite")
 
 t_to_eta2(6.77, df_error = 17)
@@ -76,13 +67,12 @@ F_to_eta2(45.8, 1, 17)
 F_to_epsilon2(45.8, 1, 17)
 F_to_omega2(45.8, 1, 17)
 
-## -----------------------------------------------------------------------------
+## ---- eval = requireNamespace("lmerTest", quietly = TRUE)---------------------
 parameters::model_parameters(fit_lmm, effects = "fixed", ci_method = "satterthwaite")
 
 t_to_r(6.77, df_error = 17)
 
 ## -----------------------------------------------------------------------------
-
 fit_lm <- lm(rating ~ complaints + critical, data = attitude)
 
 parameters::model_parameters(fit_lm)
@@ -95,7 +85,7 @@ t_to_r(
 ## ---- eval=require(correlation, quietly = TRUE)-------------------------------
 correlation::correlation(attitude[, c(1, 2, 6)], partial = TRUE)[1:2, c(2, 3, 7, 8)]
 
-## -----------------------------------------------------------------------------
+## ---- eval = requireNamespace("afex", quietly = TRUE) && requireNamespace("emmeans", quietly = TRUE)----
 pairs(emmeans(aov_fit, ~angle))
 
 t_to_r(
@@ -103,7 +93,7 @@ t_to_r(
   df_error = 18
 )
 
-## -----------------------------------------------------------------------------
+## ---- eval = requireNamespace("emmeans", quietly = TRUE)----------------------
 m <- lm(breaks ~ tension, data = warpbreaks)
 
 em_tension <- emmeans(m, ~tension)
@@ -114,11 +104,10 @@ t_to_d(
   df_error = 51
 )
 
-## -----------------------------------------------------------------------------
+## ---- eval = requireNamespace("emmeans", quietly = TRUE)----------------------
 eff_size(em_tension, sigma = sigma(m), edf = df.residual(m))
 
-## -----------------------------------------------------------------------------
-
+## ---- eval = requireNamespace("afex", quietly = TRUE) && requireNamespace("emmeans", quietly = TRUE)----
 pairs(emmeans(aov_fit, ~angle))
 
 t_to_d(

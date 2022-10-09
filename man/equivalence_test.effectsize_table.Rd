@@ -2,7 +2,7 @@
 % Please edit documentation in R/equivalence_test.R
 \name{equivalence_test.effectsize_table}
 \alias{equivalence_test.effectsize_table}
-\title{Test for Practical Equivalence}
+\title{Test Effect Size for Practical Equivalence to the Null}
 \usage{
 \method{equivalence_test}{effectsize_table}(
   x,
@@ -63,15 +63,13 @@ the function used to make the effect size table (\code{cohens_d}, \code{eta_squa
 \examples{
 \donttest{
 
-model <- aov(mpg ~ hp + am * factor(cyl), data = mtcars)
+data("hardlyworking")
+model <- aov(salary ~ age + factor(n_comps) * cut(seniority, 3), data = hardlyworking)
 es <- eta_squared(model, ci = 0.9, alternative = "two.sided")
-equivalence_test(es, range = 0.30) # TOST
+equivalence_test(es, range = 0.15) # TOST
 
-RCT <- matrix(c(
-  71, 101,
-  50, 100
-), nrow = 2)
-OR <- oddsratio(RCT, alternative = "greater")
+data("RCT_table")
+OR <- oddsratio(RCT_table, alternative = "greater")
 equivalence_test(OR, range = 1)
 
 ds <- t_to_d(

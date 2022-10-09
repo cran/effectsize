@@ -34,31 +34,37 @@
   model_info
 }
 
+
+
 #' @keywords internal
-.get_object <- function(x, attribute_name = "object_name") {
-  obj_name <- attr(x, attribute_name, exact = TRUE)
-  model <- NULL
-  if (!is.null(obj_name)) {
-    model <- tryCatch(
-      {
-        get(obj_name, envir = parent.frame())
-      },
-      error = function(e) {
-        NULL
-      }
-    )
-    if (is.null(model) ||
-      # prevent self reference
-      inherits(model, "parameters_model")) {
-      model <- tryCatch(
-        {
-          get(obj_name, envir = globalenv())
-        },
-        error = function(e) {
-          NULL
-        }
-      )
-    }
+.safe_ranktransform <- function(x, verbose = TRUE, ...) {
+  if (insight::n_unique(x) == 1) {
+    return(rep(mean(seq_along(x)), length(x)))
   }
-  model
+  datawizard::ranktransform(x, method = "average", ..., verbose = FALSE)
+}
+
+
+#' @keywords internal
+.is_BF_of_type <- function(x, type, msg = type) {
+  if (inherits(x, "BFBayesFactor")) {
+    if (!inherits(x@numerator[[1]], type)) {
+      stop("'x' is not a ", msg, "!", call. = FALSE)
+    }
+    return(TRUE)
+  } else {
+    return(FALSE)
+  }
+}
+
+#' @keywords internal
+.is_htest_of_type <- function(x, pattern, msg) {
+  if (inherits(x, "htest")) {
+    if (!grepl(pattern, x$method)) {
+      stop("'x' is not a ", msg, "!", call. = FALSE)
+    }
+    return(TRUE)
+  } else {
+    return(FALSE)
+  }
 }

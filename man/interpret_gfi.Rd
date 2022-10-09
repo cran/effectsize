@@ -13,7 +13,7 @@
 \alias{interpret_pnfi}
 \alias{interpret.lavaan}
 \alias{interpret.performance_lavaan}
-\title{Interpret of indices of CFA / SEM goodness of fit}
+\title{Interpret of CFA / SEM Indices of Goodness of Fit}
 \usage{
 interpret_gfi(x, rules = "default")
 
@@ -141,3 +141,4 @@ Structural Equation Modeling, 6, 56-83.
 modeling. Guilford publications.
 }
 }
+\keyword{interpreters}
