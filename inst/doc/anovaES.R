@@ -74,7 +74,11 @@ eta_squared(m_afex, generalized = "gender")
 ## -----------------------------------------------------------------------------
 cohens_f(m_afex)
 
-## ---- eval=require(lmerTest)--------------------------------------------------
+## ---- echo = FALSE, eval=TRUE-------------------------------------------------
+lmm_pkgs <- c("lmerTest", "lme4")
+eval_lmm <- all(sapply(lmm_pkgs, requireNamespace, quietly = TRUE))
+
+## ---- eval=eval_lmm-----------------------------------------------------------
 library(lmerTest)
 
 fit_lmm <- lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
@@ -83,7 +87,7 @@ anova(fit_lmm) # note the type-3 errors
 
 F_to_eta2(45.8, df = 1, df_error = 17)
 
-## ---- eval=require(lmerTest)--------------------------------------------------
+## ---- eval=eval_lmm-----------------------------------------------------------
 eta_squared(fit_lmm)
 epsilon_squared(fit_lmm)
 omega_squared(fit_lmm)

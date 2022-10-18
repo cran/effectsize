@@ -13,7 +13,7 @@ options(es.use_symbols = TRUE) # get nice symbols when printing! (On Windows, re
 ## -----------------------------------------------------------------------------
 (MPG_Gear <- table(mtcars$mpg < 20, mtcars$vs))
 
-phi(MPG_Gear)
+phi(MPG_Gear, adjust = FALSE)
 
 # Same as:
 cor(mtcars$mpg < 20, mtcars$vs)

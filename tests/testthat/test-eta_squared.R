@@ -1,3 +1,4 @@
+# library(testthat)
 
 # anova() -----------------------------------------------------------------
 test_that("anova()", {
@@ -15,7 +16,7 @@ test_that("anova()", {
     ignore_attr = TRUE
   )
   expect_warning(eta_squared(mod1, partial = FALSE), "partial")
-  expect_warning(eta_squared(mod1, generalized = TRUE), "generalized")
+  expect_warning(eta_squared(mod1, generalized = TRUE), "Generalized")
 
   mod2 <- mod1
   mod2$`F value` <- NULL
@@ -493,7 +494,10 @@ test_that("afex | mixed()", {
 
   data(md_15.1, package = "afex")
   # random intercept plus random slope
-  t15.4a <- afex::mixed(iq ~ timecat + (1 + time | id), data = md_15.1)
+  t15.4a <- afex::mixed(iq ~ timecat + (1 + time | id),
+    data = md_15.1,
+    method = "S"
+  )
   expect_equal(
     eta_squared(t15.4a),
     eta_squared(t15.4a$full_model)

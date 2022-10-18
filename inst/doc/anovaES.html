@@ -718,24 +718,31 @@ all required <em>SS</em>s is not straightforward. However, we can still
 based on the <strong>test-statistic approximation method</strong> (learn
 more in the <a href="https://easystats.github.io/effectsize/articles/from_test_statistics.html"><em>Effect
 Size from Test Statistics</em> vignette</a>).</p>
-<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lmerTest)</span>
-<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>fit_lmm <span class="ot">&lt;-</span> <span class="fu">lmer</span>(Reaction <span class="sc">~</span> Days <span class="sc">+</span> (Days <span class="sc">|</span> Subject), sleepstudy)</span>
-<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(fit_lmm) <span class="co"># note the type-3 errors</span></span></code></pre></div>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lmerTest)</span></code></pre></div>
+<pre><code>&gt; 
+&gt; Attaching package: &#39;lmerTest&#39;</code></pre>
+<pre><code>&gt; The following object is masked from &#39;package:lme4&#39;:
+&gt; 
+&gt;     lmer</code></pre>
+<pre><code>&gt; The following object is masked from &#39;package:stats&#39;:
+&gt; 
+&gt;     step</code></pre>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>fit_lmm <span class="ot">&lt;-</span> <span class="fu">lmer</span>(Reaction <span class="sc">~</span> Days <span class="sc">+</span> (Days <span class="sc">|</span> Subject), sleepstudy)</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(fit_lmm) <span class="co"># note the type-3 errors</span></span></code></pre></div>
 <pre><code>&gt; Type III Analysis of Variance Table with Satterthwaite&#39;s method
 &gt;      Sum Sq Mean Sq NumDF DenDF F value  Pr(&gt;F)    
 &gt; Days  30031   30031     1    17    45.9 3.3e-06 ***
 &gt; ---
 &gt; Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">F_to_eta2</span>(<span class="fl">45.8</span>, <span class="at">df =</span> <span class="dv">1</span>, <span class="at">df_error =</span> <span class="dv">17</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">F_to_eta2</span>(<span class="fl">45.8</span>, <span class="at">df =</span> <span class="dv">1</span>, <span class="at">df_error =</span> <span class="dv">17</span>)</span></code></pre></div>
 <pre><code>&gt; η² (partial) |       95% CI
 &gt; ---------------------------
 &gt; 0.73         | [0.51, 1.00]
 &gt; 
 &gt; - One-sided CIs: upper bound fixed at [1.00].</code></pre>
 <p>Or directly with `eta_squared() and co.:</p>
-<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">eta_squared</span>(fit_lmm)</span></code></pre></div>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">eta_squared</span>(fit_lmm)</span></code></pre></div>
 <pre><code>&gt; # Effect Size for ANOVA (Type III)
 &gt; 
 &gt; Parameter | η² (partial) |       95% CI
@@ -743,7 +750,7 @@ Size from Test Statistics</em> vignette</a>).</p>
 &gt; Days      |         0.73 | [0.51, 1.00]
 &gt; 
 &gt; - One-sided CIs: upper bound fixed at [1.00].</code></pre>
-<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">epsilon_squared</span>(fit_lmm)</span></code></pre></div>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">epsilon_squared</span>(fit_lmm)</span></code></pre></div>
 <pre><code>&gt; # Effect Size for ANOVA (Type III)
 &gt; 
 &gt; Parameter | ε² (partial) |       95% CI
@@ -751,7 +758,7 @@ Size from Test Statistics</em> vignette</a>).</p>
 &gt; Days      |         0.71 | [0.48, 1.00]
 &gt; 
 &gt; - One-sided CIs: upper bound fixed at [1.00].</code></pre>
-<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">omega_squared</span>(fit_lmm)</span></code></pre></div>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">omega_squared</span>(fit_lmm)</span></code></pre></div>
 <pre><code>&gt; # Effect Size for ANOVA (Type III)
 &gt; 
 &gt; Parameter | ω² (partial) |       95% CI
@@ -780,30 +787,30 @@ location-parameters of the model, but also on the scale-parameters of
 the model!</strong> So it is vital to <a href="https://mc-stan.org/docs/2_23/stan-users-guide/meta-models-part.html#meta-models.part/">validate
 the PPD</a> before using it to estimate explained variance measures.</p>
 <p>Let’s fit our model:</p>
-<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rstanarm)</span></code></pre></div>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rstanarm)</span></code></pre></div>
 <pre><code>&gt; Loading required package: Rcpp</code></pre>
 <pre><code>&gt; This is rstanarm version 2.21.3</code></pre>
 <pre><code>&gt; - See https://mc-stan.org/rstanarm/articles/priors for changes to default priors!</code></pre>
 <pre><code>&gt; - Default priors may change, so it&#39;s safest to specify priors, even if equivalent to the defaults.</code></pre>
 <pre><code>&gt; - For execution on a local, multicore CPU with excess RAM we recommend calling</code></pre>
 <pre><code>&gt;   options(mc.cores = parallel::detectCores())</code></pre>
-<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>m_bayes <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(value <span class="sc">~</span> gender <span class="sc">+</span> phase <span class="sc">+</span> treatment,</span>
-<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> obk.long, <span class="at">family =</span> <span class="fu">gaussian</span>(),</span>
-<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">refresh =</span> <span class="dv">0</span></span>
-<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>m_bayes <span class="ot">&lt;-</span> <span class="fu">stan_glm</span>(value <span class="sc">~</span> gender <span class="sc">+</span> phase <span class="sc">+</span> treatment,</span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> obk.long, <span class="at">family =</span> <span class="fu">gaussian</span>(),</span>
+<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">refresh =</span> <span class="dv">0</span></span>
+<span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 <p>We can use <code>eta_squared_posterior()</code> to get the posterior
 distribution of <span class="math inline">\(eta^2\)</span> or <span class="math inline">\(eta^2_p\)</span> for each effect. Like an ANOVA
 table, we must make sure to use the right effects-coding and
 <em>SS</em>-type:</p>
-<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>pes_posterior <span class="ot">&lt;-</span> <span class="fu">eta_squared_posterior</span>(m_bayes,</span>
-<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">draws =</span> <span class="dv">500</span>, <span class="co"># how many samples from the PPD?</span></span>
-<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">partial =</span> <span class="cn">TRUE</span>, <span class="co"># partial eta squared</span></span>
-<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># type 3 SS</span></span>
-<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">ss_function =</span> car<span class="sc">::</span>Anova, <span class="at">type =</span> <span class="dv">3</span>,</span>
-<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">verbose =</span> <span class="cn">FALSE</span></span>
-<span id="cb60-7"><a href="#cb60-7" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb60-8"><a href="#cb60-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb60-9"><a href="#cb60-9" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(pes_posterior)</span></code></pre></div>
+<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>pes_posterior <span class="ot">&lt;-</span> <span class="fu">eta_squared_posterior</span>(m_bayes,</span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">draws =</span> <span class="dv">500</span>, <span class="co"># how many samples from the PPD?</span></span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">partial =</span> <span class="cn">TRUE</span>, <span class="co"># partial eta squared</span></span>
+<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># type 3 SS</span></span>
+<span id="cb64-5"><a href="#cb64-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">ss_function =</span> car<span class="sc">::</span>Anova, <span class="at">type =</span> <span class="dv">3</span>,</span>
+<span id="cb64-6"><a href="#cb64-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">verbose =</span> <span class="cn">FALSE</span></span>
+<span id="cb64-7"><a href="#cb64-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb64-8"><a href="#cb64-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-9"><a href="#cb64-9" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(pes_posterior)</span></code></pre></div>
 <pre><code>&gt;   gender  phase treatment
 &gt; 1  0.194 0.1694     0.065
 &gt; 2  0.260 0.0268     0.248
@@ -811,9 +818,9 @@ table, we must make sure to use the right effects-coding and
 &gt; 4  0.149 0.1023     0.392
 &gt; 5  0.014 0.1156     0.406
 &gt; 6  0.025 0.0097     0.364</code></pre>
-<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>bayestestR<span class="sc">::</span><span class="fu">describe_posterior</span>(pes_posterior,</span>
-<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">rope_range =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.1</span>), <span class="at">test =</span> <span class="st">&quot;rope&quot;</span></span>
-<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>bayestestR<span class="sc">::</span><span class="fu">describe_posterior</span>(pes_posterior,</span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">rope_range =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.1</span>), <span class="at">test =</span> <span class="st">&quot;rope&quot;</span></span>
+<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>&gt; Summary of Posterior Distribution
 &gt; 
 &gt; Parameter | Median |       95% CI |         ROPE | % in ROPE
@@ -822,9 +829,9 @@ table, we must make sure to use the right effects-coding and
 &gt; phase     |   0.05 | [0.00, 0.20] | [0.00, 0.10] |    83.54%
 &gt; treatment |   0.26 | [0.04, 0.47] | [0.00, 0.10] |     7.17%</code></pre>
 <p>Compare to:</p>
-<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>m_ML <span class="ot">&lt;-</span> <span class="fu">lm</span>(value <span class="sc">~</span> gender <span class="sc">+</span> phase <span class="sc">+</span> treatment, <span class="at">data =</span> obk.long)</span>
-<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a><span class="fu">eta_squared</span>(car<span class="sc">::</span><span class="fu">Anova</span>(m_ML, <span class="at">type =</span> <span class="dv">3</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>m_ML <span class="ot">&lt;-</span> <span class="fu">lm</span>(value <span class="sc">~</span> gender <span class="sc">+</span> phase <span class="sc">+</span> treatment, <span class="at">data =</span> obk.long)</span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a><span class="fu">eta_squared</span>(car<span class="sc">::</span><span class="fu">Anova</span>(m_ML, <span class="at">type =</span> <span class="dv">3</span>))</span></code></pre></div>
 <pre><code>&gt; # Effect Size for ANOVA (Type III)
 &gt; 
 &gt; Parameter | η² (partial) |       95% CI
@@ -849,25 +856,25 @@ for differences between dependent groups.</p>
 similar to their non-rank counterparts: values range between 0 (no
 relative superiority between any of the groups) to 1 (complete
 separation - with no overlap in ranks between the groups).</p>
-<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>group_data <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
-<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">g1 =</span> <span class="fu">c</span>(<span class="fl">2.9</span>, <span class="fl">3.0</span>, <span class="fl">2.5</span>, <span class="fl">2.6</span>, <span class="fl">3.2</span>), <span class="co"># normal subjects</span></span>
-<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">g2 =</span> <span class="fu">c</span>(<span class="fl">3.8</span>, <span class="fl">2.7</span>, <span class="fl">4.0</span>, <span class="fl">2.4</span>), <span class="co"># with obstructive airway disease</span></span>
-<span id="cb66-4"><a href="#cb66-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">g3 =</span> <span class="fu">c</span>(<span class="fl">2.8</span>, <span class="fl">3.4</span>, <span class="fl">3.7</span>, <span class="fl">2.2</span>, <span class="fl">2.0</span>) <span class="co"># with asbestosis</span></span>
-<span id="cb66-5"><a href="#cb66-5" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb66-6"><a href="#cb66-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb66-7"><a href="#cb66-7" aria-hidden="true" tabindex="-1"></a><span class="fu">kruskal.test</span>(group_data)</span></code></pre></div>
+<div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a>group_data <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">g1 =</span> <span class="fu">c</span>(<span class="fl">2.9</span>, <span class="fl">3.0</span>, <span class="fl">2.5</span>, <span class="fl">2.6</span>, <span class="fl">3.2</span>), <span class="co"># normal subjects</span></span>
+<span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">g2 =</span> <span class="fu">c</span>(<span class="fl">3.8</span>, <span class="fl">2.7</span>, <span class="fl">4.0</span>, <span class="fl">2.4</span>), <span class="co"># with obstructive airway disease</span></span>
+<span id="cb70-4"><a href="#cb70-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">g3 =</span> <span class="fu">c</span>(<span class="fl">2.8</span>, <span class="fl">3.4</span>, <span class="fl">3.7</span>, <span class="fl">2.2</span>, <span class="fl">2.0</span>) <span class="co"># with asbestosis</span></span>
+<span id="cb70-5"><a href="#cb70-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb70-6"><a href="#cb70-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-7"><a href="#cb70-7" aria-hidden="true" tabindex="-1"></a><span class="fu">kruskal.test</span>(group_data)</span></code></pre></div>
 <pre><code>&gt; 
 &gt;   Kruskal-Wallis rank sum test
 &gt; 
 &gt; data:  group_data
 &gt; Kruskal-Wallis chi-squared = 0.8, df = 2, p-value = 0.7</code></pre>
-<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rank_epsilon_squared</span>(group_data)</span></code></pre></div>
+<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rank_epsilon_squared</span>(group_data)</span></code></pre></div>
 <pre><code>&gt; ε²(R) |       95% CI
 &gt; --------------------
 &gt; 0.06  | [0.02, 1.00]
 &gt; 
 &gt; - One-sided CIs: upper bound fixed at [1.00].</code></pre>
-<div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rank_eta_squared</span>(group_data)</span></code></pre></div>
+<div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rank_eta_squared</span>(group_data)</span></code></pre></div>
 <pre><code>&gt; η²(H) |       95% CI
 &gt; --------------------
 &gt; 0.13  | [0.08, 1.00]
@@ -878,19 +885,19 @@ is a measure of agreement on the effect of condition between various
 “blocks” (the subjects), or more often conceptualized as a measure of
 reliability of the rating / scores of observations (or “groups”) between
 “raters” (“blocks”).</p>
-<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Subjects are COLUMNS</span></span>
-<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>(ReactionTimes <span class="ot">&lt;-</span> <span class="fu">matrix</span>(</span>
-<span id="cb72-3"><a href="#cb72-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="dv">398</span>, <span class="dv">338</span>, <span class="dv">520</span>,</span>
-<span id="cb72-4"><a href="#cb72-4" aria-hidden="true" tabindex="-1"></a>    <span class="dv">325</span>, <span class="dv">388</span>, <span class="dv">555</span>,</span>
-<span id="cb72-5"><a href="#cb72-5" aria-hidden="true" tabindex="-1"></a>    <span class="dv">393</span>, <span class="dv">363</span>, <span class="dv">561</span>,</span>
-<span id="cb72-6"><a href="#cb72-6" aria-hidden="true" tabindex="-1"></a>    <span class="dv">367</span>, <span class="dv">433</span>, <span class="dv">470</span>,</span>
-<span id="cb72-7"><a href="#cb72-7" aria-hidden="true" tabindex="-1"></a>    <span class="dv">286</span>, <span class="dv">492</span>, <span class="dv">536</span>,</span>
-<span id="cb72-8"><a href="#cb72-8" aria-hidden="true" tabindex="-1"></a>    <span class="dv">362</span>, <span class="dv">475</span>, <span class="dv">496</span>,</span>
-<span id="cb72-9"><a href="#cb72-9" aria-hidden="true" tabindex="-1"></a>    <span class="dv">253</span>, <span class="dv">334</span>, <span class="dv">610</span>),</span>
-<span id="cb72-10"><a href="#cb72-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">nrow =</span> <span class="dv">7</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb72-11"><a href="#cb72-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="fu">paste0</span>(<span class="st">&quot;Subject&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">7</span>),</span>
-<span id="cb72-12"><a href="#cb72-12" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">c</span>(<span class="st">&quot;Congruent&quot;</span>, <span class="st">&quot;Neutral&quot;</span>, <span class="st">&quot;Incongruent&quot;</span>))</span>
-<span id="cb72-13"><a href="#cb72-13" aria-hidden="true" tabindex="-1"></a>))</span></code></pre></div>
+<div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Subjects are COLUMNS</span></span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>(ReactionTimes <span class="ot">&lt;-</span> <span class="fu">matrix</span>(</span>
+<span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="dv">398</span>, <span class="dv">338</span>, <span class="dv">520</span>,</span>
+<span id="cb76-4"><a href="#cb76-4" aria-hidden="true" tabindex="-1"></a>    <span class="dv">325</span>, <span class="dv">388</span>, <span class="dv">555</span>,</span>
+<span id="cb76-5"><a href="#cb76-5" aria-hidden="true" tabindex="-1"></a>    <span class="dv">393</span>, <span class="dv">363</span>, <span class="dv">561</span>,</span>
+<span id="cb76-6"><a href="#cb76-6" aria-hidden="true" tabindex="-1"></a>    <span class="dv">367</span>, <span class="dv">433</span>, <span class="dv">470</span>,</span>
+<span id="cb76-7"><a href="#cb76-7" aria-hidden="true" tabindex="-1"></a>    <span class="dv">286</span>, <span class="dv">492</span>, <span class="dv">536</span>,</span>
+<span id="cb76-8"><a href="#cb76-8" aria-hidden="true" tabindex="-1"></a>    <span class="dv">362</span>, <span class="dv">475</span>, <span class="dv">496</span>,</span>
+<span id="cb76-9"><a href="#cb76-9" aria-hidden="true" tabindex="-1"></a>    <span class="dv">253</span>, <span class="dv">334</span>, <span class="dv">610</span>),</span>
+<span id="cb76-10"><a href="#cb76-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">nrow =</span> <span class="dv">7</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb76-11"><a href="#cb76-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="fu">paste0</span>(<span class="st">&quot;Subject&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">7</span>),</span>
+<span id="cb76-12"><a href="#cb76-12" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">c</span>(<span class="st">&quot;Congruent&quot;</span>, <span class="st">&quot;Neutral&quot;</span>, <span class="st">&quot;Incongruent&quot;</span>))</span>
+<span id="cb76-13"><a href="#cb76-13" aria-hidden="true" tabindex="-1"></a>))</span></code></pre></div>
 <pre><code>&gt;          Congruent Neutral Incongruent
 &gt; Subject1       398     338         520
 &gt; Subject2       325     388         555
@@ -899,13 +906,13 @@ reliability of the rating / scores of observations (or “groups”) between
 &gt; Subject5       286     492         536
 &gt; Subject6       362     475         496
 &gt; Subject7       253     334         610</code></pre>
-<div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="fu">friedman.test</span>(ReactionTimes)</span></code></pre></div>
+<div class="sourceCode" id="cb78"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a><span class="fu">friedman.test</span>(ReactionTimes)</span></code></pre></div>
 <pre><code>&gt; 
 &gt;   Friedman rank sum test
 &gt; 
 &gt; data:  ReactionTimes
 &gt; Friedman chi-squared = 11, df = 2, p-value = 0.004</code></pre>
-<div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="fu">kendalls_w</span>(ReactionTimes)</span></code></pre></div>
+<div class="sourceCode" id="cb80"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="fu">kendalls_w</span>(ReactionTimes)</span></code></pre></div>
 <pre><code>&gt; Kendall&#39;s W |       95% CI
 &gt; --------------------------
 &gt; 0.80        | [0.76, 1.00]

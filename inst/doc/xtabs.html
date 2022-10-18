@@ -372,10 +372,10 @@ perfect association.</p>
 &gt;          0  1
 &gt;   FALSE  3 11
 &gt;   TRUE  15  3</code></pre>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">phi</span>(MPG_Gear)</span></code></pre></div>
-<pre><code>&gt; ϕ (adj.) |       95% CI
-&gt; -----------------------
-&gt; 0.59     | [0.27, 1.00]
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">phi</span>(MPG_Gear, <span class="at">adjust =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<pre><code>&gt; ϕ    |       95% CI
+&gt; -------------------
+&gt; 0.62 | [0.33, 1.00]
 &gt; 
 &gt; - One-sided CIs: upper bound fixed at [1.00].</code></pre>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Same as:</span></span>
@@ -524,11 +524,11 @@ from the hypothetical probabilities, with 0 reflecting no deviation.</p>
 &gt; 
 &gt; - One-sided CIs: upper bound fixed at [1.00].</code></pre>
 <div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cohens_w</span>(O, <span class="at">p =</span> E)</span></code></pre></div>
-<pre><code>&gt; Cohen&#39;s w |      95% CI
-&gt; -----------------------
-&gt; 0.65      | [0.54, Inf]
+<pre><code>&gt; Cohen&#39;s w |       95% CI
+&gt; ------------------------
+&gt; 0.65      | [0.54, 4.36]
 &gt; 
-&gt; - One-sided CIs: upper bound fixed at [Inf].</code></pre>
+&gt; - One-sided CIs: upper bound fixed at [4.36~].</code></pre>
 <p>However, these values are not (anti)correlations - they do not
 properly adjust for the “shape” of the expected multinational
 distribution, making them inflated (additionally, Cohen’s <em>w</em> can
