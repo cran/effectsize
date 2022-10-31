@@ -44,8 +44,8 @@ F_to_eta2(
 pairs(emmeans(aov_fit, ~angle))
 
 t_to_eta2(
-  t = c(-5.7, -8.9, -3.2),
-  df_error = 18
+  t = c(-6.2, -8.2, -3.3),
+  df_error = 9
 )
 
 ## ---- eval = requireNamespace("lmerTest", quietly = TRUE), message=FALSE------
