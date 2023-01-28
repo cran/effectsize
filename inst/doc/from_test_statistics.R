@@ -8,7 +8,12 @@ options(knitr.kable.NA = "")
 
 set.seed(747)
 
-## ---- eval = requireNamespace("afex", quietly = TRUE), message=FALSE----------
+.eval_if_requireNamespace <- function(...) {
+  pkgs <- c(...)
+  knitr::opts_chunk$get("eval") && all(sapply(pkgs, requireNamespace, quietly = TRUE))
+}
+
+## ---- eval = .eval_if_requireNamespace("afex"), message=FALSE-----------------
 library(afex)
 
 data(md_12.1)
@@ -29,7 +34,7 @@ F_to_eta2(
   df_error = c(18, 9, 18)
 )
 
-## ---- eval = requireNamespace("afex", quietly = TRUE) && requireNamespace("emmeans", quietly = TRUE)----
+## ---- eval = .eval_if_requireNamespace("afex", "emmeans")---------------------
 library(emmeans)
 
 joint_tests(aov_fit, by = "noise")
@@ -40,7 +45,7 @@ F_to_eta2(
   df_error = 29
 )
 
-## ---- eval = requireNamespace("afex", quietly = TRUE) && requireNamespace("emmeans", quietly = TRUE)----
+## ---- eval = .eval_if_requireNamespace("afex", "emmeans")---------------------
 pairs(emmeans(aov_fit, ~angle))
 
 t_to_eta2(
@@ -48,7 +53,7 @@ t_to_eta2(
   df_error = 9
 )
 
-## ---- eval = requireNamespace("lmerTest", quietly = TRUE), message=FALSE------
+## ---- eval = .eval_if_requireNamespace("lmerTest"), message=FALSE-------------
 library(lmerTest)
 
 fit_lmm <- lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
@@ -57,7 +62,7 @@ anova(fit_lmm)
 
 F_to_eta2(45.8, 1, 17)
 
-## ---- eval = requireNamespace("lmerTest", quietly = TRUE)---------------------
+## ---- eval = .eval_if_requireNamespace("lmerTest")----------------------------
 parameters::model_parameters(fit_lmm, effects = "fixed", ci_method = "satterthwaite")
 
 t_to_eta2(6.77, df_error = 17)
@@ -67,7 +72,7 @@ F_to_eta2(45.8, 1, 17)
 F_to_epsilon2(45.8, 1, 17)
 F_to_omega2(45.8, 1, 17)
 
-## ---- eval = requireNamespace("lmerTest", quietly = TRUE)---------------------
+## ---- eval = .eval_if_requireNamespace("lmerTest")----------------------------
 parameters::model_parameters(fit_lmm, effects = "fixed", ci_method = "satterthwaite")
 
 t_to_r(6.77, df_error = 17)
@@ -82,10 +87,14 @@ t_to_r(
   df_error = 27
 )
 
-## ---- eval=require(correlation, quietly = TRUE)-------------------------------
-correlation::correlation(attitude[, c(1, 2, 6)], partial = TRUE)[1:2, c(2, 3, 7, 8)]
+## ---- eval=.eval_if_requireNamespace("correlation")---------------------------
+correlation::correlation(attitude,
+  select = "rating",
+  select2 = c("complaints", "critical"),
+  partial = TRUE
+)
 
-## ---- eval = requireNamespace("afex", quietly = TRUE) && requireNamespace("emmeans", quietly = TRUE)----
+## ---- eval = .eval_if_requireNamespace("afex", "emmeans")---------------------
 pairs(emmeans(aov_fit, ~angle))
 
 t_to_r(
@@ -93,7 +102,7 @@ t_to_r(
   df_error = 18
 )
 
-## ---- eval = requireNamespace("emmeans", quietly = TRUE)----------------------
+## ---- eval = .eval_if_requireNamespace("emmeans")-----------------------------
 m <- lm(breaks ~ tension, data = warpbreaks)
 
 em_tension <- emmeans(m, ~tension)
@@ -104,10 +113,10 @@ t_to_d(
   df_error = 51
 )
 
-## ---- eval = requireNamespace("emmeans", quietly = TRUE)----------------------
+## ---- eval = .eval_if_requireNamespace("emmeans")-----------------------------
 eff_size(em_tension, sigma = sigma(m), edf = df.residual(m))
 
-## ---- eval = requireNamespace("afex", quietly = TRUE) && requireNamespace("emmeans", quietly = TRUE)----
+## ---- eval = .eval_if_requireNamespace("afex", "emmeans")---------------------
 pairs(emmeans(aov_fit, ~angle))
 
 t_to_d(

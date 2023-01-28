@@ -21,7 +21,8 @@ cramers_v(M)
 
 ## -----------------------------------------------------------------------------
 model <- lm(mpg ~ cyl * am,
-            data = mtcars)
+  data = mtcars
+)
 
 datawizard::standardize(model)
 
@@ -29,8 +30,9 @@ parameters::standardize_parameters(model)
 
 ## -----------------------------------------------------------------------------
 model <- glm(am ~ cyl + hp,
-             family = "binomial",
-             data = mtcars)
+  family = "binomial",
+  data = mtcars
+)
 
 parameters::standardize_parameters(model, exponentiate = TRUE)
 

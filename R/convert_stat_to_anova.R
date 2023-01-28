@@ -63,8 +63,7 @@
 #' # Compare to:
 #' eta_squared(mod)
 #'
-#' @examplesIf require(lmerTest)
-#' \donttest{
+#' @examplesIf require(lmerTest) && interactive()
 #' fit <- lmerTest::lmer(extra ~ group + (1 | ID), sleep)
 #' # anova(fit)
 #' # #> Type III Analysis of Variance Table with Satterthwaite's method
@@ -77,17 +76,14 @@
 #' F_to_omega2(16.501, 1, 9)
 #' F_to_epsilon2(16.501, 1, 9)
 #' F_to_f(16.501, 1, 9)
-#' }
 #'
-#' #' @examplesIf require(emmeans)
-#' if (require(emmeans)) {
-#'   ## Use with emmeans based contrasts
-#'   ## --------------------------------
-#'   warp.lm <- lm(breaks ~ wool * tension, data = warpbreaks)
+#' @examplesIf require(emmeans)
+#' ## Use with emmeans based contrasts
+#' ## --------------------------------
+#' warp.lm <- lm(breaks ~ wool * tension, data = warpbreaks)
 #'
-#'   jt <- emmeans::joint_tests(warp.lm, by = "wool")
-#'   F_to_eta2(jt$F.ratio, jt$df1, jt$df2)
-#' }
+#' jt <- emmeans::joint_tests(warp.lm, by = "wool")
+#' F_to_eta2(jt$F.ratio, jt$df1, jt$df2)
 #'
 #' @references
 #' - Albers, C., & Lakens, D. (2018). When power analyses based on pilot data
@@ -187,7 +183,8 @@ F_to_omega2 <- function(f, df, df_error,
 #' @rdname F_to_eta2
 #' @export
 t_to_omega2 <- function(t, df_error,
-                        ci = 0.95, alternative = "greater", ...) {
+                        ci = 0.95, alternative = "greater",
+                        ...) {
   F_to_omega2(t^2, 1, df_error,
     ci = ci, alternative = alternative,
     ...
@@ -213,7 +210,7 @@ F_to_f <- function(f, df, df_error,
   )
 
   ci_method <- NULL
-  if (is.numeric(ci)) {
+  if (!is.null(ci)) {
     res$CI <- res_eta$CI
     res$CI_low <- res_eta$CI_low / (1 - res_eta$CI_low)
     res$CI_high <- res_eta$CI_high / (1 - res_eta$CI_high)
@@ -230,7 +227,7 @@ F_to_f <- function(f, df, df_error,
   class(res) <- c("effectsize_table", "see_effectsize_table", class(res))
   attr(res, "ci") <- ci
   attr(res, "ci_method") <- ci_method
-  attr(res, "alternative") <- if (is.numeric(ci)) alternative
+  attr(res, "alternative") <- if (!is.null(ci)) alternative
   return(res)
 }
 
@@ -278,7 +275,7 @@ t_to_f2 <- function(t, df_error,
                       es = "eta2",
                       ci = 0.95, alternative = "greater",
                       verbose = TRUE, ...) {
-  alternative <- match.arg(alternative, c("greater", "two.sided", "less"))
+  alternative <- .match.alt(alternative, FALSE)
 
   res <- switch(tolower(es),
     eta2 = data.frame(Eta2_partial = (f * df) / (f * df + df_error)),
@@ -287,11 +284,9 @@ t_to_f2 <- function(t, df_error,
     insight::format_error("'es' must be 'eta2', 'epsilon2', or 'omega2'.")
   )
 
-  ci_method <- NULL
-  if (is.numeric(ci)) {
-    stopifnot(length(ci) == 1, ci < 1, ci > 0)
+  if (.test_ci(ci)) {
     res$CI <- ci
-    ci.level <- if (alternative == "two.sided") ci else 2 * ci - 1
+    ci.level <- .adjust_ci(ci, alternative)
 
     # based on MBESS::ci.R2
     f <- pmax(0, (res[[1]] / df) / ((1 - res[[1]]) / df_error))
@@ -306,13 +301,9 @@ t_to_f2 <- function(t, df_error,
     res$CI_high <- F_to_eta2(fs[, 2], df, df_error, ci = NULL)[[1]]
 
     ci_method <- list(method = "ncp", distribution = "F")
-    if (alternative == "less") {
-      res$CI_low <- 0
-    } else if (alternative == "greater") {
-      res$CI_high <- 1
-    }
+    res <- .limit_ci(res, alternative, 0, 1)
   } else {
-    alternative <- NULL
+    ci_method <- alternative <- NULL
   }
 
   class(res) <- c("effectsize_table", "see_effectsize_table", class(res))

@@ -7,7 +7,7 @@ options(digits = 3)
 ## -----------------------------------------------------------------------------
 library(effectsize)
 
-odds_to_probs(13/4)
+odds_to_probs(13 / 4)
 
 # or
 odds_to_probs(3.25)

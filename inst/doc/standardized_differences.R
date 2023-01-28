@@ -6,6 +6,11 @@ options(digits = 3)
 
 set.seed(7)
 
+.eval_if_requireNamespace <- function(...) {
+  pkgs <- c(...)
+  knitr::opts_chunk$get("eval") && all(sapply(pkgs, requireNamespace, quietly = TRUE))
+}
+
 ## -----------------------------------------------------------------------------
 library(effectsize)
 options(es.use_symbols = TRUE) # get nice symbols when printing! (On Windows, requires R >= 4.2.0)
@@ -47,7 +52,7 @@ cohens_d(extra ~ group, data = sleep, paired = TRUE)
 
 hedges_g(extra ~ group, data = sleep, paired = TRUE)
 
-## ---- eval = requireNamespace("BayesFactor", quietly = TRUE), message=FALSE----
+## ---- eval = .eval_if_requireNamespace("BayesFactor"), message=FALSE----------
 library(BayesFactor)
 BFt <- ttestBF(formula = mpg ~ am, data = mtcars)
 
@@ -56,11 +61,14 @@ effectsize(BFt, type = "d")
 ## -----------------------------------------------------------------------------
 mahalanobis_d(mpg + hp + cyl ~ am, data = mtcars)
 
+## -----------------------------------------------------------------------------
+means_ratio(mpg ~ am, data = mtcars)
+
 ## ---- warning=FALSE-----------------------------------------------------------
 A <- c(48, 48, 77, 86, 85, 85)
 B <- c(14, 34, 34, 77)
 
-wilcox.test(A, B) # aka Mann–Whitney U test
+wilcox.test(A, B, exact = FALSE) # aka Mann–Whitney U test
 
 rank_biserial(A, B)
 
@@ -108,14 +116,18 @@ p_superiority(mtcars$wt, mu = 2.75)
 p_superiority(mtcars$wt, mu = 2.75, parametric = FALSE)
 
 ## -----------------------------------------------------------------------------
-p_superiority(extra ~ group, data = sleep, 
-              paired = TRUE, mu = -1)
+p_superiority(extra ~ group,
+  data = sleep,
+  paired = TRUE, mu = -1
+)
 
-p_superiority(extra ~ group, data = sleep, 
-              paired = TRUE, mu = -1, 
-              parametric = FALSE)
+p_superiority(extra ~ group,
+  data = sleep,
+  paired = TRUE, mu = -1,
+  parametric = FALSE
+)
 
-## ---- eval = requireNamespace("BayesFactor", quietly = TRUE)------------------
+## ---- eval = .eval_if_requireNamespace("BayesFactor")-------------------------
 effectsize(BFt, type = "p_superiority")
 
 effectsize(BFt, type = "u1")

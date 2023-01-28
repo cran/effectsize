@@ -88,6 +88,10 @@ class(mod) <- "superMODEL"
   out
 }
 
+## ---- echo=FALSE--------------------------------------------------------------
+# This is for: https://github.com/easystats/easystats/issues/348
+.anova_es.superMODEL <<- .anova_es.superMODEL
+
 ## -----------------------------------------------------------------------------
 eta_squared(mod)
 

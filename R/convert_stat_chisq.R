@@ -151,15 +151,15 @@ chisq_to_cohens_w <- function(chisq, n, nrow, ncol, p,
   colnames(res)[1] <- "Cohens_w"
 
   if ("CI" %in% colnames(res)) {
-    if (ncol > 2 && nrow > 2) {
-      max_possible <- sqrt((pmin(ncol, nrow) - 1))
-    } else if (ncol == 1 || nrow == 1) {
+    if (ncol == 1 || nrow == 1) {
       if (missing(p)) {
         max_possible <- Inf # really is chisqMax, but can't compute it without p
       } else {
         q <- min(p / sum(p))
         max_possible <- sqrt((1 - q) / q)
       }
+    } else {
+      max_possible <- sqrt((pmin(ncol, nrow) - 1))
     }
 
     if (attr(res, "alternative") == "greater") {
@@ -280,7 +280,7 @@ chisq_to_fei <- function(chisq, n, nrow, ncol, p,
     }
   }
 
-  is_uniform <- insight::n_unique(p) > 1L
+  is_uniform <- insight::n_unique(p) == 1L
   if (!is_uniform || max(ncol, nrow) > 2) {
     attr(res, "table_footer") <-
       sprintf("Adjusted for %suniform expected probabilities.", if (is_uniform) "non-" else "")
@@ -302,8 +302,8 @@ chisq_to_pearsons_c <- function(chisq, n, nrow, ncol,
   res[to_convert] <- lapply(res[to_convert], function(phi) sqrt(1 / (1 / phi^2 + 1)))
   colnames(res)[1] <- "Pearsons_c"
 
-  if ("CI" %in% colnames(res) && alternative == "greater") {
-    res$CI_high <- 1
+  if ("CI" %in% colnames(res)) {
+    res <- .limit_ci(res, alternative, 0, 1)
   }
 
   return(res)
@@ -326,9 +326,9 @@ phi_to_chisq <- function(phi, n, ...) {
 .chisq_to_generic_phi <- function(chisq, den, nrow, ncol,
                                   ci = NULL, alternative = "greater",
                                   ...) {
-  alternative <- match.arg(alternative, c("greater", "two.sided", "less"))
+  alternative <- .match.alt(alternative, FALSE)
 
-  if (is.numeric(ci)) {
+  if (ci_numeric <- .test_ci(ci)) {
     is_goodness <- ncol == 1 || nrow == 1
 
     if (is_goodness) {
@@ -340,10 +340,9 @@ phi_to_chisq <- function(phi, n, ...) {
 
   res <- data.frame(phi = sqrt(chisq / den))
 
-  if (is.numeric(ci)) {
-    stopifnot(length(ci) == 1, ci < 1, ci > 0)
+  if (ci_numeric) {
     res$CI <- ci
-    ci.level <- if (alternative == "two.sided") ci else 2 * ci - 1
+    ci.level <- .adjust_ci(ci, alternative)
 
     chisqs <- t(mapply(
       .get_ncp_chi,
@@ -354,14 +353,9 @@ phi_to_chisq <- function(phi, n, ...) {
     res$CI_high <- .chisq_to_generic_phi(chisqs[, 2], den, nrow, ncol)[[1]]
 
     ci_method <- list(method = "ncp", distribution = "chisq")
-    if (alternative == "less") {
-      res$CI_low <- 0
-    } else if (alternative == "greater") {
-      res$CI_high <- 1
-    }
+    res <- .limit_ci(res, alternative, 0, 1)
   } else {
-    ci_method <- NULL
-    alternative <- NULL
+    ci_method <- alternative <- NULL
   }
 
   class(res) <- c("effectsize_table", "see_effectsize_table", class(res))

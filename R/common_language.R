@@ -131,7 +131,7 @@ p_superiority <- function(x, y = NULL, data = NULL,
       mu = mu,
       ci = ci,
       alternative = alternative,
-      verbose = verbose,
+      verbose = verbose
     )
     d_to_p_superiority(d)
   } else {
@@ -181,7 +181,7 @@ cohens_u1 <- function(x, y = NULL, data = NULL,
     mu = mu,
     ci = ci,
     alternative = alternative,
-    verbose = verbose,
+    verbose = verbose
   )
   out <- d_to_u1(d)
 
@@ -218,7 +218,7 @@ cohens_u2 <- function(x, y = NULL, data = NULL,
       mu = mu,
       ci = ci,
       alternative = alternative,
-      verbose = verbose,
+      verbose = verbose
     )
     out <- d_to_u2(d)
   } else {
@@ -262,7 +262,7 @@ cohens_u3 <- function(x, y = NULL, data = NULL,
       mu = mu,
       ci = ci,
       alternative = alternative,
-      verbose = verbose,
+      verbose = verbose
     )
     out <- d_to_u3(d)
   } else {
@@ -305,7 +305,7 @@ p_overlap <- function(x, y = NULL, data = NULL,
       mu = mu,
       ci = ci,
       alternative = alternative,
-      verbose = verbose,
+      verbose = verbose
     )
     out <- d_to_overlap(d)
   } else {
@@ -359,8 +359,8 @@ wmw_odds <- function(x, y = NULL, data = NULL,
     y <- data[data$g == "y", "r"]
 
     .foo <- function(p) {
-      min(abs(stats::quantile(x, probs = c(p, 1 - p)) -
-        stats::quantile(y, probs = c(1 - p, p))))
+      diff <- stats::quantile(x, probs = c(p, 1 - p)) - stats::quantile(y, probs = c(1 - p, p))
+      min(abs(diff))
     }
 
     stats::optim(
@@ -375,8 +375,7 @@ wmw_odds <- function(x, y = NULL, data = NULL,
   colnames(out)[1] <- "Cohens_U2"
 
   if ("CI" %in% colnames(out)) {
-    if (alternative == "less") out$CI_low <- 0
-    if (alternative == "greater") out$CI_high <- 1
+    out <- .limit_ci(out, alternative, 0, 1)
   }
 
   out
@@ -395,8 +394,7 @@ wmw_odds <- function(x, y = NULL, data = NULL,
   colnames(out)[1] <- "Cohens_U3"
 
   if ("CI" %in% colnames(out)) {
-    if (alternative == "less") out$CI_low <- 0
-    if (alternative == "greater") out$CI_high <- 1
+    out <- .limit_ci(out, alternative, 0, 1)
   }
 
   out
@@ -415,8 +413,7 @@ wmw_odds <- function(x, y = NULL, data = NULL,
   colnames(out)[1] <- "Overlap"
 
   if ("CI" %in% colnames(out)) {
-    if (alternative == "less") out$CI_low <- 0
-    if (alternative == "greater") out$CI_high <- 1
+    out <- .limit_ci(out, alternative, 0, 1)
   }
 
   out
@@ -437,40 +434,38 @@ wmw_odds <- function(x, y = NULL, data = NULL,
            iterations = 200) {
     d <- data.frame(
       r = c(x, y),
-      g = rep(c("x", "y"), c(length(x), length(y)))
+      g = rep(c("x", "y"), c(length(x), length(y))),
+      stringsAsFactors = TRUE
     )
 
     out <- data.frame(ES = est(d))
 
-    ci_method <- NULL
-    if (is.numeric(ci)) {
-      if (insight::check_if_installed("boot", "for estimating CIs", stop = FALSE)) {
-        stopifnot(length(ci) == 1, ci < 1, ci > 0)
+    if (.test_ci(ci) &&
+      insight::check_if_installed("boot", "for estimating CIs", stop = FALSE)) {
+      ci.level <- .adjust_ci(ci, alternative)
 
-        ci.level <- if (alternative == "two.sided") ci else 2 * ci - 1
+      out$CI <- ci
 
-        out$CI <- ci
+      R <- boot::boot(
+        data = d,
+        statistic = est,
+        R = iterations
+      )
 
-        R <- boot::boot(
-          data = d,
-          statistic = est,
-          R = iterations
-        )
-
-        bCI <- boot::boot.ci(R, conf = ci, type = "perc")[["percent"]]
-        bCI <- utils::tail(as.vector(bCI), 2)
-        out$CI_low <- bCI[1]
-        out$CI_high <- bCI[2]
-        ci_method <- list(method = "percentile bootstrap", iterations = iterations)
-      } else {
-        alternative <- NULL
-      }
+      bCI <- boot::boot.ci(R, conf = ci, type = "perc")[["percent"]]
+      bCI <- utils::tail(as.vector(bCI), 2)
+      out$CI_low <- bCI[1]
+      out$CI_high <- bCI[2]
+      ci_method <- list(method = "percentile bootstrap", iterations = iterations)
+    } else {
+      ci_method <- alternative <- ci <- NULL
     }
 
     class(out) <- c("effectsize_table", class(out))
     # TODO
     # class(out) <- c("effectsize_difference", "effectsize_table", "see_effectsize_table", class(out))
-    .someattributes(out) <- .nlist(mu, ci, ci_method, alternative,
+    .someattributes(out) <- .nlist(
+      mu, ci, ci_method, alternative,
       approximate = TRUE,
       table_footer = "Non-parametric CLES"
     )

@@ -1,3 +1,5 @@
+# library(testthat)
+
 test_that("oddsratio_to_d", {
   expect_equal(oddsratio_to_d(0.2), -0.887, tolerance = 0.01)
   expect_equal(oddsratio_to_d(-1.45, log = TRUE), -0.7994, tolerance = 0.01)
@@ -12,6 +14,14 @@ test_that("d_to_r", {
 
   expect_equal(oddsratio_to_r(d_to_oddsratio(r_to_d(0.5))), 0.5, tolerance = 0.001)
   expect_equal(oddsratio_to_d(r_to_oddsratio(d_to_r(1), log = TRUE), log = TRUE), 1, tolerance = 0.001)
+
+  r <- cor(mtcars$hp, -mtcars$am)
+  d <- cohens_d(hp ~ am, data = mtcars, ci = NULL)[[1]]
+  n <- table(mtcars$am)
+  expect_true(r_to_d(r) > d)
+  expect_true(d_to_r(d) < r)
+  expect_equal(r_to_d(r, n[1], n[2]), d, ignore_attr = TRUE)
+  expect_equal(d_to_r(d, n[1], n[2]), r, ignore_attr = TRUE)
 })
 
 test_that("oddsratio_to_RR", {
@@ -37,17 +47,19 @@ test_that("oddsratio_to_RR", {
     family = binomial()
   )
 
-  w <- capture_warnings(RR <- oddsratio_to_riskratio(m, ci_method = "wald"))
-  expect_match(w[1], "p0")
-  expect_match(w[2], "CIs")
+  expect_warning(RR <- oddsratio_to_riskratio(m, ci = NULL), "p0")
   expect_true("(Intercept)" %in% RR$Parameter)
   expect_false("(p0)" %in% RR$Parameter)
+
+  expect_message(RR <- oddsratio_to_riskratio(m, ci_method = "wald", p0 = 0.7272727), "CIs")
+  expect_false("(Intercept)" %in% RR$Parameter)
+  expect_true("(p0)" %in% RR$Parameter)
   # these values confirmed from emmeans
   expect_equal(RR$Coefficient, c(0.7272, 0.5892, 0.1964), tolerance = 0.001)
   expect_equal(RR$CI_low, c(NA, 0.1267, 0.0303), tolerance = 0.001)
   expect_equal(RR$CI_high, c(NA, 1.1648, 0.7589), tolerance = 0.001)
 
-  expect_warning(RR <- oddsratio_to_riskratio(m, p0 = 0.05), "CIs")
+  expect_message(RR <- oddsratio_to_riskratio(m, p0 = 0.05), "CIs")
   expect_true("(p0)" %in% RR$Parameter)
   expect_false("(Intercept)" %in% RR$Parameter)
   # these values confirmed from emmeans
@@ -59,11 +71,14 @@ test_that("oddsratio_to_RR", {
     data = mtcars,
     family = binomial()
   )
-  w <- capture_warnings(RR <- oddsratio_to_riskratio(m))
-  expect_match(w[1], "p0")
-  expect_match(w[2], "CIs")
+
+  expect_warning(RR <- oddsratio_to_riskratio(m, ci = NULL), "p0")
   expect_true("(Intercept)" %in% RR$Parameter)
   expect_false("(p0)" %in% RR$Parameter)
+
+  expect_message(RR <- oddsratio_to_riskratio(m, ci_method = "wald", p0 = 0.7047536), "CIs")
+  expect_false("(Intercept)" %in% RR$Parameter)
+  expect_true("(p0)" %in% RR$Parameter)
   # these values confirmed from emmeans
   expect_equal(RR$Coefficient, c(0.7048, 0.6042, 0.4475), tolerance = 0.001)
   expect_equal(RR$CI_low, c(NA, 0.08556, 0.0102), tolerance = 0.001)

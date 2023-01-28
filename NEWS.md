@@ -1,3 +1,21 @@
+# effectsize 0.8.3
+
+## Changes
+
+- `mahalanobis_d()` now defaults to one-sided CIs.
+
+## New features
+
+- `means_ratio()` for computing ratios of two means for ratio-scales outcomes (thanks to @arcaldwell49!)
+- `r_to_d()` family of functions gain arguments for specifying group size ( #534 )
+- `r2_semipartial` for semi-partial squared correlations of model terms / parameters.
+
+## Bug fixes
+
+- Fixed error in `cohens_w()` for 2-by-X tables.  
+- Solved integer overflow errors in `rank_biserial()` ( #476 )
+
+
 # effectsize 0.8.2
 
 ## Breaking Changes
@@ -9,7 +27,7 @@
 
 ## Changes
 
-- cohens_w() has an exact upper bound when used as an effect size for goodness-of-fit.
+- `cohens_w()` has an exact upper bound when used as an effect size for goodness-of-fit.
 
 ## Bug fixes
 

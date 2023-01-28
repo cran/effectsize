@@ -88,23 +88,22 @@ Aov <- oneway.test(extra ~ group, data = sleep, var.equal = TRUE)
 effectsize(Aov)
 effectsize(Aov, type = "omega")
 
-Wt <- wilcox.test(1:10, 7:20, mu = -3, alternative = "less")
+Wt <- wilcox.test(1:10, 7:20, mu = -3, alternative = "less", exact = FALSE)
 effectsize(Wt)
 effectsize(Wt, type = "u2")
 
 ## Models and Anova Tables
 ## -----------------------
 fit <- lm(mpg ~ factor(cyl) * wt + hp, data = mtcars)
-effectsize(fit)
+effectsize(fit, method = "basic")
 
 anova_table <- anova(fit)
 effectsize(anova_table)
 effectsize(anova_table, type = "epsilon")
 
-\dontshow{if (requireNamespace("BayesFactor", quietly = TRUE)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (requireNamespace("BayesFactor", quietly = TRUE) && interactive()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 ## Bayesian Hypothesis Testing
 ## ---------------------------
-\donttest{
 bf_prop <- BayesFactor::proportionBF(3, 7, p = 0.3)
 effectsize(bf_prop)
 
@@ -121,7 +120,6 @@ bf_ttest <- BayesFactor::ttestBF(sleep$extra[sleep$group == 1],
   paired = TRUE, mu = -1
 )
 effectsize(bf_ttest)
-}
 \dontshow{\}) # examplesIf}
 }
 \seealso{
