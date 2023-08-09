@@ -65,20 +65,16 @@ effectsize.htest <- function(model, type = NULL, verbose = TRUE, ...) {
       df_error = unname(model$parameter)
     )
   } else {
-    if (grepl(" by ", model$data.name, fixed = TRUE)) {
+    if (ncol(data) == 2) {
       data[[2]] <- factor(data[[2]])
     }
+    data <- stats::na.omit(data)
 
     args <- list(
       x = data[[1]],
       y = if (ncol(data) == 2) data[[2]],
       pooled_sd = !grepl("Welch", model$method, fixed = TRUE)
     )
-
-    if (!isTRUE(dots$paired)) {
-      args$x <- na.omit(args$x)
-      args$y <- na.omit(args$y)
-    }
 
     if (type %in% c("d", "g")) {
       f <- switch(tolower(type),
@@ -125,7 +121,7 @@ effectsize.htest <- function(model, type = NULL, verbose = TRUE, ...) {
 
   if (is.null(type)) type <- "cramers_v"
 
-  if (grepl("(c|v|t|w|phi)$", tolower(type))) {
+  if (grepl("(c|v|t|w|phi)$", tolower(type)) && tolower(type) != "nnt") {
     f <- switch(tolower(type),
       v = ,
       cramers_v = chisq_to_cramers_v,
@@ -153,7 +149,9 @@ effectsize.htest <- function(model, type = NULL, verbose = TRUE, ...) {
       rr = ,
       riskratio = riskratio,
       h = ,
-      cohens_h = cohens_h
+      cohens_h = cohens_h,
+      arr = arr,
+      nnt = nnt
     )
 
     out <- f(x = model$observed, ...)
@@ -212,7 +210,9 @@ effectsize.htest <- function(model, type = NULL, verbose = TRUE, ...) {
     rr = ,
     riskratio = riskratio,
     h = ,
-    cohens_h = cohens_h
+    cohens_h = cohens_h,
+    arr = arr,
+    nnt = nnt
   )
 
   if (is.table(data)) {
@@ -340,6 +340,11 @@ effectsize.htest <- function(model, type = NULL, verbose = TRUE, ...) {
 
   .fail_if_approx(approx, type)
 
+  if (ncol(data) == 2) {
+    data[[2]] <- factor(data[[2]])
+  }
+  data <- stats::na.omit(data)
+
   f <- switch(tolower(type),
     rb = rank_biserial,
     u1 = cohens_u1,
@@ -356,11 +361,6 @@ effectsize.htest <- function(model, type = NULL, verbose = TRUE, ...) {
     y = if (ncol(data) == 2) data[[2]],
     verbose = verbose
   )
-
-  if (!isTRUE(dots$paired)) {
-    args$x <- na.omit(args$x)
-    args$y <- na.omit(args$y)
-  }
 
   if (tolower(type) != "rb") {
     if (dots$paired) {

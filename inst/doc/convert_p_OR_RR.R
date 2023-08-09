@@ -19,11 +19,14 @@ probs_to_odds(0.764)
 OR <- 3.5
 baserate <- 0.85
 
-oddsratio_to_riskratio(OR, baserate)
+(RR <- oddsratio_to_riskratio(OR, baserate))
 
 ## -----------------------------------------------------------------------------
-OR <- 3.5
-baserate <- 0.04
+riskratio_to_arr(RR, baserate)
 
-oddsratio_to_riskratio(OR, baserate)
+## -----------------------------------------------------------------------------
+oddsratio_to_arr(OR, baserate)
+
+## -----------------------------------------------------------------------------
+oddsratio_to_riskratio(OR, 0.04)
 

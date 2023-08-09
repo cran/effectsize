@@ -1,5 +1,3 @@
-# library(testthat)
-
 test_that("alternative = NULL", {
   m <- aov(mpg ~ factor(cyl) + hp, mtcars)
   expect_equal(
@@ -211,7 +209,7 @@ test_that("mlm / anova table", {
 
   # MANOVA table
   mod <- manova(cbind(mpg, qsec) ~ am_f * cyl_f, data = mtcars)
-  expect_equal(nrow(eta_squared(mod)), 3L)
+  expect_identical(nrow(eta_squared(mod)), 3L)
 
   # Row order
   fit <- lm(cbind(mpg, disp, hp) ~ factor(cyl), data = mtcars)
@@ -360,12 +358,12 @@ test_that("failed CIs", {
 
   expect_warning(eta_squared(model), regexp = "CIs")
   expect_warning(eta <- eta_squared(model, verbose = FALSE), regexp = NA)
-  expect_equal(nrow(eta), 2L)
+  expect_identical(nrow(eta), 2L)
   expect_equal(eta[1, "Eta2_partial"], 1)
 
   expect_warning(eta_squared(model, partial = FALSE), regexp = "CIs")
   expect_warning(eta <- eta_squared(model, partial = FALSE, verbose = FALSE), regexp = NA)
-  expect_equal(nrow(eta), 2L)
+  expect_identical(nrow(eta), 2L)
   expect_equal(eta[1, "Eta2"], 0.34, tolerance = 0.01)
 })
 
@@ -380,23 +378,23 @@ test_that("include_intercept | car", {
 
   res0 <- eta_squared(AOV, verbose = FALSE)
   res1 <- eta_squared(AOV, include_intercept = TRUE, verbose = FALSE)
-  expect_equal(nrow(res0), 3)
-  expect_equal(nrow(res1), nrow(res0) + 1)
-  expect_equal(res1[[1]][1], "(Intercept)")
+  expect_identical(nrow(res0), 3L)
+  expect_identical(nrow(res1), nrow(res0) + 1L)
+  expect_identical(res1[[1]][1], "(Intercept)")
   expect_equal(res1[[2]][1], 0.8680899, tolerance = 0.01)
 
   res0 <- epsilon_squared(AOV, verbose = FALSE)
   res1 <- epsilon_squared(AOV, include_intercept = TRUE, verbose = FALSE)
-  expect_equal(nrow(res0), 3)
-  expect_equal(nrow(res1), nrow(res0) + 1)
+  expect_identical(nrow(res0), 3L)
+  expect_identical(nrow(res1), nrow(res0) + 1L)
   expect_equal(res1[[1]][1], "(Intercept)")
 
 
   res0 <- omega_squared(AOV, verbose = FALSE)
   res1 <- omega_squared(AOV, include_intercept = TRUE, verbose = FALSE)
-  expect_equal(nrow(res0), 3)
-  expect_equal(nrow(res1), nrow(res0) + 1)
-  expect_equal(res1[[1]][1], "(Intercept)")
+  expect_identical(nrow(res0), 3L)
+  expect_identical(nrow(res1), nrow(res0) + 1L)
+  expect_identical(res1[[1]][1], "(Intercept)")
 
   # generalized
   res1 <- eta_squared(AOV, generalized = "cyl", include_intercept = TRUE, verbose = FALSE)
@@ -418,14 +416,14 @@ test_that("include_intercept | afex", {
 
   resE0 <- eta_squared(a, verbose = FALSE)
   resA0 <- anova(a, es = "pes")
-  expect_equal(nrow(resE0), 3)
-  expect_equal(nrow(resE0), nrow(resA0))
+  expect_identical(nrow(resE0), 3L)
+  expect_identical(nrow(resE0), nrow(resA0))
 
 
   resE1 <- eta_squared(a, include_intercept = TRUE, verbose = FALSE)
   resA1 <- anova(a, es = "pes", intercept = TRUE)
-  expect_equal(nrow(resE1), nrow(resE0) + 1)
-  expect_equal(nrow(resE1), nrow(resA1))
+  expect_identical(nrow(resE1), nrow(resE0) + 1L)
+  expect_identical(nrow(resE1), nrow(resA1))
 
   skip_if_not_installed("car")
   resE1 <- eta_squared(car::Anova(a$aov, type = 3), include_intercept = TRUE, generalized = "gender", verbose = FALSE)
@@ -514,6 +512,23 @@ test_that("afex | mixed()", {
     eta_squared(t15.4a),
     eta_squared(t15.4a$full_model)
   )
+
+  # Intercept
+  data("stroop", package = "afex")
+  stroop <- subset(stroop, study == 1 & acc == 1 & trialnum < 20)
+  suppressMessages(m1 <- afex::mixed(rt ~ condition + (condition | pno), data = stroop, method = "KR"))
+  suppressMessages(m2 <- afex::mixed(rt ~ condition + (condition | pno), data = stroop, test_intercept = TRUE, method = "KR"))
+
+  expect_warning(a1a <- eta_squared(m1, include_intercept = TRUE), regexp = "Intercept")
+  expect_warning(a1b <- eta_squared(m1, include_intercept = FALSE), regexp = NA)
+  expect_equal(a1a, a1b)
+  expect_equal(nrow(a1a), 1L)
+
+  expect_warning(a2a <- eta_squared(m2, include_intercept = TRUE), regexp = NA)
+  expect_warning(a2b <- eta_squared(m2, include_intercept = FALSE), regexp = NA)
+  expect_equal(nrow(a2a), 2L)
+  expect_equal(nrow(a2b), 1L)
+  expect_equal(a1a, a2a[2, ], ignore_attr = TRUE)
 })
 
 
@@ -531,27 +546,12 @@ test_that("car MVM", {
     id = 1:8
   )
 
-  ds_long <- data.frame(
-    id = c(
-      1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L,
-      1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L,
-      1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L,
-      1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L
-    ),
-    ind_var = c(
-      "I", "I", "I", "I", "I", "I", "I", "I",
-      "II", "II", "II", "II", "II", "II", "II", "II",
-      "III", "III", "III", "III", "III", "III", "III", "III",
-      "IV", "IV", "IV", "IV", "IV", "IV", "IV", "IV"
-    ),
-    score = c(
-      116, 96, 120, 110, 116, 126, 86, 80,
-      76, 93, 112, 113, 75, 120, 90, 105,
-      85, 63, 89, 60, 115, 101, 129, 67,
-      50, 87, 100, 60, 79, 70, 65, 65
+  ds_long <-
+    datawizard::reshape_longer(ds,
+      select = 1:4,
+      names_to = "ind_var",
+      values_to = "score"
     )
-  )
-
 
 
   fit <- lm(cbind(I, II, III, IV) ~ 1, data = ds)
@@ -586,12 +586,13 @@ test_that("Anova.mlm Manova", {
   skip_if_not_installed("car")
 
   data("mtcars")
+  mtcars <- mtcars[c(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 18L, 29L, 31L), ]
   mtcars$am_f <- factor(mtcars$am)
   mtcars$cyl_f <- factor(mtcars$cyl)
 
-  mod <- lm(cbind(mpg, qsec) ~ am_f * cyl_f, data = mtcars)
+  mod <- lm(cbind(mpg, qsec, disp) ~ am_f * cyl_f, data = mtcars)
 
-  Manova <- car::Manova(mod)
+  Manova <- car::Manova(mod, type = 2)
 
   expect_true(is.null(summary(Manova, univariate = TRUE)[["univariate.tests"]]))
   expect_error(eta_squared(Manova), regexp = NA)
@@ -599,6 +600,18 @@ test_that("Anova.mlm Manova", {
     eta_squared(manova(mod))[[2]][2:3],
     eta_squared(Manova)[[2]][2:3]
   )
+
+  Anova <- car::Anova(mod, idesign = ~g, idata = data.frame(g = factor(1:3)))
+  mtcars$id <- factor(seq(nrow(mtcars)))
+  mtcars_long <- datawizard::reshape_longer(mtcars,
+    select = c("mpg", "qsec", "disp"), names_to = "g"
+  )
+  a1 <- aov(value ~ am_f * cyl_f * g + Error(id / g), data = mtcars_long)
+
+  A1 <- eta_squared(Anova)
+  A2 <- eta_squared(a1)
+  expect_equal(A1$Parameter, A2$Parameter)
+  expect_equal(A1[c(2:4, 6:7), ], A2[c(2:4, 6:7), -1], ignore_attr = TRUE)
 })
 
 ## merMod --------------------

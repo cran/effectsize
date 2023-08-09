@@ -419,15 +419,15 @@ fixed or random effects). The most popular of these indices is <span class="math
 <p>The conversion of the <span class="math inline">\(F\)</span>- or
 <span class="math inline">\(t\)</span>-statistic is based on <span class="citation">Friedman (1982)</span>.</p>
 <p>Let’s look at an example:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(afex)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(md_12<span class="fl">.1</span>)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>aov_fit <span class="ot">&lt;-</span> <span class="fu">aov_car</span>(rt <span class="sc">~</span> angle <span class="sc">*</span> noise <span class="sc">+</span> <span class="fu">Error</span>(id <span class="sc">/</span> (angle <span class="sc">*</span> noise)),</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> md_12<span class="fl">.1</span>,</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">anova_table =</span> <span class="fu">list</span>(<span class="at">correction =</span> <span class="st">&quot;none&quot;</span>, <span class="at">es =</span> <span class="st">&quot;pes&quot;</span>)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>aov_fit</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(afex)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">data</span>(md_12<span class="fl">.1</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>aov_fit <span class="ot">&lt;-</span> <span class="fu">aov_car</span>(rt <span class="sc">~</span> angle <span class="sc">*</span> noise <span class="sc">+</span> <span class="fu">Error</span>(id <span class="sc">/</span> (angle <span class="sc">*</span> noise)),</span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>  <span class="at">data =</span> md_12<span class="fl">.1</span>,</span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>  <span class="at">anova_table =</span> <span class="fu">list</span>(<span class="at">correction =</span> <span class="st">&quot;none&quot;</span>, <span class="at">es =</span> <span class="st">&quot;pes&quot;</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>)</span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a>aov_fit</span></code></pre></div>
 <pre><code>&gt; Anova Table (Type 3 tests)
 &gt; 
 &gt; Response: rt
@@ -440,14 +440,14 @@ fixed or random effects). The most popular of these indices is <span class="math
 <p>Let’s compare the <span class="math inline">\(\eta^2_p\)</span> (the
 <code>pes</code> column) obtained here with ones recovered from
 <code>F_to_eta2()</code>:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(effectsize)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">es.use_symbols =</span> <span class="cn">TRUE</span>) <span class="co"># get nice symbols when printing! (On Windows, requires R &gt;= 4.2.0)</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">F_to_eta2</span>(</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">f =</span> <span class="fu">c</span>(<span class="fl">40.72</span>, <span class="fl">33.77</span>, <span class="fl">45.31</span>),</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">df =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">2</span>),</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">df_error =</span> <span class="fu">c</span>(<span class="dv">18</span>, <span class="dv">9</span>, <span class="dv">18</span>)</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">library</span>(effectsize)</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="fu">options</span>(<span class="at">es.use_symbols =</span> <span class="cn">TRUE</span>) <span class="co"># get nice symbols when printing! (On Windows, requires R &gt;= 4.2.0)</span></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="fu">F_to_eta2</span>(</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>  <span class="at">f =</span> <span class="fu">c</span>(<span class="fl">40.72</span>, <span class="fl">33.77</span>, <span class="fl">45.31</span>),</span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>  <span class="at">df =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">2</span>),</span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>  <span class="at">df_error =</span> <span class="fu">c</span>(<span class="dv">18</span>, <span class="dv">9</span>, <span class="dv">18</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>&gt; η² (partial) |       95% CI
 &gt; ---------------------------
 &gt; 0.82         | [0.66, 1.00]
@@ -463,9 +463,9 @@ using estimates based on test statistic offers a good approximation.</p>
 <p>For example:</p>
 <div id="in-simple-effect-and-contrast-analysis" class="section level3">
 <h3>In Simple Effect and Contrast Analysis</h3>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(emmeans)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">joint_tests</span>(aov_fit, <span class="at">by =</span> <span class="st">&quot;noise&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">library</span>(emmeans)</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="fu">joint_tests</span>(aov_fit, <span class="at">by =</span> <span class="st">&quot;noise&quot;</span>)</span></code></pre></div>
 <pre><code>&gt; noise = absent:
 &gt;  model term df1 df2 F.ratio p.value
 &gt;  angle        2   9   8.000  0.0096
@@ -473,11 +473,11 @@ using estimates based on test statistic offers a good approximation.</p>
 &gt; noise = present:
 &gt;  model term df1 df2 F.ratio p.value
 &gt;  angle        2   9  51.000  &lt;.0001</code></pre>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">F_to_eta2</span>(</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">f =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">79</span>),</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">df =</span> <span class="dv">2</span>,</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">df_error =</span> <span class="dv">29</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">F_to_eta2</span>(</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>  <span class="at">f =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">79</span>),</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>  <span class="at">df =</span> <span class="dv">2</span>,</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>  <span class="at">df_error =</span> <span class="dv">29</span></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>&gt; η² (partial) |       95% CI
 &gt; ---------------------------
 &gt; 0.26         | [0.04, 1.00]
@@ -485,7 +485,7 @@ using estimates based on test statistic offers a good approximation.</p>
 &gt; 
 &gt; - One-sided CIs: upper bound fixed at [1.00].</code></pre>
 <p>We can also use <code>t_to_eta2()</code> for contrast analysis:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pairs</span>(<span class="fu">emmeans</span>(aov_fit, <span class="sc">~</span>angle))</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">pairs</span>(<span class="fu">emmeans</span>(aov_fit, <span class="sc">~</span>angle))</span></code></pre></div>
 <pre><code>&gt;  contrast estimate   SE df t.ratio p.value
 &gt;  X0 - X4      -108 17.4  9  -6.200  0.0004
 &gt;  X0 - X8      -168 20.6  9  -8.200  0.0001
@@ -493,10 +493,10 @@ using estimates based on test statistic offers a good approximation.</p>
 &gt; 
 &gt; Results are averaged over the levels of: noise 
 &gt; P value adjustment: tukey method for comparing a family of 3 estimates</code></pre>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t_to_eta2</span>(</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">t =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">6.2</span>, <span class="sc">-</span><span class="fl">8.2</span>, <span class="sc">-</span><span class="fl">3.3</span>),</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">df_error =</span> <span class="dv">9</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="fu">t_to_eta2</span>(</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>  <span class="at">t =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">6.2</span>, <span class="sc">-</span><span class="fl">8.2</span>, <span class="sc">-</span><span class="fl">3.3</span>),</span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>  <span class="at">df_error =</span> <span class="dv">9</span></span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>&gt; η² (partial) |       95% CI
 &gt; ---------------------------
 &gt; 0.81         | [0.54, 1.00]
@@ -507,17 +507,17 @@ using estimates based on test statistic offers a good approximation.</p>
 </div>
 <div id="in-linear-mixed-models" class="section level3">
 <h3>In Linear Mixed Models</h3>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lmerTest)</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>fit_lmm <span class="ot">&lt;-</span> <span class="fu">lmer</span>(Reaction <span class="sc">~</span> Days <span class="sc">+</span> (Days <span class="sc">|</span> Subject), sleepstudy)</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(fit_lmm)</span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="fu">library</span>(lmerTest)</span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>fit_lmm <span class="ot">&lt;-</span> <span class="fu">lmer</span>(Reaction <span class="sc">~</span> Days <span class="sc">+</span> (Days <span class="sc">|</span> Subject), sleepstudy)</span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a><span class="fu">anova</span>(fit_lmm)</span></code></pre></div>
 <pre><code>&gt; Type III Analysis of Variance Table with Satterthwaite&#39;s method
 &gt;      Sum Sq Mean Sq NumDF DenDF F value  Pr(&gt;F)    
 &gt; Days  30031   30031     1    17    45.9 3.3e-06 ***
 &gt; ---
 &gt; Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">F_to_eta2</span>(<span class="fl">45.8</span>, <span class="dv">1</span>, <span class="dv">17</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="fu">F_to_eta2</span>(<span class="fl">45.8</span>, <span class="dv">1</span>, <span class="dv">17</span>)</span></code></pre></div>
 <pre><code>&gt; η² (partial) |       95% CI
 &gt; ---------------------------
 &gt; 0.73         | [0.51, 1.00]
@@ -525,7 +525,7 @@ using estimates based on test statistic offers a good approximation.</p>
 &gt; - One-sided CIs: upper bound fixed at [1.00].</code></pre>
 <p>We can also use <code>t_to_eta2()</code> for the slope of
 <code>Days</code> (which in this case gives the same result).</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>parameters<span class="sc">::</span><span class="fu">model_parameters</span>(fit_lmm, <span class="at">effects =</span> <span class="st">&quot;fixed&quot;</span>, <span class="at">ci_method =</span> <span class="st">&quot;satterthwaite&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a>parameters<span class="sc">::</span><span class="fu">model_parameters</span>(fit_lmm, <span class="at">effects =</span> <span class="st">&quot;fixed&quot;</span>, <span class="at">ci_method =</span> <span class="st">&quot;satterthwaite&quot;</span>)</span></code></pre></div>
 <pre><code>&gt; # Fixed Effects
 &gt; 
 &gt; Parameter   | Coefficient |   SE |           95% CI | t(17.00) |      p
@@ -535,7 +535,7 @@ using estimates based on test statistic offers a good approximation.</p>
 <pre><code>&gt; 
 &gt; Uncertainty intervals (equal-tailed) and p-values (two-tailed) computed
 &gt;   using a Wald t-distribution with Satterthwaite approximation.</code></pre>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t_to_eta2</span>(<span class="fl">6.77</span>, <span class="at">df_error =</span> <span class="dv">17</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a><span class="fu">t_to_eta2</span>(<span class="fl">6.77</span>, <span class="at">df_error =</span> <span class="dv">17</span>)</span></code></pre></div>
 <pre><code>&gt; η² (partial) |       95% CI
 &gt; ---------------------------
 &gt; 0.73         | [0.51, 1.00]
@@ -551,19 +551,19 @@ sometimes called <span class="math inline">\(\text{Adj.
 }\eta^2_p\)</span>, which is equivalent to <span class="math inline">\(R^2_{adj}\)</span>; <span class="citation">Albers
 and Lakens (2018)</span>, <span class="citation">Mordkoff
 (2019)</span>).</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">F_to_eta2</span>(<span class="fl">45.8</span>, <span class="dv">1</span>, <span class="dv">17</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a><span class="fu">F_to_eta2</span>(<span class="fl">45.8</span>, <span class="dv">1</span>, <span class="dv">17</span>)</span></code></pre></div>
 <pre><code>&gt; η² (partial) |       95% CI
 &gt; ---------------------------
 &gt; 0.73         | [0.51, 1.00]
 &gt; 
 &gt; - One-sided CIs: upper bound fixed at [1.00].</code></pre>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">F_to_epsilon2</span>(<span class="fl">45.8</span>, <span class="dv">1</span>, <span class="dv">17</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a><span class="fu">F_to_epsilon2</span>(<span class="fl">45.8</span>, <span class="dv">1</span>, <span class="dv">17</span>)</span></code></pre></div>
 <pre><code>&gt; ε² (partial) |       95% CI
 &gt; ---------------------------
 &gt; 0.71         | [0.48, 1.00]
 &gt; 
 &gt; - One-sided CIs: upper bound fixed at [1.00].</code></pre>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">F_to_omega2</span>(<span class="fl">45.8</span>, <span class="dv">1</span>, <span class="dv">17</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" tabindex="-1"></a><span class="fu">F_to_omega2</span>(<span class="fl">45.8</span>, <span class="dv">1</span>, <span class="dv">17</span>)</span></code></pre></div>
 <pre><code>&gt; ω² (partial) |       95% CI
 &gt; ---------------------------
 &gt; 0.70         | [0.47, 1.00]
@@ -582,7 +582,7 @@ It is often used instead of <span class="math inline">\(\eta^2_p\)</span> when d
 number, which looks better).</p>
 <div id="for-slopes" class="section level3">
 <h3>For Slopes</h3>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>parameters<span class="sc">::</span><span class="fu">model_parameters</span>(fit_lmm, <span class="at">effects =</span> <span class="st">&quot;fixed&quot;</span>, <span class="at">ci_method =</span> <span class="st">&quot;satterthwaite&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" tabindex="-1"></a>parameters<span class="sc">::</span><span class="fu">model_parameters</span>(fit_lmm, <span class="at">effects =</span> <span class="st">&quot;fixed&quot;</span>, <span class="at">ci_method =</span> <span class="st">&quot;satterthwaite&quot;</span>)</span></code></pre></div>
 <pre><code>&gt; # Fixed Effects
 &gt; 
 &gt; Parameter   | Coefficient |   SE |           95% CI | t(17.00) |      p
@@ -592,15 +592,15 @@ number, which looks better).</p>
 <pre><code>&gt; 
 &gt; Uncertainty intervals (equal-tailed) and p-values (two-tailed) computed
 &gt;   using a Wald t-distribution with Satterthwaite approximation.</code></pre>
-<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t_to_r</span>(<span class="fl">6.77</span>, <span class="at">df_error =</span> <span class="dv">17</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" tabindex="-1"></a><span class="fu">t_to_r</span>(<span class="fl">6.77</span>, <span class="at">df_error =</span> <span class="dv">17</span>)</span></code></pre></div>
 <pre><code>&gt; r    |       95% CI
 &gt; -------------------
 &gt; 0.85 | [0.67, 0.92]</code></pre>
 <p>In a fixed-effect linear model, this returns the
 <strong>partial</strong> correlation. Compare:</p>
-<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>fit_lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(rating <span class="sc">~</span> complaints <span class="sc">+</span> critical, <span class="at">data =</span> attitude)</span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>parameters<span class="sc">::</span><span class="fu">model_parameters</span>(fit_lm)</span></code></pre></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" tabindex="-1"></a>fit_lm <span class="ot">&lt;-</span> <span class="fu">lm</span>(rating <span class="sc">~</span> complaints <span class="sc">+</span> critical, <span class="at">data =</span> attitude)</span>
+<span id="cb33-2"><a href="#cb33-2" tabindex="-1"></a></span>
+<span id="cb33-3"><a href="#cb33-3" tabindex="-1"></a>parameters<span class="sc">::</span><span class="fu">model_parameters</span>(fit_lm)</span></code></pre></div>
 <pre><code>&gt; Parameter   | Coefficient |    SE |         95% CI | t(27) |      p
 &gt; -------------------------------------------------------------------
 &gt; (Intercept) |       14.25 | 11.17 | [-8.67, 37.18] |  1.28 | 0.213 
@@ -609,20 +609,20 @@ number, which looks better).</p>
 <pre><code>&gt; 
 &gt; Uncertainty intervals (equal-tailed) and p-values (two-tailed) computed
 &gt;   using a Wald t-distribution approximation.</code></pre>
-<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t_to_r</span>(</span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">t =</span> <span class="fu">c</span>(<span class="fl">7.46</span>, <span class="fl">0.01</span>),</span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">df_error =</span> <span class="dv">27</span></span>
-<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" tabindex="-1"></a><span class="fu">t_to_r</span>(</span>
+<span id="cb36-2"><a href="#cb36-2" tabindex="-1"></a>  <span class="at">t =</span> <span class="fu">c</span>(<span class="fl">7.46</span>, <span class="fl">0.01</span>),</span>
+<span id="cb36-3"><a href="#cb36-3" tabindex="-1"></a>  <span class="at">df_error =</span> <span class="dv">27</span></span>
+<span id="cb36-4"><a href="#cb36-4" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>&gt; r        |        95% CI
 &gt; ------------------------
 &gt; 0.82     | [ 0.67, 0.89]
 &gt; 1.92e-03 | [-0.35, 0.35]</code></pre>
 <p>to:</p>
-<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>correlation<span class="sc">::</span><span class="fu">correlation</span>(attitude,</span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">select =</span> <span class="st">&quot;rating&quot;</span>,</span>
-<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">select2 =</span> <span class="fu">c</span>(<span class="st">&quot;complaints&quot;</span>, <span class="st">&quot;critical&quot;</span>),</span>
-<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">partial =</span> <span class="cn">TRUE</span></span>
-<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" tabindex="-1"></a>correlation<span class="sc">::</span><span class="fu">correlation</span>(attitude,</span>
+<span id="cb38-2"><a href="#cb38-2" tabindex="-1"></a>  <span class="at">select =</span> <span class="st">&quot;rating&quot;</span>,</span>
+<span id="cb38-3"><a href="#cb38-3" tabindex="-1"></a>  <span class="at">select2 =</span> <span class="fu">c</span>(<span class="st">&quot;complaints&quot;</span>, <span class="st">&quot;critical&quot;</span>),</span>
+<span id="cb38-4"><a href="#cb38-4" tabindex="-1"></a>  <span class="at">partial =</span> <span class="cn">TRUE</span></span>
+<span id="cb38-5"><a href="#cb38-5" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>&gt; # Correlation Matrix (pearson-method)
 &gt; 
 &gt; Parameter1 | Parameter2 |        r |        95% CI | t(28) |         p
@@ -638,7 +638,7 @@ number, which looks better).</p>
 <p>This measure is also sometimes used in contrast analysis, where it is
 called the point bi-serial correlation - <span class="math inline">\(r_{pb}\)</span> <span class="citation">(Cohen et
 al. 1965; Rosnow, Rosenthal, and Rubin 2000)</span>:</p>
-<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pairs</span>(<span class="fu">emmeans</span>(aov_fit, <span class="sc">~</span>angle))</span></code></pre></div>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" tabindex="-1"></a><span class="fu">pairs</span>(<span class="fu">emmeans</span>(aov_fit, <span class="sc">~</span>angle))</span></code></pre></div>
 <pre><code>&gt;  contrast estimate   SE df t.ratio p.value
 &gt;  X0 - X4      -108 17.4  9  -6.200  0.0004
 &gt;  X0 - X8      -168 20.6  9  -8.200  0.0001
@@ -646,10 +646,10 @@ al. 1965; Rosnow, Rosenthal, and Rubin 2000)</span>:</p>
 &gt; 
 &gt; Results are averaged over the levels of: noise 
 &gt; P value adjustment: tukey method for comparing a family of 3 estimates</code></pre>
-<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t_to_r</span>(</span>
-<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">t =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">5.7</span>, <span class="sc">-</span><span class="fl">8.9</span>, <span class="sc">-</span><span class="fl">3.2</span>),</span>
-<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">df_error =</span> <span class="dv">18</span></span>
-<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" tabindex="-1"></a><span class="fu">t_to_r</span>(</span>
+<span id="cb42-2"><a href="#cb42-2" tabindex="-1"></a>  <span class="at">t =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">5.7</span>, <span class="sc">-</span><span class="fl">8.9</span>, <span class="sc">-</span><span class="fl">3.2</span>),</span>
+<span id="cb42-3"><a href="#cb42-3" tabindex="-1"></a>  <span class="at">df_error =</span> <span class="dv">18</span></span>
+<span id="cb42-4"><a href="#cb42-4" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>&gt; r     |         95% CI
 &gt; ----------------------
 &gt; -0.80 | [-0.89, -0.57]
@@ -667,20 +667,20 @@ when comparing two groups of equal size <span class="citation">(Wolf
 <p>These can be useful in contrast analyses.</p>
 <div id="between-subject-contrasts" class="section level3">
 <h3>Between-Subject Contrasts</h3>
-<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span> <span class="fu">lm</span>(breaks <span class="sc">~</span> tension, <span class="at">data =</span> warpbreaks)</span>
-<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>em_tension <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(m, <span class="sc">~</span>tension)</span>
-<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a><span class="fu">pairs</span>(em_tension)</span></code></pre></div>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" tabindex="-1"></a>m <span class="ot">&lt;-</span> <span class="fu">lm</span>(breaks <span class="sc">~</span> tension, <span class="at">data =</span> warpbreaks)</span>
+<span id="cb44-2"><a href="#cb44-2" tabindex="-1"></a></span>
+<span id="cb44-3"><a href="#cb44-3" tabindex="-1"></a>em_tension <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(m, <span class="sc">~</span>tension)</span>
+<span id="cb44-4"><a href="#cb44-4" tabindex="-1"></a><span class="fu">pairs</span>(em_tension)</span></code></pre></div>
 <pre><code>&gt;  contrast estimate SE df t.ratio p.value
 &gt;  L - M        10.0  4 51   2.500  0.0400
 &gt;  L - H        14.7  4 51   3.700  &lt;.0001
 &gt;  M - H         4.7  4 51   1.200  0.4600
 &gt; 
 &gt; P value adjustment: tukey method for comparing a family of 3 estimates</code></pre>
-<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t_to_d</span>(</span>
-<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">t =</span> <span class="fu">c</span>(<span class="fl">2.53</span>, <span class="fl">3.72</span>, <span class="fl">1.20</span>),</span>
-<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">df_error =</span> <span class="dv">51</span></span>
-<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" tabindex="-1"></a><span class="fu">t_to_d</span>(</span>
+<span id="cb46-2"><a href="#cb46-2" tabindex="-1"></a>  <span class="at">t =</span> <span class="fu">c</span>(<span class="fl">2.53</span>, <span class="fl">3.72</span>, <span class="fl">1.20</span>),</span>
+<span id="cb46-3"><a href="#cb46-3" tabindex="-1"></a>  <span class="at">df_error =</span> <span class="dv">51</span></span>
+<span id="cb46-4"><a href="#cb46-4" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>&gt; d    |        95% CI
 &gt; --------------------
 &gt; 0.71 | [ 0.14, 1.27]
@@ -690,7 +690,7 @@ when comparing two groups of equal size <span class="citation">(Wolf
 <em>d</em>. It is advised to directly estimate Cohen’s <em>d</em>,
 whenever possible. For example, here with
 <code>emmeans::eff_size()</code>:</p>
-<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">eff_size</span>(em_tension, <span class="at">sigma =</span> <span class="fu">sigma</span>(m), <span class="at">edf =</span> <span class="fu">df.residual</span>(m))</span></code></pre></div>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" tabindex="-1"></a><span class="fu">eff_size</span>(em_tension, <span class="at">sigma =</span> <span class="fu">sigma</span>(m), <span class="at">edf =</span> <span class="fu">df.residual</span>(m))</span></code></pre></div>
 <pre><code>&gt;  contrast effect.size   SE df lower.CL upper.CL
 &gt;  L - M           0.84 0.34 51     0.15     1.53
 &gt;  L - H           1.24 0.36 51     0.53     1.95
@@ -701,7 +701,7 @@ whenever possible. For example, here with
 </div>
 <div id="within-subject-contrasts" class="section level3">
 <h3>Within-Subject Contrasts</h3>
-<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pairs</span>(<span class="fu">emmeans</span>(aov_fit, <span class="sc">~</span>angle))</span></code></pre></div>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" tabindex="-1"></a><span class="fu">pairs</span>(<span class="fu">emmeans</span>(aov_fit, <span class="sc">~</span>angle))</span></code></pre></div>
 <pre><code>&gt;  contrast estimate   SE df t.ratio p.value
 &gt;  X0 - X4      -108 17.4  9  -6.200  0.0004
 &gt;  X0 - X8      -168 20.6  9  -8.200  0.0001
@@ -709,11 +709,11 @@ whenever possible. For example, here with
 &gt; 
 &gt; Results are averaged over the levels of: noise 
 &gt; P value adjustment: tukey method for comparing a family of 3 estimates</code></pre>
-<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t_to_d</span>(</span>
-<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">t =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">5.7</span>, <span class="sc">-</span><span class="fl">5.9</span>, <span class="sc">-</span><span class="fl">3.2</span>),</span>
-<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">df_error =</span> <span class="dv">18</span>,</span>
-<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">paired =</span> <span class="cn">TRUE</span></span>
-<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" tabindex="-1"></a><span class="fu">t_to_d</span>(</span>
+<span id="cb52-2"><a href="#cb52-2" tabindex="-1"></a>  <span class="at">t =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">5.7</span>, <span class="sc">-</span><span class="fl">5.9</span>, <span class="sc">-</span><span class="fl">3.2</span>),</span>
+<span id="cb52-3"><a href="#cb52-3" tabindex="-1"></a>  <span class="at">df_error =</span> <span class="dv">18</span>,</span>
+<span id="cb52-4"><a href="#cb52-4" tabindex="-1"></a>  <span class="at">paired =</span> <span class="cn">TRUE</span></span>
+<span id="cb52-5"><a href="#cb52-5" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>&gt; d     |         95% CI
 &gt; ----------------------
 &gt; -1.34 | [-1.97, -0.70]

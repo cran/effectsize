@@ -8,7 +8,8 @@ set.seed(7)
 
 .eval_if_requireNamespace <- function(...) {
   pkgs <- c(...)
-  knitr::opts_chunk$get("eval") && all(sapply(pkgs, requireNamespace, quietly = TRUE))
+  knitr::opts_chunk$get("eval") &&
+    all(vapply(pkgs, requireNamespace, TRUE, quietly = TRUE))
 }
 
 ## -----------------------------------------------------------------------------
@@ -33,7 +34,7 @@ food_class
 ## -----------------------------------------------------------------------------
 cramers_v(food_class, adjust = FALSE)
 
-tschuprows_t(food_class)
+tschuprows_t(food_class, adjust = FALSE)
 
 ## -----------------------------------------------------------------------------
 data("Music_preferences2")
@@ -81,7 +82,7 @@ cohens_w(O, p = E)
 fei(O, p = E)
 
 # Observed perfectly matches Expected
-(O1 <- c(E * 286))
+(O1 <- E * 286)
 
 fei(O1, p = E)
 
@@ -102,6 +103,8 @@ oddsratio(RCT_table)
 
 ## -----------------------------------------------------------------------------
 riskratio(RCT_table)
+
+arr(RCT_table)
 
 ## -----------------------------------------------------------------------------
 cohens_h(RCT_table)
