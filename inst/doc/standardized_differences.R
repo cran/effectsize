@@ -46,11 +46,18 @@ cohens_d(mtcars$wt, mu = 2.7)
 hedges_g(mtcars$wt, mu = 2.7)
 
 ## -----------------------------------------------------------------------------
-t.test(extra ~ group, data = sleep, paired = TRUE)
+sleep_wide <- datawizard::data_to_wide(sleep,
+  id_cols = "ID",
+  values_from = "extra",
+  names_from = "group",
+  names_prefix = "extra_"
+)
 
-cohens_d(extra ~ group, data = sleep, paired = TRUE)
+t.test(sleep_wide[["extra_1"]], sleep_wide[["extra_2"]], paired = TRUE)
 
-hedges_g(extra ~ group, data = sleep, paired = TRUE)
+cohens_d(sleep_wide[["extra_1"]], sleep_wide[["extra_2"]], paired = TRUE)
+
+hedges_g(sleep_wide[["extra_1"]], sleep_wide[["extra_2"]], paired = TRUE)
 
 ## ---- eval = .eval_if_requireNamespace("BayesFactor"), message=FALSE----------
 library(BayesFactor)
@@ -116,13 +123,11 @@ p_superiority(mtcars$wt, mu = 2.75)
 p_superiority(mtcars$wt, mu = 2.75, parametric = FALSE)
 
 ## -----------------------------------------------------------------------------
-p_superiority(extra ~ group,
-  data = sleep,
+p_superiority(sleep_wide[["extra_1"]], sleep_wide[["extra_2"]],
   paired = TRUE, mu = -1
 )
 
-p_superiority(extra ~ group,
-  data = sleep,
+p_superiority(sleep_wide[["extra_1"]], sleep_wide[["extra_2"]],
   paired = TRUE, mu = -1,
   parametric = FALSE
 )

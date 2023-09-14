@@ -40,16 +40,16 @@ library(emmeans)
 joint_tests(aov_fit, by = "noise")
 
 F_to_eta2(
-  f = c(5, 79),
+  f = c(8, 51),
   df = 2,
-  df_error = 29
+  df_error = 9
 )
 
 ## ---- eval = .eval_if_requireNamespace("afex", "emmeans")---------------------
-pairs(emmeans(aov_fit, ~angle))
+pairs(emmeans(aov_fit, ~ angle))
 
 t_to_eta2(
-  t = c(-6.2, -8.2, -3.3),
+  t = c(-6.2, -8.2, -3.2),
   df_error = 9
 )
 
@@ -60,7 +60,7 @@ fit_lmm <- lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
 
 anova(fit_lmm)
 
-F_to_eta2(45.8, 1, 17)
+F_to_eta2(45.9, 1, 17)
 
 ## ---- eval = .eval_if_requireNamespace("lmerTest")----------------------------
 parameters::model_parameters(fit_lmm, effects = "fixed", ci_method = "satterthwaite")
@@ -68,9 +68,9 @@ parameters::model_parameters(fit_lmm, effects = "fixed", ci_method = "satterthwa
 t_to_eta2(6.77, df_error = 17)
 
 ## -----------------------------------------------------------------------------
-F_to_eta2(45.8, 1, 17)
-F_to_epsilon2(45.8, 1, 17)
-F_to_omega2(45.8, 1, 17)
+F_to_eta2(45.9, 1, 17)
+F_to_epsilon2(45.9, 1, 17)
+F_to_omega2(45.9, 1, 17)
 
 ## ---- eval = .eval_if_requireNamespace("lmerTest")----------------------------
 parameters::model_parameters(fit_lmm, effects = "fixed", ci_method = "satterthwaite")
@@ -95,11 +95,11 @@ correlation::correlation(attitude,
 )
 
 ## ---- eval = .eval_if_requireNamespace("afex", "emmeans")---------------------
-pairs(emmeans(aov_fit, ~angle))
+pairs(emmeans(aov_fit, ~ angle))
 
 t_to_r(
-  t = c(-5.7, -8.9, -3.2),
-  df_error = 18
+  t = c(-6.2, -8.2, -3.2),
+  df_error = 9
 )
 
 ## ---- eval = .eval_if_requireNamespace("emmeans")-----------------------------
@@ -117,11 +117,11 @@ t_to_d(
 eff_size(em_tension, sigma = sigma(m), edf = df.residual(m))
 
 ## ---- eval = .eval_if_requireNamespace("afex", "emmeans")---------------------
-pairs(emmeans(aov_fit, ~angle))
+pairs(emmeans(aov_fit, ~ angle))
 
 t_to_d(
-  t = c(-5.7, -5.9, -3.2),
-  df_error = 18,
+  t = c(-6.2, -8.2, -3.3),
+  df_error = 9,
   paired = TRUE
 )
 
