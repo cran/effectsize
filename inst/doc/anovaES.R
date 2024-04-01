@@ -41,12 +41,12 @@ eta_squared(m, partial = FALSE)
 
 eta_squared(m) # partial = TRUE by default
 
-## ---- eval=.eval_if_requireNamespace("car")-----------------------------------
+## ----eval=.eval_if_requireNamespace("car")------------------------------------
 eta_squared(car::Anova(m, type = 2), partial = FALSE)
 
 eta_squared(car::Anova(m, type = 3)) # partial = TRUE by default
 
-## ---- eval=.eval_if_requireNamespace("car")-----------------------------------
+## ----eval=.eval_if_requireNamespace("car")------------------------------------
 # compare
 m_interaction1 <- lm(value ~ treatment * gender, data = obk.long)
 
@@ -80,7 +80,7 @@ eta_squared(m_afex, generalized = "gender")
 ## -----------------------------------------------------------------------------
 cohens_f(m_afex)
 
-## ---- eval=.eval_if_requireNamespace("lmerTest", "lme4")----------------------
+## ----eval=.eval_if_requireNamespace("lmerTest", "lme4")-----------------------
 library(lmerTest)
 
 fit_lmm <- lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
@@ -89,12 +89,12 @@ anova(fit_lmm) # note the type-3 errors
 
 F_to_eta2(45.8, df = 1, df_error = 17)
 
-## ---- eval=.eval_if_requireNamespace("lmerTest", "lme4")----------------------
+## ----eval=.eval_if_requireNamespace("lmerTest", "lme4")-----------------------
 eta_squared(fit_lmm)
 epsilon_squared(fit_lmm)
 omega_squared(fit_lmm)
 
-## ---- eval = .eval_if_requireNamespace("rstanarm", "bayestestR", "car")-------
+## ----eval = .eval_if_requireNamespace("rstanarm", "bayestestR", "car")--------
 library(rstanarm)
 
 m_bayes <- stan_glm(value ~ gender + phase + treatment,
@@ -102,7 +102,7 @@ m_bayes <- stan_glm(value ~ gender + phase + treatment,
   refresh = 0
 )
 
-## ---- eval = .eval_if_requireNamespace("rstanarm", "bayestestR", "car")-------
+## ----eval = .eval_if_requireNamespace("rstanarm", "bayestestR", "car")--------
 pes_posterior <- eta_squared_posterior(m_bayes,
   draws = 500, # how many samples from the PPD?
   partial = TRUE, # partial eta squared
@@ -117,7 +117,7 @@ bayestestR::describe_posterior(pes_posterior,
   rope_range = c(0, 0.1), test = "rope"
 )
 
-## ---- eval = .eval_if_requireNamespace("rstanarm", "bayestestR", "car")-------
+## ----eval = .eval_if_requireNamespace("rstanarm", "bayestestR", "car")--------
 m_ML <- lm(value ~ gender + phase + treatment, data = obk.long)
 
 eta_squared(car::Anova(m_ML, type = 3))

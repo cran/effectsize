@@ -140,7 +140,7 @@ print(rb, append_CLES = TRUE)
 
 # One Sample ----------
 # from help("wilcox.test")
-x <- c(1.83,  0.50,  1.62,  2.48, 1.68, 1.88, 1.55, 3.06, 1.30)
+x <- c(1.83, 0.50, 1.62, 2.48, 1.68, 1.88, 1.55, 3.06, 1.30)
 y <- c(0.878, 0.647, 0.598, 2.05, 1.06, 1.29, 1.06, 3.14, 1.29)
 depression <- data.frame(first = x, second = y, change = y - x)
 
@@ -187,7 +187,8 @@ Other standardized differences:
 \code{\link{cohens_d}()},
 \code{\link{mahalanobis_d}()},
 \code{\link{means_ratio}()},
-\code{\link{p_superiority}()}
+\code{\link{p_superiority}()},
+\code{\link{repeated_measures_d}()}
 
 Other rank-based effect sizes: 
 \code{\link{p_superiority}()},

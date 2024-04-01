@@ -55,11 +55,31 @@ sleep_wide <- datawizard::data_to_wide(sleep,
 
 t.test(sleep_wide[["extra_1"]], sleep_wide[["extra_2"]], paired = TRUE)
 
-cohens_d(sleep_wide[["extra_1"]], sleep_wide[["extra_2"]], paired = TRUE)
+repeated_measures_d(sleep_wide[["extra_1"]], sleep_wide[["extra_2"]], method = "z")
 
-hedges_g(sleep_wide[["extra_1"]], sleep_wide[["extra_2"]], paired = TRUE)
+# same as:
+hedges_g(sleep_wide[["extra_1"]] - sleep_wide[["extra_2"]])
 
-## ---- eval = .eval_if_requireNamespace("BayesFactor"), message=FALSE----------
+## -----------------------------------------------------------------------------
+repeated_measures_d(sleep_wide[["extra_1"]], sleep_wide[["extra_2"]])
+
+repeated_measures_d(sleep_wide[["extra_1"]], sleep_wide[["extra_2"]], method = "av")
+
+repeated_measures_d(sleep_wide[["extra_1"]], sleep_wide[["extra_2"]], method = "b")
+
+repeated_measures_d(sleep_wide[["extra_1"]], sleep_wide[["extra_2"]], method = "d")
+
+# all closer to:
+cohens_d(sleep_wide[["extra_1"]], sleep_wide[["extra_2"]], ci = NULL)
+
+## -----------------------------------------------------------------------------
+data("rouder2016")
+
+head(rouder2016)
+
+repeated_measures_d(rt ~ cond | id, data = rouder2016, method = "r")
+
+## ----eval = .eval_if_requireNamespace("BayesFactor"), message=FALSE-----------
 library(BayesFactor)
 BFt <- ttestBF(formula = mpg ~ am, data = mtcars)
 
@@ -71,7 +91,7 @@ mahalanobis_d(mpg + hp + cyl ~ am, data = mtcars)
 ## -----------------------------------------------------------------------------
 means_ratio(mpg ~ am, data = mtcars)
 
-## ---- warning=FALSE-----------------------------------------------------------
+## ----warning=FALSE------------------------------------------------------------
 A <- c(48, 48, 77, 86, 85, 85)
 B <- c(14, 34, 34, 77)
 
@@ -132,7 +152,7 @@ p_superiority(sleep_wide[["extra_1"]], sleep_wide[["extra_2"]],
   parametric = FALSE
 )
 
-## ---- eval = .eval_if_requireNamespace("BayesFactor")-------------------------
+## ----eval = .eval_if_requireNamespace("BayesFactor")--------------------------
 effectsize(BFt, type = "p_superiority")
 
 effectsize(BFt, type = "u1")

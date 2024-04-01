@@ -51,7 +51,7 @@ pearsons_c(Music_preferences2)
 
 cohens_w(Music_preferences2) # > 1
 
-## ---- eval = .eval_if_requireNamespace("BayesFactor"), message=FALSE----------
+## ----eval = .eval_if_requireNamespace("BayesFactor"), message=FALSE-----------
 library(BayesFactor)
 BFX <- contingencyTableBF(MPG_Gear, sampleType = "jointMulti")
 
@@ -109,7 +109,7 @@ arr(RCT_table)
 ## -----------------------------------------------------------------------------
 cohens_h(RCT_table)
 
-## ---- eval = .eval_if_requireNamespace("BayesFactor")-------------------------
+## ----eval = .eval_if_requireNamespace("BayesFactor")--------------------------
 BFX <- contingencyTableBF(RCT_table, sampleType = "jointMulti")
 
 effectsize(BFX, type = "or")

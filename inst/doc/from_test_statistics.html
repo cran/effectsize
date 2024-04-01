@@ -485,7 +485,7 @@ using estimates based on test statistic offers a good approximation.</p>
 &gt; 
 &gt; - One-sided CIs: upper bound fixed at [1.00].</code></pre>
 <p>We can also use <code>t_to_eta2()</code> for contrast analysis:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">pairs</span>(<span class="fu">emmeans</span>(aov_fit, <span class="sc">~</span> angle))</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">pairs</span>(<span class="fu">emmeans</span>(aov_fit, <span class="sc">~</span>angle))</span></code></pre></div>
 <pre><code>&gt;  contrast estimate   SE df t.ratio p.value
 &gt;  X0 - X4      -108 17.4  9  -6.200  0.0004
 &gt;  X0 - X8      -168 20.6  9  -8.200  0.0001
@@ -638,7 +638,7 @@ number, which looks better).</p>
 <p>This measure is also sometimes used in contrast analysis, where it is
 called the point bi-serial correlation - <span class="math inline">\(r_{pb}\)</span> <span class="citation">(Cohen et
 al. 1965; Rosnow, Rosenthal, and Rubin 2000)</span>:</p>
-<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" tabindex="-1"></a><span class="fu">pairs</span>(<span class="fu">emmeans</span>(aov_fit, <span class="sc">~</span> angle))</span></code></pre></div>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" tabindex="-1"></a><span class="fu">pairs</span>(<span class="fu">emmeans</span>(aov_fit, <span class="sc">~</span>angle))</span></code></pre></div>
 <pre><code>&gt;  contrast estimate   SE df t.ratio p.value
 &gt;  X0 - X4      -108 17.4  9  -6.200  0.0004
 &gt;  X0 - X8      -168 20.6  9  -8.200  0.0001
@@ -701,7 +701,7 @@ whenever possible. For example, here with
 </div>
 <div id="within-subject-contrasts" class="section level3">
 <h3>Within-Subject Contrasts</h3>
-<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" tabindex="-1"></a><span class="fu">pairs</span>(<span class="fu">emmeans</span>(aov_fit, <span class="sc">~</span> angle))</span></code></pre></div>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" tabindex="-1"></a><span class="fu">pairs</span>(<span class="fu">emmeans</span>(aov_fit, <span class="sc">~</span>angle))</span></code></pre></div>
 <pre><code>&gt;  contrast estimate   SE df t.ratio p.value
 &gt;  X0 - X4      -108 17.4  9  -6.200  0.0004
 &gt;  X0 - X8      -168 20.6  9  -8.200  0.0001

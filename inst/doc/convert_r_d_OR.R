@@ -17,7 +17,7 @@ head(hardlyworking)
 ## -----------------------------------------------------------------------------
 cohens_d(salary ~ is_senior, data = hardlyworking)
 
-## ---- warning=FALSE, eval=.eval_if_requireNamespace("correlation")------------
+## ----warning=FALSE, eval=.eval_if_requireNamespace("correlation")-------------
 correlation::cor_test(hardlyworking, "salary", "is_senior")
 
 ## -----------------------------------------------------------------------------
@@ -32,7 +32,7 @@ parameters::model_parameters(fit)
 1683.65 / sigma(fit)
 t_to_d(5.31, df_error = 497)[[1]]
 
-## ---- eval=.eval_if_requireNamespace("correlation")---------------------------
+## ----eval=.eval_if_requireNamespace("correlation")----------------------------
 t_to_r(5.31, df_error = 497)
 
 correlation::correlation(hardlyworking[, c("salary", "xtra_hours", "is_senior")],
