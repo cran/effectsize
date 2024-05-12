@@ -1,10 +1,10 @@
-7b5acaa78083deec3a3f7b3437eca563 *DESCRIPTION
+0cc051cd64deb62396e0c8c59f49f6af *DESCRIPTION
 1d2408b0a858940f7ae825807ac59215 *LICENSE
 4351f4a119a7fdb88f369e6264471e6a *NAMESPACE
-599eb8460fabdbd3a61774d2b563c710 *NEWS.md
-52bcf1990bd105187ed6f02af06368ba *R/cohens_d.R
+25db1a6071cb7f8a724bd19dd259dc69 *NEWS.md
+0bc4e428874ad0d23bb64e6f54f296b7 *R/cohens_d.R
 0f870bbf0eecb023e05f6d846eebbbe7 *R/cohens_g.R
-868f43ccde0bcf80d1d0dc839c2a91ec *R/common_language.R
+cb352a5c8e2fdd5cf3411d60ad630352 *R/common_language.R
 9d92b76d1614d2a2c35d9f82129db480 *R/convert_between_anova.R
 a949de2ef10938709cebb9a09285595d *R/convert_between_common_language.R
 c166c5c932dfe50fddfd6aba30b78420 *R/convert_between_d_to_r.R
@@ -20,7 +20,7 @@ e4a5e84e0bae9d76e29a58bab73e3619 *R/datasets.R
 4e03f2c3403b4935b90bfb549e928067 *R/effectsize-package.R
 27d78f6fd9d72076ddf6f890af752a7e *R/effectsize.BFBayesFactor.R
 5caa7956b1e10a7149ef7765d0de65d7 *R/effectsize.R
-53a0c8934a988d68e18fdf73dc642320 *R/effectsize.htest.R
+8c9ed46533ebfc802d1c943dcc1d832b *R/effectsize.htest.R
 a80fae58a9258bd07ed0b2b6f297ffff *R/equivalence_test.R
 02ea19b3d7f9dcab2811890eb7927904 *R/eta_squared-main.R
 88501cabb21d5cb6d61c8664ddf18745 *R/eta_squared-methods.R
@@ -52,7 +52,7 @@ ed6080dbf760e7e8a7896b98ed75dcb3 *R/print.effectsize_table.R
 fce9427751672a598da490060b046f29 *R/print.rules.R
 8330c4750ebbf52e91ec556269ec69f1 *R/r2_semipartial.R
 33d4c4dbdaa8346edd7417dc4bedb97c *R/rank_ANOVA.R
-40bf156cc176aec3570e7132f6cae716 *R/rank_diff.R
+99753c8688c09ef727f0db31cb830aa6 *R/rank_diff.R
 0a2a6a60276649af48934135fd490d8b *R/reexports.R
 ec8a28081aad515b3a9fc110e2c218dd *R/repeated_measures_d.R
 a6511c3c2926c1778a179d2748a2eb5f *R/sysdata.rda
@@ -179,6 +179,7 @@ e425e671c120d3eefe8fd8404673fd7b *tests/testthat/test-convert_statistic.R
 f090e016096ef6aca8d520670aa898be *tests/testthat/test-eta_squared.R
 b2ae83d9a3eec03b4bfe88d88013af7a *tests/testthat/test-eta_squared_posterior.R
 7ee196899f7b8fb3e4d933f2f16484a2 *tests/testthat/test-format_standardize.R
+141d63cda616de081ddb8b8c193194fb *tests/testthat/test-htest_data.R
 c2994c4b622232595f2a866acdd21b27 *tests/testthat/test-interpret.R
 0f7fee97e0d943cf87cb5329bb63abc9 *tests/testthat/test-is_effectsize_name.R
 d8d7a9a462db49d5e5d749a60d70e70e *tests/testthat/test-mahalanobis_D.R
