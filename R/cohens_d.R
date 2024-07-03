@@ -219,11 +219,13 @@ glass_delta <- function(x, y = NULL, data = NULL,
       insight::format_error("For Glass' Delta, please provide data from two samples.")
     }
     y <- 0
-    paired <- TRUE
+    is_paired_or_onesample <- TRUE
+  } else {
+    is_paired_or_onesample <- paired
   }
 
   # Compute index
-  if (paired) {
+  if (is_paired_or_onesample) {
     if (type == "delta") {
       insight::format_error("This effect size is only applicable for two independent samples.")
     }

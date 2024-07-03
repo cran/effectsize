@@ -140,11 +140,13 @@ rank_biserial <- function(x, y = NULL, data = NULL,
 
   if (is.null(y)) {
     y <- 0
-    paired <- TRUE
+    is_paired_or_onesample <- TRUE
+  } else {
+    is_paired_or_onesample <- paired
   }
 
   ## Compute
-  r_rbs <- .r_rbs(x, y, mu = mu, paired = paired, verbose = verbose)
+  r_rbs <- .r_rbs(x, y, mu = mu, paired = is_paired_or_onesample, verbose = verbose)
   out <- data.frame(r_rank_biserial = r_rbs)
 
   ## CI
@@ -154,8 +156,8 @@ rank_biserial <- function(x, y = NULL, data = NULL,
 
     alpha <- 1 - ci.level
 
-    rf <- atanh(r_rbs)
-    if (paired) {
+    rank_f <- atanh(r_rbs)
+    if (is_paired_or_onesample) {
       nd <- sum((x - mu) != 0)
       maxw <- (nd^2 + nd) / 2
 
@@ -183,9 +185,9 @@ rank_biserial <- function(x, y = NULL, data = NULL,
       rfSE <- sqrt((n1 + n2 + 1) / (3 * n1 * n2))
     }
 
-    confint <- tanh(rf + c(-1, 1) * stats::qnorm(1 - alpha / 2) * rfSE)
-    out$CI_low <- confint[1]
-    out$CI_high <- confint[2]
+    conf_int <- tanh(rank_f + c(-1, 1) * stats::qnorm(1 - alpha / 2) * rfSE)
+    out$CI_low <- conf_int[1]
+    out$CI_high <- conf_int[2]
     ci_method <- list(method = "normal")
     out <- .limit_ci(out, alternative, -1, 1)
   } else {
@@ -216,7 +218,7 @@ cliffs_delta <- function(x, y = NULL, data = NULL,
   )
   x <- data$x
   y <- data$y
-  if (is.null(y) || isTRUE(match.call()$paired) || isTRUE(data[["paired"]])) {
+  if (is.null(y) || isTRUE(cl$paired) || isTRUE(data[["paired"]])) {
     insight::format_error("This effect size is only applicable for two independent samples.")
   }
 

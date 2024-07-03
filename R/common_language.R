@@ -129,10 +129,6 @@ p_superiority <- function(x, y = NULL, data = NULL,
   paired <- data[["paired"]]
 
   if (parametric) {
-    if (paired) {
-      x <- x - y
-      y <- NULL
-    }
     d <- cohens_d(
       x = x,
       y = y,
@@ -373,8 +369,8 @@ wmw_odds <- function(x, y = NULL, data = NULL,
     y <- data[data$g == "y", "r"]
 
     .foo <- function(p) {
-      diff <- stats::quantile(x, probs = c(p, 1 - p)) - stats::quantile(y, probs = c(1 - p, p))
-      min(abs(diff))
+      difference <- stats::quantile(x, probs = c(p, 1 - p)) - stats::quantile(y, probs = c(1 - p, p))
+      min(abs(difference))
     }
 
     stats::optim(

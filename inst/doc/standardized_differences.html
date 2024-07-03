@@ -852,13 +852,14 @@ probability that, when sampling an observation at random, its
 <div class="sourceCode" id="cb86"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" tabindex="-1"></a><span class="fu">p_superiority</span>(sleep_wide[[<span class="st">&quot;extra_1&quot;</span>]], sleep_wide[[<span class="st">&quot;extra_2&quot;</span>]],</span>
 <span id="cb86-2"><a href="#cb86-2" tabindex="-1"></a>  <span class="at">paired =</span> <span class="cn">TRUE</span>, <span class="at">mu =</span> <span class="sc">-</span><span class="dv">1</span></span>
 <span id="cb86-3"><a href="#cb86-3" tabindex="-1"></a>)</span></code></pre></div>
+<pre><code>&gt; For paired samples, &#39;repeated_measures_d()&#39; provides more options.</code></pre>
 <pre><code>&gt; Pr(superiority) |       95% CI
 &gt; ------------------------------
 &gt; 0.37            | [0.22, 0.56]</code></pre>
-<div class="sourceCode" id="cb88"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" tabindex="-1"></a><span class="fu">p_superiority</span>(sleep_wide[[<span class="st">&quot;extra_1&quot;</span>]], sleep_wide[[<span class="st">&quot;extra_2&quot;</span>]],</span>
-<span id="cb88-2"><a href="#cb88-2" tabindex="-1"></a>  <span class="at">paired =</span> <span class="cn">TRUE</span>, <span class="at">mu =</span> <span class="sc">-</span><span class="dv">1</span>,</span>
-<span id="cb88-3"><a href="#cb88-3" tabindex="-1"></a>  <span class="at">parametric =</span> <span class="cn">FALSE</span></span>
-<span id="cb88-4"><a href="#cb88-4" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb89"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1" tabindex="-1"></a><span class="fu">p_superiority</span>(sleep_wide[[<span class="st">&quot;extra_1&quot;</span>]], sleep_wide[[<span class="st">&quot;extra_2&quot;</span>]],</span>
+<span id="cb89-2"><a href="#cb89-2" tabindex="-1"></a>  <span class="at">paired =</span> <span class="cn">TRUE</span>, <span class="at">mu =</span> <span class="sc">-</span><span class="dv">1</span>,</span>
+<span id="cb89-3"><a href="#cb89-3" tabindex="-1"></a>  <span class="at">parametric =</span> <span class="cn">FALSE</span></span>
+<span id="cb89-4"><a href="#cb89-4" tabindex="-1"></a>)</span></code></pre></div>
 <pre><code>&gt; Pr(superiority) |       95% CI
 &gt; ------------------------------
 &gt; 0.19            | [0.06, 0.49]
@@ -870,23 +871,23 @@ probability that, when sampling an observation at random, its
 <p>A Bayesian estimate of (the parametric version of) these effect sizes
 can also be provided based on <code>BayesFactor</code>’s version of a
 <em>t</em>-test via the <code>effectsize()</code> function:</p>
-<div class="sourceCode" id="cb90"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb90-1"><a href="#cb90-1" tabindex="-1"></a><span class="fu">effectsize</span>(BFt, <span class="at">type =</span> <span class="st">&quot;p_superiority&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb91"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb91-1"><a href="#cb91-1" tabindex="-1"></a><span class="fu">effectsize</span>(BFt, <span class="at">type =</span> <span class="st">&quot;p_superiority&quot;</span>)</span></code></pre></div>
 <pre><code>&gt; Pr(superiority) |       95% CI
 &gt; ------------------------------
 &gt; 0.18            | [0.07, 0.36]</code></pre>
-<div class="sourceCode" id="cb92"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb92-1"><a href="#cb92-1" tabindex="-1"></a><span class="fu">effectsize</span>(BFt, <span class="at">type =</span> <span class="st">&quot;u1&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb93"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb93-1"><a href="#cb93-1" tabindex="-1"></a><span class="fu">effectsize</span>(BFt, <span class="at">type =</span> <span class="st">&quot;u1&quot;</span>)</span></code></pre></div>
 <pre><code>&gt; Cohen&#39;s U1 |       95% CI
 &gt; -------------------------
 &gt; 0.65       | [0.32, 0.83]</code></pre>
-<div class="sourceCode" id="cb94"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb94-1"><a href="#cb94-1" tabindex="-1"></a><span class="fu">effectsize</span>(BFt, <span class="at">type =</span> <span class="st">&quot;u2&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb95"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb95-1"><a href="#cb95-1" tabindex="-1"></a><span class="fu">effectsize</span>(BFt, <span class="at">type =</span> <span class="st">&quot;u2&quot;</span>)</span></code></pre></div>
 <pre><code>&gt; Cohen&#39;s U2 |       95% CI
 &gt; -------------------------
 &gt; 0.74       | [0.60, 0.85]</code></pre>
-<div class="sourceCode" id="cb96"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb96-1"><a href="#cb96-1" tabindex="-1"></a><span class="fu">effectsize</span>(BFt, <span class="at">type =</span> <span class="st">&quot;u3&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb97"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb97-1"><a href="#cb97-1" tabindex="-1"></a><span class="fu">effectsize</span>(BFt, <span class="at">type =</span> <span class="st">&quot;u3&quot;</span>)</span></code></pre></div>
 <pre><code>&gt; Cohen&#39;s U3 |       95% CI
 &gt; -------------------------
 &gt; 0.10       | [0.02, 0.31]</code></pre>
-<div class="sourceCode" id="cb98"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb98-1"><a href="#cb98-1" tabindex="-1"></a><span class="fu">effectsize</span>(BFt, <span class="at">type =</span> <span class="st">&quot;overlap&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb99"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb99-1"><a href="#cb99-1" tabindex="-1"></a><span class="fu">effectsize</span>(BFt, <span class="at">type =</span> <span class="st">&quot;overlap&quot;</span>)</span></code></pre></div>
 <pre><code>&gt; Overlap |       95% CI
 &gt; ----------------------
 &gt; 0.52    | [0.29, 0.80]</code></pre>
