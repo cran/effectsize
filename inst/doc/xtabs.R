@@ -52,21 +52,21 @@ pearsons_c(Music_preferences2)
 cohens_w(Music_preferences2) # > 1
 
 ## ----eval = .eval_if_requireNamespace("BayesFactor"), message=FALSE-----------
-library(BayesFactor)
-BFX <- contingencyTableBF(MPG_Gear, sampleType = "jointMulti")
-
-effectsize(BFX, type = "phi") # for 2 * 2
-
-
-BFX <- contingencyTableBF(Music_preferences2, sampleType = "jointMulti")
-
-effectsize(BFX, type = "cramers_v")
-
-effectsize(BFX, type = "tschuprows_t")
-
-effectsize(BFX, type = "cohens_w")
-
-effectsize(BFX, type = "pearsons_c")
+#  library(BayesFactor)
+#  BFX <- contingencyTableBF(MPG_Gear, sampleType = "jointMulti")
+#  
+#  effectsize(BFX, type = "phi") # for 2 * 2
+#  
+#  
+#  BFX <- contingencyTableBF(Music_preferences2, sampleType = "jointMulti")
+#  
+#  effectsize(BFX, type = "cramers_v")
+#  
+#  effectsize(BFX, type = "tschuprows_t")
+#  
+#  effectsize(BFX, type = "cohens_w")
+#  
+#  effectsize(BFX, type = "pearsons_c")
 
 ## -----------------------------------------------------------------------------
 O <- c(89, 37, 130, 28, 2) # observed group sizes
@@ -110,13 +110,13 @@ arr(RCT_table)
 cohens_h(RCT_table)
 
 ## ----eval = .eval_if_requireNamespace("BayesFactor")--------------------------
-BFX <- contingencyTableBF(RCT_table, sampleType = "jointMulti")
-
-effectsize(BFX, type = "or")
-
-effectsize(BFX, type = "rr")
-
-effectsize(BFX, type = "cohens_h")
+#  BFX <- contingencyTableBF(RCT_table, sampleType = "jointMulti")
+#  
+#  effectsize(BFX, type = "or")
+#  
+#  effectsize(BFX, type = "rr")
+#  
+#  effectsize(BFX, type = "cohens_h")
 
 ## -----------------------------------------------------------------------------
 data("screening_test")

@@ -49,7 +49,7 @@ overflow: visible;
 </style>
 <style type="text/css" data-origin="pandoc">
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -60,7 +60,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
 { counter-reset: source-line 0; }
@@ -485,28 +485,18 @@ on <code>BayesFactor</code>’s version of a <span class="math inline">\(\chi^2\
 <div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" tabindex="-1"></a><span class="fu">library</span>(BayesFactor)</span>
 <span id="cb28-2"><a href="#cb28-2" tabindex="-1"></a>BFX <span class="ot">&lt;-</span> <span class="fu">contingencyTableBF</span>(MPG_Gear, <span class="at">sampleType =</span> <span class="st">&quot;jointMulti&quot;</span>)</span>
 <span id="cb28-3"><a href="#cb28-3" tabindex="-1"></a></span>
-<span id="cb28-4"><a href="#cb28-4" tabindex="-1"></a><span class="fu">effectsize</span>(BFX, <span class="at">type =</span> <span class="st">&quot;phi&quot;</span>) <span class="co"># for 2 * 2</span></span></code></pre></div>
-<pre><code>&gt; ϕ (adj.) |       95% CI
-&gt; -----------------------
-&gt; 0.53     | [0.17, 0.76]</code></pre>
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" tabindex="-1"></a>BFX <span class="ot">&lt;-</span> <span class="fu">contingencyTableBF</span>(Music_preferences2, <span class="at">sampleType =</span> <span class="st">&quot;jointMulti&quot;</span>)</span>
-<span id="cb30-2"><a href="#cb30-2" tabindex="-1"></a></span>
-<span id="cb30-3"><a href="#cb30-3" tabindex="-1"></a><span class="fu">effectsize</span>(BFX, <span class="at">type =</span> <span class="st">&quot;cramers_v&quot;</span>)</span></code></pre></div>
-<pre><code>&gt; Cramer&#39;s V (adj.) |       95% CI
-&gt; --------------------------------
-&gt; 0.78              | [0.75, 0.81]</code></pre>
-<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" tabindex="-1"></a><span class="fu">effectsize</span>(BFX, <span class="at">type =</span> <span class="st">&quot;tschuprows_t&quot;</span>)</span></code></pre></div>
-<pre><code>&gt; Tschuprow&#39;s T (adj.) |       95% CI
-&gt; -----------------------------------
-&gt; 0.71                 | [0.68, 0.73]</code></pre>
-<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" tabindex="-1"></a><span class="fu">effectsize</span>(BFX, <span class="at">type =</span> <span class="st">&quot;cohens_w&quot;</span>)</span></code></pre></div>
-<pre><code>&gt; Cohen&#39;s w |       95% CI
-&gt; ------------------------
-&gt; 1.11      | [1.06, 1.15]</code></pre>
-<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" tabindex="-1"></a><span class="fu">effectsize</span>(BFX, <span class="at">type =</span> <span class="st">&quot;pearsons_c&quot;</span>)</span></code></pre></div>
-<pre><code>&gt; Pearson&#39;s C |       95% CI
-&gt; --------------------------
-&gt; 0.74        | [0.73, 0.75]</code></pre>
+<span id="cb28-4"><a href="#cb28-4" tabindex="-1"></a><span class="fu">effectsize</span>(BFX, <span class="at">type =</span> <span class="st">&quot;phi&quot;</span>) <span class="co"># for 2 * 2</span></span>
+<span id="cb28-5"><a href="#cb28-5" tabindex="-1"></a></span>
+<span id="cb28-6"><a href="#cb28-6" tabindex="-1"></a></span>
+<span id="cb28-7"><a href="#cb28-7" tabindex="-1"></a>BFX <span class="ot">&lt;-</span> <span class="fu">contingencyTableBF</span>(Music_preferences2, <span class="at">sampleType =</span> <span class="st">&quot;jointMulti&quot;</span>)</span>
+<span id="cb28-8"><a href="#cb28-8" tabindex="-1"></a></span>
+<span id="cb28-9"><a href="#cb28-9" tabindex="-1"></a><span class="fu">effectsize</span>(BFX, <span class="at">type =</span> <span class="st">&quot;cramers_v&quot;</span>)</span>
+<span id="cb28-10"><a href="#cb28-10" tabindex="-1"></a></span>
+<span id="cb28-11"><a href="#cb28-11" tabindex="-1"></a><span class="fu">effectsize</span>(BFX, <span class="at">type =</span> <span class="st">&quot;tschuprows_t&quot;</span>)</span>
+<span id="cb28-12"><a href="#cb28-12" tabindex="-1"></a></span>
+<span id="cb28-13"><a href="#cb28-13" tabindex="-1"></a><span class="fu">effectsize</span>(BFX, <span class="at">type =</span> <span class="st">&quot;cohens_w&quot;</span>)</span>
+<span id="cb28-14"><a href="#cb28-14" tabindex="-1"></a></span>
+<span id="cb28-15"><a href="#cb28-15" tabindex="-1"></a><span class="fu">effectsize</span>(BFX, <span class="at">type =</span> <span class="st">&quot;pearsons_c&quot;</span>)</span></code></pre></div>
 </div>
 </div>
 <div id="goodness-of-fit" class="section level1">
@@ -514,22 +504,22 @@ on <code>BayesFactor</code>’s version of a <span class="math inline">\(\chi^2\
 <p>Cohen’s <em>w</em> and Pearson’s <em>C</em> are also applicable to
 tests of goodness-of-fit, where they indicate the degree of deviation
 from the hypothetical probabilities, with 0 reflecting no deviation.</p>
-<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" tabindex="-1"></a>O <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">89</span>, <span class="dv">37</span>, <span class="dv">130</span>, <span class="dv">28</span>, <span class="dv">2</span>) <span class="co"># observed group sizes</span></span>
-<span id="cb38-2"><a href="#cb38-2" tabindex="-1"></a>E <span class="ot">&lt;-</span> <span class="fu">c</span>(.<span class="dv">40</span>, .<span class="dv">20</span>, .<span class="dv">20</span>, .<span class="dv">15</span>, .<span class="dv">05</span>) <span class="co"># expected group freq</span></span>
-<span id="cb38-3"><a href="#cb38-3" tabindex="-1"></a></span>
-<span id="cb38-4"><a href="#cb38-4" tabindex="-1"></a><span class="fu">chisq.test</span>(O, <span class="at">p =</span> E)</span></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" tabindex="-1"></a>O <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">89</span>, <span class="dv">37</span>, <span class="dv">130</span>, <span class="dv">28</span>, <span class="dv">2</span>) <span class="co"># observed group sizes</span></span>
+<span id="cb29-2"><a href="#cb29-2" tabindex="-1"></a>E <span class="ot">&lt;-</span> <span class="fu">c</span>(.<span class="dv">40</span>, .<span class="dv">20</span>, .<span class="dv">20</span>, .<span class="dv">15</span>, .<span class="dv">05</span>) <span class="co"># expected group freq</span></span>
+<span id="cb29-3"><a href="#cb29-3" tabindex="-1"></a></span>
+<span id="cb29-4"><a href="#cb29-4" tabindex="-1"></a><span class="fu">chisq.test</span>(O, <span class="at">p =</span> E)</span></code></pre></div>
 <pre><code>&gt; 
 &gt;   Chi-squared test for given probabilities
 &gt; 
 &gt; data:  O
 &gt; X-squared = 121, df = 4, p-value &lt;2e-16</code></pre>
-<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" tabindex="-1"></a><span class="fu">pearsons_c</span>(O, <span class="at">p =</span> E)</span></code></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" tabindex="-1"></a><span class="fu">pearsons_c</span>(O, <span class="at">p =</span> E)</span></code></pre></div>
 <pre><code>&gt; Pearson&#39;s C |       95% CI
 &gt; --------------------------
 &gt; 0.55        | [0.48, 1.00]
 &gt; 
 &gt; - One-sided CIs: upper bound fixed at [1.00].</code></pre>
-<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" tabindex="-1"></a><span class="fu">cohens_w</span>(O, <span class="at">p =</span> E)</span></code></pre></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" tabindex="-1"></a><span class="fu">cohens_w</span>(O, <span class="at">p =</span> E)</span></code></pre></div>
 <pre><code>&gt; Cohen&#39;s w |       95% CI
 &gt; ------------------------
 &gt; 0.65      | [0.54, 4.36]
@@ -544,28 +534,28 @@ of anti-correlation between the observed and the expected distributions,
 ranging from 0 (observed distribution matches the expected distribution
 perfectly) and 1 (the observed distribution is maximally different than
 the expected one).</p>
-<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" tabindex="-1"></a><span class="fu">fei</span>(O, <span class="at">p =</span> E)</span></code></pre></div>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" tabindex="-1"></a><span class="fu">fei</span>(O, <span class="at">p =</span> E)</span></code></pre></div>
 <pre><code>&gt; פ‎    |       95% CI
 &gt; -------------------
 &gt; 0.15 | [0.13, 1.00]
 &gt; 
 &gt; - Adjusted for uniform expected probabilities.
 &gt; - One-sided CIs: upper bound fixed at [1.00].</code></pre>
-<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" tabindex="-1"></a><span class="co"># Observed perfectly matches Expected</span></span>
-<span id="cb46-2"><a href="#cb46-2" tabindex="-1"></a>(O1 <span class="ot">&lt;-</span> E <span class="sc">*</span> <span class="dv">286</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" tabindex="-1"></a><span class="co"># Observed perfectly matches Expected</span></span>
+<span id="cb37-2"><a href="#cb37-2" tabindex="-1"></a>(O1 <span class="ot">&lt;-</span> E <span class="sc">*</span> <span class="dv">286</span>)</span></code></pre></div>
 <pre><code>&gt; [1] 114.4  57.2  57.2  42.9  14.3</code></pre>
-<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" tabindex="-1"></a><span class="fu">fei</span>(O1, <span class="at">p =</span> E)</span></code></pre></div>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" tabindex="-1"></a><span class="fu">fei</span>(O1, <span class="at">p =</span> E)</span></code></pre></div>
 <pre><code>&gt; פ‎    |       95% CI
 &gt; -------------------
 &gt; 0.00 | [0.00, 1.00]
 &gt; 
 &gt; - Adjusted for uniform expected probabilities.
 &gt; - One-sided CIs: upper bound fixed at [1.00].</code></pre>
-<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" tabindex="-1"></a><span class="co"># Observed deviates maximally from Expected:</span></span>
-<span id="cb50-2"><a href="#cb50-2" tabindex="-1"></a><span class="co"># All observed values are in the least expected class!</span></span>
-<span id="cb50-3"><a href="#cb50-3" tabindex="-1"></a>(O2 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">0</span>, <span class="dv">4</span>), <span class="dv">286</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" tabindex="-1"></a><span class="co"># Observed deviates maximally from Expected:</span></span>
+<span id="cb41-2"><a href="#cb41-2" tabindex="-1"></a><span class="co"># All observed values are in the least expected class!</span></span>
+<span id="cb41-3"><a href="#cb41-3" tabindex="-1"></a>(O2 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">0</span>, <span class="dv">4</span>), <span class="dv">286</span>))</span></code></pre></div>
 <pre><code>&gt; [1]   0   0   0   0 286</code></pre>
-<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" tabindex="-1"></a><span class="fu">fei</span>(O2, <span class="at">p =</span> E)</span></code></pre></div>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" tabindex="-1"></a><span class="fu">fei</span>(O2, <span class="at">p =</span> E)</span></code></pre></div>
 <pre><code>&gt; פ‎    |       95% CI
 &gt; -------------------
 &gt; 1.00 | [0.98, 1.00]
@@ -579,19 +569,19 @@ the expected one).</p>
 each column represents a different <em>group</em>. Values larger than 1
 indicate that the odds are higher in the first group (and vice
 versa).</p>
-<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;RCT_table&quot;</span>)</span>
-<span id="cb54-2"><a href="#cb54-2" tabindex="-1"></a>RCT_table</span></code></pre></div>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;RCT_table&quot;</span>)</span>
+<span id="cb45-2"><a href="#cb45-2" tabindex="-1"></a>RCT_table</span></code></pre></div>
 <pre><code>&gt;            Group
 &gt; Diagnosis   Treatment Control
 &gt;   Sick             71      30
 &gt;   Recovered        50     100</code></pre>
-<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" tabindex="-1"></a><span class="fu">chisq.test</span>(RCT_table) <span class="co"># or fisher.test(RCT_table)</span></span></code></pre></div>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" tabindex="-1"></a><span class="fu">chisq.test</span>(RCT_table) <span class="co"># or fisher.test(RCT_table)</span></span></code></pre></div>
 <pre><code>&gt; 
 &gt;   Pearson&#39;s Chi-squared test with Yates&#39; continuity correction
 &gt; 
 &gt; data:  RCT_table
 &gt; X-squared = 32, df = 1, p-value = 2e-08</code></pre>
-<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" tabindex="-1"></a><span class="fu">oddsratio</span>(RCT_table)</span></code></pre></div>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" tabindex="-1"></a><span class="fu">oddsratio</span>(RCT_table)</span></code></pre></div>
 <pre><code>&gt; Odds ratio |       95% CI
 &gt; -------------------------
 &gt; 4.73       | [2.74, 8.17]</code></pre>
@@ -600,18 +590,18 @@ the proportions of the two groups, and the Absolute Risk Reduction
 (ARR), which is the <em>difference</em> between the proportions of the
 two groups - both are measures which some claim to be more
 intuitive.</p>
-<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" tabindex="-1"></a><span class="fu">riskratio</span>(RCT_table)</span></code></pre></div>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" tabindex="-1"></a><span class="fu">riskratio</span>(RCT_table)</span></code></pre></div>
 <pre><code>&gt; Risk ratio |       95% CI
 &gt; -------------------------
 &gt; 2.54       | [1.80, 3.60]</code></pre>
-<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" tabindex="-1"></a><span class="fu">arr</span>(RCT_table)</span></code></pre></div>
+<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" tabindex="-1"></a><span class="fu">arr</span>(RCT_table)</span></code></pre></div>
 <pre><code>&gt; ARR  |       95% CI
 &gt; -------------------
 &gt; 0.36 | [0.24, 0.47]</code></pre>
 <p>Additionally, Cohen’s <em>h</em> can also be computed, which uses the
 <em>arcsin</em> transformation. Negative values indicate smaller
 proportion in the first group (and vice versa).</p>
-<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" tabindex="-1"></a><span class="fu">cohens_h</span>(RCT_table)</span></code></pre></div>
+<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" tabindex="-1"></a><span class="fu">cohens_h</span>(RCT_table)</span></code></pre></div>
 <pre><code>&gt; Cohen&#39;s h |       95% CI
 &gt; ------------------------
 &gt; 0.74      | [0.50, 0.99]</code></pre>
@@ -620,20 +610,13 @@ proportion in the first group (and vice versa).</p>
 <p>A Bayesian estimate of these effect sizes can also be provided based
 on <code>BayesFactor</code>’s version of a <span class="math inline">\(\chi^2\)</span>-test via the
 <code>effectsize()</code> function:</p>
-<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" tabindex="-1"></a>BFX <span class="ot">&lt;-</span> <span class="fu">contingencyTableBF</span>(RCT_table, <span class="at">sampleType =</span> <span class="st">&quot;jointMulti&quot;</span>)</span>
-<span id="cb66-2"><a href="#cb66-2" tabindex="-1"></a></span>
-<span id="cb66-3"><a href="#cb66-3" tabindex="-1"></a><span class="fu">effectsize</span>(BFX, <span class="at">type =</span> <span class="st">&quot;or&quot;</span>)</span></code></pre></div>
-<pre><code>&gt; Odds ratio |       95% CI
-&gt; -------------------------
-&gt; 4.63       | [2.71, 8.08]</code></pre>
-<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" tabindex="-1"></a><span class="fu">effectsize</span>(BFX, <span class="at">type =</span> <span class="st">&quot;rr&quot;</span>)</span></code></pre></div>
-<pre><code>&gt; Risk ratio |       95% CI
-&gt; -------------------------
-&gt; 2.48       | [1.82, 3.59]</code></pre>
-<div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" tabindex="-1"></a><span class="fu">effectsize</span>(BFX, <span class="at">type =</span> <span class="st">&quot;cohens_h&quot;</span>)</span></code></pre></div>
-<pre><code>&gt; Cohen&#39;s h |       95% CI
-&gt; ------------------------
-&gt; 0.74      | [0.49, 0.98]</code></pre>
+<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" tabindex="-1"></a>BFX <span class="ot">&lt;-</span> <span class="fu">contingencyTableBF</span>(RCT_table, <span class="at">sampleType =</span> <span class="st">&quot;jointMulti&quot;</span>)</span>
+<span id="cb57-2"><a href="#cb57-2" tabindex="-1"></a></span>
+<span id="cb57-3"><a href="#cb57-3" tabindex="-1"></a><span class="fu">effectsize</span>(BFX, <span class="at">type =</span> <span class="st">&quot;or&quot;</span>)</span>
+<span id="cb57-4"><a href="#cb57-4" tabindex="-1"></a></span>
+<span id="cb57-5"><a href="#cb57-5" tabindex="-1"></a><span class="fu">effectsize</span>(BFX, <span class="at">type =</span> <span class="st">&quot;rr&quot;</span>)</span>
+<span id="cb57-6"><a href="#cb57-6" tabindex="-1"></a></span>
+<span id="cb57-7"><a href="#cb57-7" tabindex="-1"></a><span class="fu">effectsize</span>(BFX, <span class="at">type =</span> <span class="st">&quot;cohens_h&quot;</span>)</span></code></pre></div>
 </div>
 </div>
 <div id="paired-contingency-tables" class="section level1">
@@ -643,15 +626,15 @@ represents the symmetry of the table, ranging between 0 (perfect
 symmetry) and 0.5 (perfect asymmetry).</p>
 <p>For example, these two tests seem to be equally predictive of the
 disease they are screening:</p>
-<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;screening_test&quot;</span>)</span>
-<span id="cb72-2"><a href="#cb72-2" tabindex="-1"></a></span>
-<span id="cb72-3"><a href="#cb72-3" tabindex="-1"></a><span class="fu">phi</span>(screening_test<span class="sc">$</span>Diagnosis, screening_test<span class="sc">$</span>Test1)</span></code></pre></div>
+<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;screening_test&quot;</span>)</span>
+<span id="cb58-2"><a href="#cb58-2" tabindex="-1"></a></span>
+<span id="cb58-3"><a href="#cb58-3" tabindex="-1"></a><span class="fu">phi</span>(screening_test<span class="sc">$</span>Diagnosis, screening_test<span class="sc">$</span>Test1)</span></code></pre></div>
 <pre><code>&gt; ϕ (adj.) |       95% CI
 &gt; -----------------------
 &gt; 0.85     | [0.81, 1.00]
 &gt; 
 &gt; - One-sided CIs: upper bound fixed at [1.00].</code></pre>
-<div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" tabindex="-1"></a><span class="fu">phi</span>(screening_test<span class="sc">$</span>Diagnosis, screening_test<span class="sc">$</span>Test2)</span></code></pre></div>
+<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" tabindex="-1"></a><span class="fu">phi</span>(screening_test<span class="sc">$</span>Diagnosis, screening_test<span class="sc">$</span>Test2)</span></code></pre></div>
 <pre><code>&gt; ϕ (adj.) |       95% CI
 &gt; -----------------------
 &gt; 0.85     | [0.81, 1.00]
@@ -659,19 +642,19 @@ disease they are screening:</p>
 &gt; - One-sided CIs: upper bound fixed at [1.00].</code></pre>
 <p>Does this mean they give the same number of positive/negative
 results?</p>
-<div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" tabindex="-1"></a>tests <span class="ot">&lt;-</span> <span class="fu">table</span>(<span class="at">Test1 =</span> screening_test<span class="sc">$</span>Test1, <span class="at">Test2 =</span> screening_test<span class="sc">$</span>Test2)</span>
-<span id="cb76-2"><a href="#cb76-2" tabindex="-1"></a>tests</span></code></pre></div>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" tabindex="-1"></a>tests <span class="ot">&lt;-</span> <span class="fu">table</span>(<span class="at">Test1 =</span> screening_test<span class="sc">$</span>Test1, <span class="at">Test2 =</span> screening_test<span class="sc">$</span>Test2)</span>
+<span id="cb62-2"><a href="#cb62-2" tabindex="-1"></a>tests</span></code></pre></div>
 <pre><code>&gt;        Test2
 &gt; Test1   &quot;Neg&quot; &quot;Pos&quot;
 &gt;   &quot;Neg&quot;   794    86
 &gt;   &quot;Pos&quot;   150   570</code></pre>
-<div class="sourceCode" id="cb78"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" tabindex="-1"></a><span class="fu">mcnemar.test</span>(tests)</span></code></pre></div>
+<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" tabindex="-1"></a><span class="fu">mcnemar.test</span>(tests)</span></code></pre></div>
 <pre><code>&gt; 
 &gt;   McNemar&#39;s Chi-squared test with continuity correction
 &gt; 
 &gt; data:  tests
 &gt; McNemar&#39;s chi-squared = 17, df = 1, p-value = 4e-05</code></pre>
-<div class="sourceCode" id="cb80"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" tabindex="-1"></a><span class="fu">cohens_g</span>(tests)</span></code></pre></div>
+<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" tabindex="-1"></a><span class="fu">cohens_g</span>(tests)</span></code></pre></div>
 <pre><code>&gt; Cohen&#39;s g |       95% CI
 &gt; ------------------------
 &gt; 0.14      | [0.07, 0.19]</code></pre>
