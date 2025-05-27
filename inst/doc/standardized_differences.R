@@ -80,10 +80,10 @@ head(rouder2016)
 repeated_measures_d(rt ~ cond | id, data = rouder2016, method = "r")
 
 ## ----eval = .eval_if_requireNamespace("BayesFactor"), message=FALSE-----------
-#  library(BayesFactor)
-#  BFt <- ttestBF(formula = mpg ~ am, data = mtcars)
-#  
-#  effectsize(BFt, type = "d")
+library(BayesFactor)
+BFt <- ttestBF(formula = mpg ~ am, data = mtcars)
+
+effectsize(BFt, type = "d")
 
 ## -----------------------------------------------------------------------------
 mahalanobis_d(mpg + hp + cyl ~ am, data = mtcars)
@@ -153,13 +153,13 @@ p_superiority(sleep_wide[["extra_1"]], sleep_wide[["extra_2"]],
 )
 
 ## ----eval = .eval_if_requireNamespace("BayesFactor")--------------------------
-#  effectsize(BFt, type = "p_superiority")
-#  
-#  effectsize(BFt, type = "u1")
-#  
-#  effectsize(BFt, type = "u2")
-#  
-#  effectsize(BFt, type = "u3")
-#  
-#  effectsize(BFt, type = "overlap")
+effectsize(BFt, type = "p_superiority")
+
+effectsize(BFt, type = "u1")
+
+effectsize(BFt, type = "u2")
+
+effectsize(BFt, type = "u3")
+
+effectsize(BFt, type = "overlap")
 

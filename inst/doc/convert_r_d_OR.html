@@ -498,15 +498,17 @@ function.</p>
 <span id="cb22-2"><a href="#cb22-2" tabindex="-1"></a>thresh <span class="ot">&lt;-</span> <span class="dv">22500</span></span>
 <span id="cb22-3"><a href="#cb22-3" tabindex="-1"></a></span>
 <span id="cb22-4"><a href="#cb22-4" tabindex="-1"></a><span class="co"># 2. dichotomize the outcome</span></span>
-<span id="cb22-5"><a href="#cb22-5" tabindex="-1"></a>hardlyworking<span class="sc">$</span>salary_high <span class="ot">&lt;-</span> hardlyworking<span class="sc">$</span>salary <span class="sc">&lt;</span> thresh</span>
-<span id="cb22-6"><a href="#cb22-6" tabindex="-1"></a></span>
-<span id="cb22-7"><a href="#cb22-7" tabindex="-1"></a><span class="co"># 3. Fit a logistic regression:</span></span>
-<span id="cb22-8"><a href="#cb22-8" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">glm</span>(salary_high <span class="sc">~</span> is_senior,</span>
-<span id="cb22-9"><a href="#cb22-9" tabindex="-1"></a>  <span class="at">data =</span> hardlyworking,</span>
-<span id="cb22-10"><a href="#cb22-10" tabindex="-1"></a>  <span class="at">family =</span> <span class="fu">binomial</span>()</span>
-<span id="cb22-11"><a href="#cb22-11" tabindex="-1"></a>)</span>
-<span id="cb22-12"><a href="#cb22-12" tabindex="-1"></a></span>
-<span id="cb22-13"><a href="#cb22-13" tabindex="-1"></a>parameters<span class="sc">::</span><span class="fu">model_parameters</span>(fit)</span></code></pre></div>
+<span id="cb22-5"><a href="#cb22-5" tabindex="-1"></a>hardlyworking<span class="sc">$</span>salary_low <span class="ot">&lt;-</span> <span class="fu">factor</span>(hardlyworking<span class="sc">$</span>salary <span class="sc">&lt;</span> thresh,</span>
+<span id="cb22-6"><a href="#cb22-6" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;high&quot;</span>, <span class="st">&quot;low&quot;</span>)</span>
+<span id="cb22-7"><a href="#cb22-7" tabindex="-1"></a>)</span>
+<span id="cb22-8"><a href="#cb22-8" tabindex="-1"></a></span>
+<span id="cb22-9"><a href="#cb22-9" tabindex="-1"></a><span class="co"># 3. Fit a logistic regression:</span></span>
+<span id="cb22-10"><a href="#cb22-10" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">glm</span>(salary_low <span class="sc">~</span> is_senior,</span>
+<span id="cb22-11"><a href="#cb22-11" tabindex="-1"></a>  <span class="at">data =</span> hardlyworking,</span>
+<span id="cb22-12"><a href="#cb22-12" tabindex="-1"></a>  <span class="at">family =</span> <span class="fu">binomial</span>()</span>
+<span id="cb22-13"><a href="#cb22-13" tabindex="-1"></a>)</span>
+<span id="cb22-14"><a href="#cb22-14" tabindex="-1"></a></span>
+<span id="cb22-15"><a href="#cb22-15" tabindex="-1"></a>parameters<span class="sc">::</span><span class="fu">model_parameters</span>(fit)</span></code></pre></div>
 <pre><code>&gt; Parameter     | Log-Odds |   SE |         95% CI |     z |      p
 &gt; -----------------------------------------------------------------
 &gt; (Intercept)   |     1.55 | 0.16 | [ 1.25,  1.87] |  9.86 | &lt; .001
@@ -520,6 +522,30 @@ function.</p>
 <div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" tabindex="-1"></a><span class="co"># Convert log(OR) (the coefficient) to d</span></span>
 <span id="cb26-2"><a href="#cb26-2" tabindex="-1"></a><span class="fu">oddsratio_to_d</span>(<span class="sc">-</span><span class="fl">1.22</span>, <span class="at">log =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <pre><code>&gt; [1] -0.673</code></pre>
+<p>That’s very close to Cohen’s <em>d</em> we got above (<span class="math inline">\(d=-0.72\)</span>).</p>
+<p>We can get an even closer estimate by accounting for the rate of low
+salaries in the reference group.</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" tabindex="-1"></a><span class="fu">proportions</span>(</span>
+<span id="cb28-2"><a href="#cb28-2" tabindex="-1"></a>  <span class="fu">table</span>(</span>
+<span id="cb28-3"><a href="#cb28-3" tabindex="-1"></a>    <span class="at">is_senior =</span> hardlyworking<span class="sc">$</span>is_senior,</span>
+<span id="cb28-4"><a href="#cb28-4" tabindex="-1"></a>    <span class="at">salary_low =</span> hardlyworking<span class="sc">$</span>salary_low</span>
+<span id="cb28-5"><a href="#cb28-5" tabindex="-1"></a>  ),</span>
+<span id="cb28-6"><a href="#cb28-6" tabindex="-1"></a>  <span class="at">margin =</span> <span class="dv">1</span></span>
+<span id="cb28-7"><a href="#cb28-7" tabindex="-1"></a>)</span></code></pre></div>
+<pre><code>&gt;          salary_low
+&gt; is_senior  high   low
+&gt;     FALSE 0.175 0.825
+&gt;     TRUE  0.418 0.582</code></pre>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" tabindex="-1"></a><span class="co"># Or</span></span>
+<span id="cb30-2"><a href="#cb30-2" tabindex="-1"></a><span class="fu">odds_to_probs</span>(<span class="fl">1.55</span>, <span class="at">log =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>&gt; [1] 0.825</code></pre>
+<p>As we can see, 82.5% of non-senior workers have a low salary. We can
+plug that in to <code>oddsratio_to_d()</code>:</p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" tabindex="-1"></a><span class="fu">oddsratio_to_d</span>(<span class="sc">-</span><span class="fl">1.22</span>, <span class="at">p0 =</span> <span class="fl">0.825</span>, <span class="at">log =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>&gt; [1] -0.728</code></pre>
+<p>We have successfully recovered the standardized mean difference
+between seniors and non-senior’ salaries by only observing a dichotomize
+salary (“low/high salary”).</p>
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1 class="unnumbered">References</h1>

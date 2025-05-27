@@ -19,21 +19,21 @@ library(effectsize)
 t <- t.test(mpg ~ am, data = mtcars)
 
 ## ----eval = FALSE-------------------------------------------------------------
-#  pwr.t2n.test(
-#    n1 = ..., n2 = ...,
-#    d = ...,
-#    sig.level = ...,
-#    power = ...,
-#    alternative = ...
-#  )
+# pwr.t2n.test(
+#   n1 = ..., n2 = ...,
+#   d = ...,
+#   sig.level = ...,
+#   power = ...,
+#   alternative = ...
+# )
 
 ## ----eval = FALSE-------------------------------------------------------------
-#  t_alt <- t.test(mtcars$mpg[mtcars$am == 0], mtcars$mpg[mtcars$am == 1])
-#  
-#  effectsize(t_alt, type = "cohens_d")
+# t_alt <- t.test(mtcars$mpg[mtcars$am == 0], mtcars$mpg[mtcars$am == 1])
+# 
+# effectsize(t_alt, type = "cohens_d")
 
 ## ----eval = FALSE-------------------------------------------------------------
-#  cohens_d(mpg ~ am, data = mtcars)
+# cohens_d(mpg ~ am, data = mtcars)
 
 ## -----------------------------------------------------------------------------
 t_to_d(

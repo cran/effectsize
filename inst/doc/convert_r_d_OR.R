@@ -48,10 +48,12 @@ d_to_r(0.47)
 thresh <- 22500
 
 # 2. dichotomize the outcome
-hardlyworking$salary_high <- hardlyworking$salary < thresh
+hardlyworking$salary_low <- factor(hardlyworking$salary < thresh,
+  labels = c("high", "low")
+)
 
 # 3. Fit a logistic regression:
-fit <- glm(salary_high ~ is_senior,
+fit <- glm(salary_low ~ is_senior,
   data = hardlyworking,
   family = binomial()
 )
@@ -60,4 +62,19 @@ parameters::model_parameters(fit)
 
 # Convert log(OR) (the coefficient) to d
 oddsratio_to_d(-1.22, log = TRUE)
+
+## -----------------------------------------------------------------------------
+proportions(
+  table(
+    is_senior = hardlyworking$is_senior,
+    salary_low = hardlyworking$salary_low
+  ),
+  margin = 1
+)
+
+# Or
+odds_to_probs(1.55, log = TRUE)
+
+## -----------------------------------------------------------------------------
+oddsratio_to_d(-1.22, p0 = 0.825, log = TRUE)
 
