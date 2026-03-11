@@ -105,32 +105,30 @@
 #' @examples
 #' # Paired data -------
 #'
-#' data("sleep")
-#' sleep2 <- reshape(sleep,
-#'   direction = "wide",
-#'   idvar = "ID", timevar = "group"
-#' )
+#' data("preferences2025")
+#' # Is chocolate preferred over... poop?
 #'
-#' repeated_measures_d(Pair(extra.1, extra.2) ~ 1, data = sleep2)
-#'
-#' # Same as:
-#' # repeated_measures_d(sleep$extra[sleep$group==1],
-#' #                     sleep$extra[sleep$group==2])
-#' # repeated_measures_d(extra ~ group | ID, data = sleep)
-#'
+#' repeated_measures_d(Pair(chocolate, poop) ~ 1, data = preferences2025)
 #'
 #' # More options:
-#' repeated_measures_d(Pair(extra.1, extra.2) ~ 1, data = sleep2, mu = -1)
-#' repeated_measures_d(Pair(extra.1, extra.2) ~ 1, data = sleep2, alternative = "less")
+#' repeated_measures_d(Pair(chocolate, poop) ~ 1, data = preferences2025,
+#'                     mu = 3.4)
+#' repeated_measures_d(Pair(chocolate, poop) ~ 1, data = preferences2025,
+#'                     alternative = "greater")
 #'
 #' # Other methods
-#' repeated_measures_d(Pair(extra.1, extra.2) ~ 1, data = sleep2, method = "av")
-#' repeated_measures_d(Pair(extra.1, extra.2) ~ 1, data = sleep2, method = "b")
-#' repeated_measures_d(Pair(extra.1, extra.2) ~ 1, data = sleep2, method = "d")
-#' repeated_measures_d(Pair(extra.1, extra.2) ~ 1, data = sleep2, method = "z", adjust = FALSE)
+#' repeated_measures_d(Pair(chocolate, poop) ~ 1, data = preferences2025,
+#'                     method = "av")
+#' repeated_measures_d(Pair(chocolate, poop) ~ 1, data = preferences2025,
+#'                     method = "b")
+#' repeated_measures_d(Pair(chocolate, poop) ~ 1, data = preferences2025,
+#'                     method = "d")
+#' repeated_measures_d(Pair(chocolate, poop) ~ 1, data = preferences2025,
+#'                     method = "z")
 #'
 #' # d_z is the same as Cohen's d for one sample (of individual difference):
-#' cohens_d(extra.1 - extra.2 ~ 1, data = sleep2)
+#' cohens_d(chocolate - poop ~ 1, data = preferences2025)
+#'
 #'
 #'
 #'
@@ -153,23 +151,39 @@
 #' cohens_d(rt ~ cond, data = rouder2016, ci = NULL)
 #'
 #' @export
-repeated_measures_d <- function(x, y,
-                                data = NULL,
-                                mu = 0, method = c("rm", "av", "z", "b", "d", "r"),
-                                adjust = TRUE,
-                                reference = NULL,
-                                ci = 0.95, alternative = "two.sided",
-                                verbose = TRUE, ...) {
+repeated_measures_d <- function(
+  x,
+  y,
+  data = NULL,
+  mu = 0,
+  method = c("rm", "av", "z", "b", "d", "r"),
+  adjust = TRUE,
+  reference = NULL,
+  ci = 0.95,
+  alternative = "two.sided",
+  verbose = TRUE,
+  ...
+) {
   method <- match.arg(method)
   if (.is_htest_of_type(x, "t-test")) {
-    return(effectsize(x, type = paste0("rm_", method), verbose = verbose, adjust = adjust, ...))
+    return(effectsize(
+      x,
+      type = paste0("rm_", method),
+      verbose = verbose,
+      adjust = adjust,
+      ...
+    ))
   }
 
   alternative <- .match.alt(alternative)
-  data <- .get_data_paired(x, y,
-    data = data, method = method,
+  data <- .get_data_paired(
+    x,
+    y,
+    data = data,
+    method = method,
     reference = reference,
-    verbose = verbose, ...
+    verbose = verbose,
+    ...
   )
 
   if (method %in% c("d", "r")) {
@@ -200,7 +214,6 @@ repeated_measures_d <- function(x, y,
     ci_method <- alternative <- NULL
   }
 
-
   if (adjust) {
     J <- .J(values[["df"]])
 
@@ -211,15 +224,24 @@ repeated_measures_d <- function(x, y,
   }
 
   # rename column to method
-  colnames(out)[1] <- switch(method,
+  colnames(out)[1] <- switch(
+    method,
     d = "Cohens_d",
     b = "Beckers_d",
     paste0("d_", method)
   )
 
-  class(out) <- c("effectsize_difference", "effectsize_table", "see_effectsize_table", class(out))
+  class(out) <- c(
+    "effectsize_difference",
+    "effectsize_table",
+    "see_effectsize_table",
+    class(out)
+  )
   .someattributes(out) <- .nlist(
-    mu, ci, ci_method, alternative,
+    mu,
+    ci,
+    ci_method,
+    alternative,
     approximate = FALSE
   )
   out
@@ -240,7 +262,8 @@ rm_d <- repeated_measures_d
   r <- stats::cor(x, y)
   f <- 2 * (1 - r)
 
-  if (method == "rm") { # nolint
+  if (method == "rm") {
+    # nolint
     s <- stats::sd(x - y) / sqrt(f)
     d <- (m - mu) / s
 
@@ -273,12 +296,15 @@ rm_d <- repeated_measures_d
 .replication_d <- function(data, mu, method) {
   if (method == "r") {
     # for r - need to make sure there are replications!
-    cell_ns <- tapply(data[[1]], data[3:2], function(v) length(stats::na.omit(v)))
+    cell_ns <- tapply(data[[1]], data[3:2], function(v) {
+      length(stats::na.omit(v))
+    })
     all(cell_ns > 1L)
   }
 
   mod <- suppressWarnings(
-    stats::aov(y ~ condition + Error(id / condition),
+    stats::aov(
+      y ~ condition + Error(id / condition),
       data = data,
       contrasts = list(condition = stats::contr.treatment)
     )

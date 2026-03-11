@@ -5,8 +5,6 @@
 #' \ifelse{latex}{\eqn{Fei}}{פ (Fei)} and Pearson's \eqn{C} for contingency
 #' tables or goodness of fit.
 #'
-#' @name chisq_to_phi
-#' @rdname convert_chisq
 #'
 #' @param chisq The \eqn{\chi^2} (chi-square) statistic.
 #' @param n Total sample size.
@@ -113,17 +111,28 @@
 #' tests to effect sizes for meta-analysis. PloS one, 5(4), e10059.
 #'
 #' @export
-chisq_to_phi <- function(chisq, n, nrow = 2, ncol = 2,
-                         adjust = TRUE,
-                         ci = 0.95, alternative = "greater",
-                         ...) {
+chisq_to_phi <- function(
+  chisq,
+  n,
+  nrow = 2,
+  ncol = 2,
+  adjust = TRUE,
+  ci = 0.95,
+  alternative = "greater",
+  ...
+) {
   if ((!missing(nrow) && nrow != 2) || (!missing(ncol) && ncol != 2)) {
     insight::format_error("Phi is not appropriate for non-2x2 tables.")
   }
 
-  res <- .chisq_to_generic_phi(chisq, n, nrow, ncol,
+  res <- .chisq_to_generic_phi(
+    chisq,
+    n,
+    nrow,
+    ncol,
     adjust = adjust,
-    ci = ci, alternative = alternative,
+    ci = ci,
+    alternative = alternative,
     ...
   )
 
@@ -139,13 +148,25 @@ chisq_to_phi <- function(chisq, n, nrow = 2, ncol = 2,
 }
 
 
-#' @rdname convert_chisq
+#' @rdname chisq_to_phi
 #' @export
-chisq_to_cohens_w <- function(chisq, n, nrow, ncol, p,
-                              ci = 0.95, alternative = "greater",
-                              ...) {
-  res <- .chisq_to_generic_phi(chisq, n, nrow, ncol,
-    ci = ci, alternative = alternative,
+chisq_to_cohens_w <- function(
+  chisq,
+  n,
+  nrow,
+  ncol,
+  p,
+  ci = 0.95,
+  alternative = "greater",
+  ...
+) {
+  res <- .chisq_to_generic_phi(
+    chisq,
+    n,
+    nrow,
+    ncol,
+    ci = ci,
+    alternative = alternative,
     ...
   )
   colnames(res)[1] <- "Cohens_w"
@@ -173,26 +194,42 @@ chisq_to_cohens_w <- function(chisq, n, nrow, ncol, p,
   return(res)
 }
 
-#' @rdname convert_chisq
+#' @rdname chisq_to_phi
 #' @export
-chisq_to_cramers_v <- function(chisq, n, nrow, ncol,
-                               adjust = TRUE,
-                               ci = 0.95, alternative = "greater",
-                               ...) {
+chisq_to_cramers_v <- function(
+  chisq,
+  n,
+  nrow,
+  ncol,
+  adjust = TRUE,
+  ci = 0.95,
+  alternative = "greater",
+  ...
+) {
   if (nrow == 1 || ncol == 1) {
     insight::format_error("Cramer's V not applicable to goodness-of-fit tests.")
   }
 
-  res <- .chisq_to_generic_phi(chisq, n, nrow, ncol,
+  res <- .chisq_to_generic_phi(
+    chisq,
+    n,
+    nrow,
+    ncol,
     adjust = adjust,
-    ci = ci, alternative = alternative,
+    ci = ci,
+    alternative = alternative,
     ...
   )
 
   # Convert
   kl <- .possibly_adjust_k_and_l(nrow, ncol, n, adjust = adjust)
   to_convert <- grepl("^(phi|CI_)", colnames(res))
-  res[to_convert] <- lapply(res[to_convert], w_to_v, nrow = kl[["k"]], ncol = kl[["l"]])
+  res[to_convert] <- lapply(
+    res[to_convert],
+    w_to_v,
+    nrow = kl[["k"]],
+    ncol = kl[["l"]]
+  )
   colnames(res)[1] <- gsub("phi", "Cramers_v", colnames(res)[1], fixed = TRUE)
 
   if ("CI" %in% colnames(res)) {
@@ -205,27 +242,50 @@ chisq_to_cramers_v <- function(chisq, n, nrow, ncol,
   return(res)
 }
 
-#' @rdname convert_chisq
+#' @rdname chisq_to_phi
 #' @export
-chisq_to_tschuprows_t <- function(chisq, n, nrow, ncol,
-                                  adjust = TRUE,
-                                  ci = 0.95, alternative = "greater",
-                                  ...) {
+chisq_to_tschuprows_t <- function(
+  chisq,
+  n,
+  nrow,
+  ncol,
+  adjust = TRUE,
+  ci = 0.95,
+  alternative = "greater",
+  ...
+) {
   if (nrow == 1 || ncol == 1) {
-    insight::format_error("Tschuprow's T not applicable to goodness-of-fit tests.")
+    insight::format_error(
+      "Tschuprow's T not applicable to goodness-of-fit tests."
+    )
   }
 
-  res <- .chisq_to_generic_phi(chisq, n, nrow, ncol,
+  res <- .chisq_to_generic_phi(
+    chisq,
+    n,
+    nrow,
+    ncol,
     adjust = adjust,
-    ci = ci, alternative = alternative,
+    ci = ci,
+    alternative = alternative,
     ...
   )
 
   # Convert
   kl <- .possibly_adjust_k_and_l(nrow, ncol, n, adjust = adjust)
   to_convert <- grepl("^(phi|CI_)", colnames(res))
-  res[to_convert] <- lapply(res[to_convert], w_to_t, nrow = kl[["k"]], ncol = kl[["l"]])
-  colnames(res)[1] <- gsub("phi", "Tschuprows_t", colnames(res)[1], fixed = TRUE)
+  res[to_convert] <- lapply(
+    res[to_convert],
+    w_to_t,
+    nrow = kl[["k"]],
+    ncol = kl[["l"]]
+  )
+  colnames(res)[1] <- gsub(
+    "phi",
+    "Tschuprows_t",
+    colnames(res)[1],
+    fixed = TRUE
+  )
 
   if ("CI" %in% colnames(res)) {
     if (attr(res, "alternative") == "greater") {
@@ -238,12 +298,19 @@ chisq_to_tschuprows_t <- function(chisq, n, nrow, ncol,
 }
 
 
-#' @rdname convert_chisq
+#' @rdname chisq_to_phi
 #' @export
 #' @param p Vector of expected values. See [stats::chisq.test()].
-chisq_to_fei <- function(chisq, n, nrow, ncol, p,
-                         ci = 0.95, alternative = "greater",
-                         ...) {
+chisq_to_fei <- function(
+  chisq,
+  n,
+  nrow,
+  ncol,
+  p,
+  ci = 0.95,
+  alternative = "greater",
+  ...
+) {
   if (!missing(nrow) && !missing(ncol)) {
     if (!1 %in% c(nrow, ncol)) {
       insight::format_error("Fei is only applicable to goodness of fit tests.")
@@ -254,8 +321,13 @@ chisq_to_fei <- function(chisq, n, nrow, ncol, p,
     }
   }
 
-  res <- .chisq_to_generic_phi(chisq, n, nrow, ncol,
-    ci = ci, alternative = alternative,
+  res <- .chisq_to_generic_phi(
+    chisq,
+    n,
+    nrow,
+    ncol,
+    ci = ci,
+    alternative = alternative,
     ...
   )
 
@@ -276,18 +348,32 @@ chisq_to_fei <- function(chisq, n, nrow, ncol, p,
   is_uniform <- insight::n_unique(p) == 1L
   if (!is_uniform || max(ncol, nrow) > 2) {
     attr(res, "table_footer") <-
-      sprintf("Adjusted for %suniform expected probabilities.", if (is_uniform) "non-" else "")
+      sprintf(
+        "Adjusted for %suniform expected probabilities.",
+        if (is_uniform) "non-" else ""
+      )
   }
   return(res)
 }
 
-#' @rdname convert_chisq
+#' @rdname chisq_to_phi
 #' @export
-chisq_to_pearsons_c <- function(chisq, n, nrow, ncol,
-                                ci = 0.95, alternative = "greater",
-                                ...) {
-  res <- .chisq_to_generic_phi(chisq, n, nrow, ncol,
-    ci = ci, alternative = alternative,
+chisq_to_pearsons_c <- function(
+  chisq,
+  n,
+  nrow,
+  ncol,
+  ci = 0.95,
+  alternative = "greater",
+  ...
+) {
+  res <- .chisq_to_generic_phi(
+    chisq,
+    n,
+    nrow,
+    ncol,
+    ci = ci,
+    alternative = alternative,
     ...
   )
 
@@ -305,7 +391,7 @@ chisq_to_pearsons_c <- function(chisq, n, nrow, ncol,
 
 # Reverse -----------------------------------------------------------------
 
-#' @rdname convert_chisq
+#' @rdname chisq_to_phi
 #' @param phi The \eqn{\phi} (phi) statistic.
 #' @export
 phi_to_chisq <- function(phi, n, ...) {
@@ -316,10 +402,16 @@ phi_to_chisq <- function(phi, n, ...) {
 # Utils  ------------------------------------------------------------------
 
 #' @keywords internal
-.chisq_to_generic_phi <- function(chisq, n, nrow, ncol,
-                                  adjust = FALSE,
-                                  ci = NULL, alternative = "greater",
-                                  ...) {
+.chisq_to_generic_phi <- function(
+  chisq,
+  n,
+  nrow,
+  ncol,
+  adjust = FALSE,
+  ci = NULL,
+  alternative = "greater",
+  ...
+) {
   alternative <- .match.alt(alternative, FALSE)
 
   ci_numeric <- .test_ci(ci)
@@ -339,7 +431,8 @@ phi_to_chisq <- function(phi, n, ...) {
     res$CI <- ci
     ci.level <- .adjust_ci(ci, alternative)
 
-    chisqs <- vapply(chisq,
+    chisqs <- vapply(
+      chisq,
       .get_ncp_chi,
       FUN.VALUE = numeric(2),
       df = df,

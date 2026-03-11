@@ -48,8 +48,9 @@ overflow: visible;
 }
 </style>
 <style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -60,7 +61,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
 { counter-reset: source-line 0; }
@@ -424,7 +425,7 @@ know what food product it is.</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="fu">cramers_v</span>(food_class, <span class="at">adjust =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <pre><code>&gt; Cramer&#39;s V |       95% CI
 &gt; -------------------------
-&gt; 1.00       | [0.81, 1.00]
+&gt; 1          | [0.81, 1.00]
 &gt; 
 &gt; - One-sided CIs: upper bound fixed at [1.00].</code></pre>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="fu">tschuprows_t</span>(food_class, <span class="at">adjust =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
@@ -555,9 +556,9 @@ the expected one).</p>
 <span id="cb46-2"><a href="#cb46-2" tabindex="-1"></a>(O1 <span class="ot">&lt;-</span> E <span class="sc">*</span> <span class="dv">286</span>)</span></code></pre></div>
 <pre><code>&gt; [1] 114.4  57.2  57.2  42.9  14.3</code></pre>
 <div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" tabindex="-1"></a><span class="fu">fei</span>(O1, <span class="at">p =</span> E)</span></code></pre></div>
-<pre><code>&gt; פ‎    |       95% CI
-&gt; -------------------
-&gt; 0.00 | [0.00, 1.00]
+<pre><code>&gt; פ‎ |       95% CI
+&gt; ----------------
+&gt; 0 | [0.00, 1.00]
 &gt; 
 &gt; - Adjusted for uniform expected probabilities.
 &gt; - One-sided CIs: upper bound fixed at [1.00].</code></pre>
